@@ -1,0 +1,42 @@
+{
+	"name": "optivest-frontend",
+	"version": "0.0.1",
+	"private": true,
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"lint": "prettier --check . && eslint .",
+		"format": "prettier --write ."
+	},
+	"devDependencies": {
+		"@internationalized/date": "^3.5.6",
+		"@sveltejs/adapter-auto": "^3.0.0",
+		"@sveltejs/kit": "^2.0.0",
+		"@sveltejs/vite-plugin-svelte": "^4.0.0-next.6",
+		"@types/eslint": "^9.6.0",
+		"autoprefixer": "^10.4.20",
+		"bits-ui": "^0.21.16",
+		"clsx": "^2.1.1",
+		"eslint": "^9.0.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-svelte": "^2.36.0",
+		"formsnap": "^1.0.1",
+		"globals": "^15.0.0",
+		"lucide-svelte": "^0.453.0",
+		"prettier": "^3.1.1",
+		"prettier-plugin-svelte": "^3.1.2",
+		"prettier-plugin-tailwindcss": "^0.6.5",
+		"svelte": "^5.0.0-next.265",
+		"sveltekit-superforms": "^2.19.1",
+		"tailwind-merge": "^2.5.4",
+		"tailwind-variants": "^0.2.1",
+		"tailwindcss": "^3.4.9",
+		"vite": "^5.0.3",
+		"zod": "^3.23.8"
+	},
+	"type": "module",
+	"dependencies": {
+		"mode-watcher": "^0.4.1"
+	}
+}
