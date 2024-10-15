@@ -1,6 +1,15 @@
-# create-svelte
+# OptiVest Frontend
 
-Everything you need to build a Svelte project, powered by [`create-svelte`](https://github.com/sveltejs/kit/tree/main/packages/create-svelte).
+This is the Svelte-powered frontend for OptiVest, an AI-powered financial advisor designed to help you manage savings, incomes, debts, expenses, perform portfolio management, and forecast future financial trends.
+
+**PLEASE NOTE:** This is a placeholder readme as I proceed with the development.
+
+## Features
+- User-friendly interface for managing savings, incomes, debts, and expenses
+- Interactive portfolio management and financial goal setting
+- Real-time financial data visualization and analysis
+- Secure communication with the backend for financial forecasting
+
 
 ## Creating a project
 
