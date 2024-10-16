@@ -54,3 +54,9 @@ export const signUpFormSchema =  z
     });
   }
 });
+
+export const tokenSchema = z
+	.string({ required_error: 'A Token is required' })
+	.min(26, { message: 'A Valid Token is required' })
+	.max(32, { message: 'The Token is Invalid' })
+	.refine((value) => value.trim().length > 0, { message: 'Token cannot be only whitespace' });

@@ -25,7 +25,7 @@
 		<div class="flex items-center space-x-4">
 			<a href="/login" class="text-white transition duration-300 hover:text-blue-300">Log In</a>
 			<a
-				href="#signup"
+				href="/signup"
 				class="rounded-md bg-white px-4 py-2 font-semibold text-blue-700 transition duration-300 hover:bg-gray-100"
 				>Sign Up</a
 			>
