@@ -3,8 +3,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { ModeWatcher } from 'mode-watcher';
 	import { toggleMode } from 'mode-watcher';
-	import LandingNav from '$lib/layouts/navs/landingnav.svelte';
-	import { Sun, Moon, Users, Bell, Fingerprint } from 'lucide-svelte';
+	import { Sun, Moon } from 'lucide-svelte';
 
 
 </script>
@@ -16,7 +15,6 @@
 		<span class="sr-only">Toggle theme</span>
 	</Button>
 	<ModeWatcher />
-	<LandingNav />
 	<slot />
 </div>
 
