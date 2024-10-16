@@ -1,44 +1,36 @@
 <script>
 	import * as Form from '$lib/components/ui/form';
+	import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { passwordConfrimPasswordSchema } from '$lib/settings/schema.js';
+	import { Input } from '$lib/components/ui/input';
 	import { toastManager } from '$lib/helpers/utilities.js';
 	import {
 		TOAST_TYPE_ERROR,
 		TOAST_TYPE_SUCCESS,
-		TOAST_TYPE_LOADING,
-		TOAST_TYPE_INFO
+		TOAST_TYPE_LOADING
 	} from '$lib/settings/constants.js';
-	import { superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { formSchema } from '$lib/settings/schema.js';
 	import { goto } from '$app/navigation';
-	import { Input } from '$lib/components/ui/input';
 	import { fly, fade } from 'svelte/transition';
 
-	let { data } = $props();
+    let { data } = $props();
 	const form = superForm(data.form, {
-		validators: zodClient(formSchema),
+		validators: zodClient(passwordConfrimPasswordSchema),
 		dataType: 'json',
 		onUpdated({ form }) {
-			//const action = result.data
 			if (form.message) {
-				// Display the message using a toast library
-				//console.log(form.message.data);
 				if (form.message.status === 'success') {
-					let name = `${form.message.data.first_name} ${form.message.data.last_name}`;
-					let message = `${form.message.message} Welcome back, ${name}!`;
-					toastManager(TOAST_TYPE_SUCCESS, message);
-					goto('/dashboard');
+					toastManager(TOAST_TYPE_SUCCESS, form.message.message);
+					goto('/login');
 				} else {
 					toastManager(TOAST_TYPE_ERROR, form.message.message);
 				}
 			}
 		}
 	});
-	const { form: formData, enhance, message, delayed } = form;
-	console.log(data);
+	const { form: formData, enhance, delayed } = form;
 
 	function handleBack() {
-		console.log('Back button clicked');
 		goto('/');
 	}
 </script>
@@ -47,19 +39,19 @@
 	<!-- Image Panel Section -->
 	<div class="relative hidden w-1/2 md:block">
 		<img
-			src="https://images.unsplash.com/photo-1640197618317-dc379a226fbe?q=80&w=1937&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-			alt="Dashboard Preview"
+			src="https://img.freepik.com/free-vector/my-password-concept-illustration_114360-3864.jpg?t=st=1729104592~exp=1729108192~hmac=42a31844a0ca320be5df4a36cef523d43283211422e3e13ab9e5f7c8df614731&w=740"
+			alt="Password Reset Preview"
 			class="h-full w-full object-cover"
 		/>
 		<div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-6 text-white">
-			<h3 class="mb-2 text-xl font-bold">Manage all your financial tasks using Optivest</h3>
+			<h3 class="mb-2 text-xl font-bold">Reset Your Password</h3>
 			<p class="text-sm">
-				The one-stop platform for all financial management of small and medium-sized businesses.
+				Secure your account like a pro – choose a password that's tough to crack!
 			</p>
 		</div>
 	</div>
 
-	<!-- Login Form Section -->
+	<!-- Password Reset Form Section -->
 	<div class="flex w-full flex-col justify-between p-8 md:w-1/2" in:fade={{ duration: 300 }}>
 		<button
 			onclick={handleBack}
@@ -74,8 +66,7 @@
 			>
 				<path
 					stroke-linecap="round"
-					s
-					troke-linejoin="round"
+					stroke-linejoin="round"
 					stroke-width="2"
 					d="M10 19l-7-7m0 0l7-7m-7 7h18"
 				/>
@@ -95,45 +86,36 @@
 				</div>
 
 				<h2 class="mb-6 text-center text-2xl font-bold text-gray-900 dark:text-gray-100">
-					Login to your Optivest account
+					Reset Your Password
 				</h2>
 
 				<!-- Form using shadcn-svelte Form components -->
 				<form method="POST" use:enhance>
-					<Form.Field {form} name="email">
-						<Form.Control let:attrs>
-							<Form.Label>Email</Form.Label>
-							<Input {...attrs} bind:value={$formData.email} placeholder="yourname@example.com" />
-						</Form.Control>
-						<Form.FieldErrors />
-					</Form.Field>
-
 					<Form.Field {form} name="password">
 						<Form.Control let:attrs>
-							<Form.Label>Password</Form.Label>
-							<Input {...attrs} type="password" bind:value={$formData.password} />
+							<Form.Label>New Password</Form.Label>
+							<Input
+								{...attrs}
+								type="password"
+								bind:value={$formData.password}
+								placeholder="Enter your new password"
+							/>
 						</Form.Control>
 						<Form.FieldErrors />
 					</Form.Field>
 
-					<div class="flex items-center justify-between">
-						<div class="flex items-center">
-							<input
-								type="checkbox"
-								id="remember-me"
-								bind:checked={$formData.rememberMe}
-								class="mb-4 mt-4 h-4 w-4 rounded border-gray-300 text-teal-500 focus:ring-teal-500 dark:border-gray-700 dark:bg-gray-900 dark:text-teal-400"
+					<Form.Field {form} name="confirm_password">
+						<Form.Control let:attrs>
+							<Form.Label>Confirm Password</Form.Label>
+							<Input
+								{...attrs}
+								type="password"
+								bind:value={$formData.confirm_password}
+								placeholder="Confirm your new password"
 							/>
-							<label for="remember-me" class="ml-2 block text-sm text-gray-700 dark:text-gray-300"
-								>Remember me</label
-							>
-						</div>
-						<div class="text-sm">
-							<a href="/passwordreset" class="font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400"
-								>Forgot Password?</a
-							>
-						</div>
-					</div>
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
 
 					<Form.Button type="submit" class="w-full" disabled={$delayed}>
 						{#if $delayed}
@@ -150,21 +132,13 @@
 								>
 								</path>
 							</svg>
-							Logging you in...
+							Resetting password...
 							{toastManager(TOAST_TYPE_LOADING, 'Please wait...')}
 						{:else}
-							Login
+							Reset Password
 						{/if}
 					</Form.Button>
 				</form>
-
-				<p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
-					Don't have an account? <a
-						href="/signup"
-						class="font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400"
-						>Register Here</a
-					>
-				</p>
 			</div>
 		</div>
 

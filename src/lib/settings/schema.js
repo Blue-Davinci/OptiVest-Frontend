@@ -5,6 +5,17 @@ export const formSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
+export const emailSchema = z.object({
+  email: z.string().min(2, 'Username must be at least 2 characters').max(50, 'Username must not exceed 50 characters'),
+})
+
+export const passwordConfrimPasswordSchema = z.object({
+  password: z.string().min(8, 'Password must be at least 8 characters long'),
+  confirmPassword: z.string().min(8, 'Confirm Password must be at least 8 characters long')
+}).refine(data => data.password === data.confirmPassword, {
+  message: "Passwords don't match",
+  path: ['confirmPassword']
+});
 export const signUpFormSchema =  z
 .object({
   first_name: z
@@ -60,3 +71,4 @@ export const tokenSchema = z
 	.min(26, { message: 'A Valid Token is required' })
 	.max(32, { message: 'The Token is Invalid' })
 	.refine((value) => value.trim().length > 0, { message: 'Token cannot be only whitespace' });
+
