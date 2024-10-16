@@ -1,6 +1,12 @@
 <script>
 	import * as Form from '$lib/components/ui/form';
-	import { page } from '$app/stores';
+	import { toastManager } from '$lib/helpers/utilities.js';
+	import {
+		TOAST_TYPE_ERROR,
+		TOAST_TYPE_SUCCESS,
+		TOAST_TYPE_LOADING,
+		TOAST_TYPE_INFO
+	} from '$lib/settings/constants.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { formSchema } from '$lib/settings/schema.js';
@@ -9,11 +15,26 @@
 	import { fly, slide, fade } from 'svelte/transition';
 
 	let { data } = $props();
-	const form = superForm(data, {
+	const form = superForm(data.form, {
 		validators: zodClient(formSchema),
-		dataType: 'json' // Ensure nested data structures are handled as JSON
+		dataType: 'json',
+		onUpdated({ form }) {
+			//const action = result.data
+			if (form.message) {
+				// Display the message using a toast library
+				//console.log(form.message.data);
+				if (form.message.status === 'success') {
+					let name = `${form.message.data.first_name} ${form.message.data.last_name}`;
+					let message = `${form.message.message} Welcome back, ${name}!`;
+					toastManager(TOAST_TYPE_SUCCESS, message);
+					goto('/dashboard');
+				} else {
+					toastManager(TOAST_TYPE_ERROR, form.message.message);
+				}
+			}
+		}
 	});
-	const { form: formData, enhance, message, delayed, errors } = form;
+	const { form: formData, enhance, message, delayed } = form;
 	console.log(data);
 
 	function handleBack() {
@@ -24,8 +45,7 @@
 
 <div
 	class="mt-3 flex h-screen w-full"
-	in:fly={{ x: -400, duration: 1000 }}
-	out:slide={{ duration: 600 }}
+	transition:fly|global={{ y: -200,duration: 300 }}
 >
 	<!-- Image Panel Section -->
 	<div class="relative hidden w-1/2 md:block">
@@ -76,6 +96,7 @@
 						class="mx-auto h-16 w-auto"
 					/>
 				</div>
+
 				<h2 class="mb-6 text-center text-2xl font-bold text-gray-900 dark:text-gray-100">
 					Login to your Optivest account
 				</h2>
@@ -117,14 +138,10 @@
 						</div>
 					</div>
 					{#if $delayed}
-						working...
+						{toastManager(TOAST_TYPE_LOADING, 'Please wait...')}
 					{/if}
-					{#if $message}
-						<h3 class:invalid={$page.status >= 400}>{$message}</h3>
-					{/if}
-                    {#if $errors.name}<span class="invalid">{$errors.name}</span>{/if}
 
-					<Form.Button type="submit" class="w-full">Login</Form.Button>
+					<Form.Button type="submit" class="w-full" disabled={$delayed}>Login</Form.Button>
 				</form>
 
 				<p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
