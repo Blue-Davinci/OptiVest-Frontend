@@ -4,65 +4,53 @@
 	import {
 		TOAST_TYPE_ERROR,
 		TOAST_TYPE_SUCCESS,
-		TOAST_TYPE_LOADING,
-		TOAST_TYPE_INFO
+		TOAST_TYPE_LOADING
 	} from '$lib/settings/constants.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { formSchema } from '$lib/settings/schema.js';
+	import { signUpFormSchema } from '$lib/settings/schema.js'; 
 	import { goto } from '$app/navigation';
 	import { Input } from '$lib/components/ui/input';
 	import { fly, fade } from 'svelte/transition';
 
+
 	let { data } = $props();
 	const form = superForm(data.form, {
-		validators: zodClient(formSchema),
+		validators: zodClient(signUpFormSchema),
 		dataType: 'json',
 		onUpdated({ form }) {
-			//const action = result.data
 			if (form.message) {
-				// Display the message using a toast library
-				//console.log(form.message.data);
 				if (form.message.status === 'success') {
-					let name = `${form.message.data.first_name} ${form.message.data.last_name}`;
-					let message = `${form.message.message} Welcome back, ${name}!`;
-					toastManager(TOAST_TYPE_SUCCESS, message);
-					goto('/dashboard');
+					toastManager(TOAST_TYPE_SUCCESS, form.message.message);
+					goto('/login');
 				} else {
 					toastManager(TOAST_TYPE_ERROR, form.message.message);
 				}
 			}
 		}
 	});
-	const { form: formData, enhance, message, delayed } = form;
-	console.log(data);
+	const { form: formData, enhance, delayed } = form;
 
 	function handleBack() {
-		console.log('Back button clicked');
 		goto('/');
 	}
 </script>
 
-<div
-	class="mt-3 flex h-screen w-full"
-	transition:fly|global={{ y: -200,duration: 300 }}
->
+<div class="flex h-screen w-full md:flex-row flex-col" transition:fly|global={{ y: -200, duration: 300 }}>
 	<!-- Image Panel Section -->
-	<div class="relative hidden w-1/2 md:block">
+	<div class="relative hidden w-1/2 md:block h-full">
 		<img
-			src="https://images.unsplash.com/photo-1640197618317-dc379a226fbe?q=80&w=1937&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-			alt="Dashboard Preview"
+			src="https://images.unsplash.com/photo-1728044849325-47f4f5a21da3?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+			alt="Signup Preview"
 			class="h-full w-full object-cover"
 		/>
 		<div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-6 text-white">
-			<h3 class="mb-2 text-xl font-bold">Manage all your financial tasks using Optivest</h3>
-			<p class="text-sm">
-				The one-stop platform for all financial management of small and medium-sized businesses.
-			</p>
+			<h3 class="mb-2 text-xl font-bold">Join Optivest Today</h3>
+			<p class="text-sm">Get full access to all financial management features by signing up.</p>
 		</div>
 	</div>
 
-	<!-- Login Form Section -->
+	<!-- Signup Form Section -->
 	<div class="flex w-full flex-col justify-between p-8 md:w-1/2" in:fade={{ duration: 300 }}>
 		<button
 			onclick={handleBack}
@@ -77,8 +65,7 @@
 			>
 				<path
 					stroke-linecap="round"
-					s
-					troke-linejoin="round"
+					stroke-linejoin="round"
 					stroke-width="2"
 					d="M10 19l-7-7m0 0l7-7m-7 7h18"
 				/>
@@ -98,11 +85,30 @@
 				</div>
 
 				<h2 class="mb-6 text-center text-2xl font-bold text-gray-900 dark:text-gray-100">
-					Login to your Optivest account
+					Sign up for your Optivest account
 				</h2>
 
-				<!-- Form using shadcn-svelte Form components -->
+				<!-- Signup Form -->
 				<form method="POST" use:enhance>
+					<!-- First Name -->
+					<Form.Field {form} name="first_name">
+						<Form.Control let:attrs>
+							<Form.Label>First Name</Form.Label>
+							<Input {...attrs} bind:value={$formData.first_name} placeholder="John" />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+
+					<!-- Last Name -->
+					<Form.Field {form} name="last_name">
+						<Form.Control let:attrs>
+							<Form.Label>Last Name</Form.Label>
+							<Input {...attrs} bind:value={$formData.last_name} placeholder="Doe" />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+
+					<!-- Email -->
 					<Form.Field {form} name="email">
 						<Form.Control let:attrs>
 							<Form.Label>Email</Form.Label>
@@ -111,6 +117,16 @@
 						<Form.FieldErrors />
 					</Form.Field>
 
+					<!-- Phone Number -->
+					<Form.Field {form} name="phone_number">
+						<Form.Control let:attrs>
+							<Form.Label>Phone Number</Form.Label>
+							<Input {...attrs} bind:value={$formData.phone_number} placeholder="+1234567890" />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+
+					<!-- Password -->
 					<Form.Field {form} name="password">
 						<Form.Control let:attrs>
 							<Form.Label>Password</Form.Label>
@@ -119,36 +135,26 @@
 						<Form.FieldErrors />
 					</Form.Field>
 
-					<div class="flex items-center justify-between">
-						<div class="flex items-center">
-							<input
-								type="checkbox"
-								id="remember-me"
-								bind:checked={$formData.rememberMe}
-								class="mb-4 mt-4 h-4 w-4 rounded border-gray-300 text-teal-500 focus:ring-teal-500 dark:border-gray-700 dark:bg-gray-900 dark:text-teal-400"
-							/>
-							<label for="remember-me" class="ml-2 block text-sm text-gray-700 dark:text-gray-300"
-								>Remember me</label
-							>
-						</div>
-						<div class="text-sm">
-							<a href="#1" class="font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400"
-								>Forgot Password?</a
-							>
-						</div>
-					</div>
+					<!-- Confirm Password -->
+					<Form.Field {form} name="confirm_password">
+						<Form.Control let:attrs>
+							<Form.Label>Confirm Password</Form.Label>
+							<Input {...attrs} type="password" bind:value={$formData.confirm_password} />
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+
 					{#if $delayed}
-						{toastManager(TOAST_TYPE_LOADING, 'Please wait...')}
+						{toastManager(TOAST_TYPE_LOADING, 'Creating your account...')}
 					{/if}
 
-					<Form.Button type="submit" class="w-full" disabled={$delayed}>Login</Form.Button>
+					<Form.Button type="submit" class="w-full" disabled={$delayed}>Sign Up</Form.Button>
 				</form>
 
 				<p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
-					Don't have an account? <a
-						href="/signup"
-						class="font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400"
-						>Register Here</a
+					Already have an account? <a
+						href="/login"
+						class="font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400">Login here</a
 					>
 				</p>
 			</div>
