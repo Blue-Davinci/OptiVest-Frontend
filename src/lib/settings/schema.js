@@ -9,13 +9,26 @@ export const emailSchema = z.object({
   email: z.string().min(2, 'Username must be at least 2 characters').max(50, 'Username must not exceed 50 characters'),
 })
 
-export const passwordConfrimPasswordSchema = z.object({
+export const passworSchema = z.object({
   password: z.string().min(8, 'Password must be at least 8 characters long'),
-  confirmPassword: z.string().min(8, 'Confirm Password must be at least 8 characters long')
-}).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword']
+  token: z.string(),
+  confirm_password: z.string().min(8, 'Confirm Password must be at least 8 characters long')
+})
+.superRefine(({ confirm_password, password }, ctx) => {
+  if (confirm_password !== password) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Password and Confirm Password must match',
+      path: ['password']
+    });
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Password and Confirm Password must match',
+      path: ['confirm_password']
+    });
+  }
 });
+
 export const signUpFormSchema =  z
 .object({
   first_name: z

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>%sveltekit.error.message%</title>
+
+  <!-- Google font -->
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700,900" rel="stylesheet">
+  
+  <!-- Tailwind CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gradient-to-r from-gray-100 to-gray-400 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 p-0 m-0 flex flex-col min-h-screen justify-center items-center">
+  <header class="text-center p-4">
+    <div class="flex items-center justify-center">
+      <div class="w-24 h-24 rounded-full bg-gray-800 dark:bg-gray-900 p-2 shadow-md flex items-center justify-center">
+        <img src="https://i.ibb.co/6BpdrKV/optivest-high-resolution-logo-transparent.png" alt="OptiVest Logo" class="w-20 h-20">
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-grow flex items-center justify-center w-full h-full">
+    <div class="text-center p-12 bg-gray-300 dark:bg-gray-900 rounded-lg shadow-lg w-full max-w-2xl h-full flex flex-col justify-center items-center">
+      <div class="mb-4">
+        <h1 class="font-extrabold bg-cover bg-center text-transparent bg-clip-text leading-none" style="background-image: url('https://i.ibb.co/W5xrrRN/bg.jpg'); font-size: 200px;">
+          Oops!
+        </h1>
+      </div>
+      <h2 class="text-3xl font-semibold uppercase mb-4 text-indigo-600 dark:text-indigo-400">Status: %sveltekit.status%</h2>
+      <p class="text-xl mb-8 text-gray-700 dark:text-gray-300">Message: %sveltekit.error.message%</p>
+      <a href="/" class="inline-block px-10 py-4 text-lg font-semibold text-white bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 active:from-blue-700 active:to-indigo-700 focus:ring focus:ring-blue-300 rounded-full shadow-lg transition-transform duration-300 transform hover:scale-105 uppercase">
+        Go To Homepage
+      </a>
+    </div>
+  </main>
+
+  <footer class="text-center p-4 text-sm text-gray-500 dark:text-gray-400">
+    &copy; 2024 OptiVest. All rights reserved.
+  </footer>
+</body>
+
+</html>

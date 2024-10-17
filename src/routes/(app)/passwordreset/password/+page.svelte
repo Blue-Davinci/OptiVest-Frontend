@@ -2,7 +2,7 @@
 	import * as Form from '$lib/components/ui/form';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { passwordConfrimPasswordSchema } from '$lib/settings/schema.js';
+	import { passworSchema } from '$lib/settings/schema.js';
 	import { Input } from '$lib/components/ui/input';
 	import { toastManager } from '$lib/helpers/utilities.js';
 	import {
@@ -12,11 +12,20 @@
 	} from '$lib/settings/constants.js';
 	import { goto } from '$app/navigation';
 	import { fly, fade } from 'svelte/transition';
+	import { onMount } from 'svelte';
 
-    let { data } = $props();
+	let { data } = $props();
+	let token = $state(data.token);
+
 	const form = superForm(data.form, {
-		validators: zodClient(passwordConfrimPasswordSchema),
+		validators: zodClient(passworSchema),
 		dataType: 'json',
+		onSubmit: ({ formData, jsonData }) => {
+			// Convert formData to an object and add the token
+			const updatedData = { ...Object.fromEntries(formData), token: token };
+			// Set data to be posted
+			jsonData(updatedData);
+		},
 		onUpdated({ form }) {
 			if (form.message) {
 				if (form.message.status === 'success') {
@@ -24,11 +33,13 @@
 					goto('/login');
 				} else {
 					toastManager(TOAST_TYPE_ERROR, form.message.message);
+					// ToDo: redirect on error.
 				}
 			}
 		}
 	});
-	const { form: formData, enhance, delayed } = form;
+
+	const { form: formData, enhance, delayed, taintedFields } = form;
 
 	function handleBack() {
 		goto('/');
@@ -112,6 +123,19 @@
 								type="password"
 								bind:value={$formData.confirm_password}
 								placeholder="Confirm your new password"
+							/>
+						</Form.Control>
+						<Form.FieldErrors />
+					</Form.Field>
+
+					<Form.Field {form} name="token">
+						<Form.Control let:attrs>
+							<Input
+								{...attrs}
+								type="hidden"
+								disabled
+								bind:value={token}
+								placeholder="token entry"
 							/>
 						</Form.Control>
 						<Form.FieldErrors />
