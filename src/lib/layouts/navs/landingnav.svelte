@@ -1,6 +1,10 @@
 <script>
-	let menuOpen = false;
+	let menuOpen = $state(false);
     import { fly, slide } from 'svelte/transition';
+
+	// props for isLogged in to control showing of login and signup buttons
+	let	{isValidUser} = $props();
+	//console.log("In Nav Link: ",isValidUser);
 </script>
 
 <header class="bg-gradient-to-r from-blue-700 to-blue-900 shadow-sm">
@@ -23,16 +27,25 @@
 			>
 		</nav>
 		<div class="flex items-center space-x-4">
+			{#if !isValidUser}
 			<a href="/login" class="text-white transition duration-300 hover:text-blue-300">Log In</a>
 			<a
 				href="/signup"
 				class="rounded-md bg-white px-4 py-2 font-semibold text-blue-700 transition duration-300 hover:bg-gray-100"
 				>Sign Up</a
 			>
+			{:else}
+			<!-- Log out -->
+			<a
+				href="/logout"
+				class="rounded-md bg-white px-4 py-2 font-semibold text-blue-700 transition duration-300 hover:bg-gray-100"
+				>Log Out</a
+			>
+			{/if}
 		</div>
 		<button
 			class="md:hidden"
-			on:click={() => (menuOpen = !menuOpen)}
+			onclick={() => (menuOpen = !menuOpen)}
 			aria-expanded={menuOpen}
 			aria-label="Toggle menu"
 		>
