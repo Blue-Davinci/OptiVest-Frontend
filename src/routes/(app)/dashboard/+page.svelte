@@ -1,190 +1,42 @@
 <script>
-  import { Button } from '$lib/components/ui/button';
-  import { onMount } from 'svelte';
-  import { 
-    LayoutDashboard, DollarSign, Target, PiggyBank, Wallet, Home,
-    Users, UserPlus, Bell, Settings, HelpCircle, Moon, Sun, Newspaper, GraduationCap,
-    ChevronsLeft, ChevronsRight
-  } from 'lucide-svelte';
-
-  let isOpen = true;
-  let activeItem = 'Dashboard';
-  let isDarkMode = false;
-
-  const navSections = [
-    {
-      name: 'Main',
-      shortLabel: 'Main',
-      items: [
-        { name: 'Home', icon: Home, url: '#1' },
-        { name: 'Dashboard', icon: LayoutDashboard, url: '#1' },
-      ]
-    },
-    {
-      name: 'Finance Management',
-      shortLabel: 'Finance',
-      items: [
-        { name: 'Budget Manager', icon: DollarSign, url: '#1' },
-        { name: 'Goal Manager', icon: Target, url: '#1' },
-      ]
-    },
-    {
-      name: 'Finance Tracker',
-      shortLabel: 'Trackers',
-      items: [
-        { name: 'Expense Manager', icon: PiggyBank, url: '#1' },
-        { name: 'Debt Manager', icon: Wallet, url: '#1' },
-      ]
-    },
-    {
-      name: 'Groups',
-      shortLabel: 'Groups',
-      items: [
-        { name: 'Group Manager', icon: UserPlus, url: '#1' },
-        { name: 'Groups', icon: Users, url: '#1' },
-      ]
-    },
-    {
-      name: 'News',
-      shortLabel: 'News',
-      items: [
-        { name: 'Finance News', icon: Newspaper, url: '#1' },
-        { name: 'Education', icon: GraduationCap, url: '#1' },
-      ]
-    },
+  // Sample data for the dashboard cards
+  let stats = [
+    { title: 'Total Users', value: 1200, icon: '👥' },
+    { title: 'Revenue', value: '$45,000', icon: '💰' },
+    { title: 'New Orders', value: 342, icon: '📦' },
+    { title: 'Support Tickets', value: 18, icon: '🎫' }
   ];
-
-  const bottomItems = [
-    { name: 'Notifications', icon: Bell, badge: 4, url: '#1' },
-    { name: 'Settings', icon: Settings, url: '#1' },
-    { name: 'Support', icon: HelpCircle, url: '#1' },
-  ];
-
-  function toggleSidebar() {
-    isOpen = !isOpen;
-  }
-
-  function setActiveItem(item) {
-    activeItem = item;
-  }
-
-  function toggleTheme() {
-    isDarkMode = !isDarkMode;
-  }
-
-  onMount(() => {
-    const mediaQuery = window.matchMedia('(max-width: 768px)');
-    const handleMediaQueryChange = (e) => {
-      isOpen = !e.matches;
-    };
-    mediaQuery.addEventListener('change', handleMediaQueryChange);
-    handleMediaQueryChange(mediaQuery);
-
-    return () => {
-      mediaQuery.removeEventListener('change', handleMediaQueryChange);
-    };
-  });
 </script>
 
-<nav class="fixed left-0 top-0 h-full bg-white dark:bg-gray-900 shadow-lg transition-all duration-300 ease-in-out {isOpen ? 'w-64' : 'w-20'} flex flex-col text-gray-700 dark:text-gray-400">
-  <div class="flex items-center justify-between p-4 bg-blue-100 dark:bg-gray-800">
-    {#if isOpen}
-      <div class="flex items-center space-x-2">
-        <img src="optivest-cropped.png" alt="OptiVest Logo" class="w-10 h-10 rounded-full">
-        <span class="font-bold text-lg text-blue-800 dark:text-blue-300">OptiVest</span>
-      </div>
-    {:else}
-      <img src="optivest-cropped.png" alt="OptiVest Logo" class="w-8 h-8 mx-auto">
-    {/if}
-    <button on:click={toggleSidebar} class="text-gray-500 hover:text-gray-700 dark:text-gray-300">
-      {#if isOpen}
-        <ChevronsLeft class="h-5 w-5" />
-      {:else}
-        <ChevronsRight class="h-5 w-5" />
-      {/if}
-    </button>
+<div class="min-h-screen bg-gray-100 p-8">
+  <!-- Dashboard Heading -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-semibold text-gray-700">Dashboard</h1>
+    <p class="text-gray-500">Overview of your platform metrics</p>
   </div>
 
-  <div class="flex-grow overflow-y-auto">
-    <div class="mt-2 space-y-1">
-      {#each navSections as section}
+  <!-- Stats Cards -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    {#each stats as stat}
+      <div class="bg-white shadow-md rounded-lg p-6 flex items-center justify-between">
         <div>
-          {#if isOpen}
-            <h3 class="px-4 py-1 text-[9px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-              {section.name}
-            </h3>
-          {:else}
-            <!-- Display short label for collapsed view -->
-            <p class="text-center text-gray-500 dark:text-gray-400 text-[10px] uppercase font-semibold tracking-wider mb-2">
-              {section.shortLabel}
-            </p>
-          {/if}
-          <ul>
-            {#each section.items as item}
-              <li>
-                <a href={item.url} class="w-full flex items-center px-4 py-2 text-[13px] font-medium text-gray-600 hover:bg-blue-100 dark:text-gray-300 dark:hover:bg-gray-700 hover:rounded-lg transition-colors duration-200 {activeItem === item.name ? 'bg-blue-200 dark:bg-gray-800 text-blue-600 dark:text-white rounded-lg' : ''}"
-                  on:click={() => setActiveItem(item.name)}>
-                  <svelte:component this={item.icon} class="w-5 h-5 {isOpen ? 'mr-3' : 'mx-auto'}" />
-                  {#if isOpen}
-                    <span>{item.name}</span>
-                  {/if}
-                </a>
-              </li>
-            {/each}
-          </ul>
+          <h2 class="text-xl font-semibold text-gray-700">{stat.title}</h2>
+          <p class="text-2xl font-bold text-gray-900">{stat.value}</p>
         </div>
-      {/each}
+        <div class="text-4xl">{stat.icon}</div>
+      </div>
+    {/each}
+  </div>
+
+  <!-- Recent Activity Section -->
+  <div class="mt-8">
+    <h2 class="text-2xl font-semibold text-gray-700 mb-4">Recent Activity</h2>
+    <div class="bg-white shadow-md rounded-lg p-6">
+      <p class="text-gray-600">No recent activity to display at the moment.</p>
     </div>
   </div>
-
-  <div class="p-3">
-    <ul>
-      {#each bottomItems as item}
-        <li>
-          <a href={item.url} class="w-full flex items-center px-4 py-2 text-[13px] text-gray-600 hover:bg-blue-100 dark:text-gray-300 dark:hover:bg-gray-700 hover:rounded-lg transition-colors duration-200 {activeItem === item.name ? 'bg-blue-200 dark:bg-gray-800 text-blue-600 dark:text-white rounded-lg' : ''}"
-            on:click={() => setActiveItem(item.name)}>
-            <div class="relative">
-              <svelte:component this={item.icon} class="w-5 h-5 {isOpen ? 'mr-2' : 'mx-auto'}" />
-              {#if item.badge && !isOpen}
-                <span class="absolute -top-1 -right-1 bg-blue-500 text-white text-xs font-bold w-4 h-4 flex items-center justify-center rounded-full">{item.badge}</span>
-              {/if}
-            </div>
-            {#if isOpen}
-              <span>{item.name}</span>
-              {#if item.badge}
-                <span class="ml-auto bg-blue-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{item.badge}</span>
-              {/if}
-            {/if}
-          </a>
-        </li>
-      {/each}
-    </ul>
-  </div>
-
-  <div class="p-3 bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg mx-3 mb-4">
-    <div class="flex items-center space-x-3 {isOpen ? '' : 'justify-center'}">
-      <img src="https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="User Avatar" class="w-10 h-10 rounded-full object-cover">
-      {#if isOpen}
-        <div class="flex-1 min-w-0">
-          <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">John Doe</p>
-          <p class="text-sm text-gray-500 dark:text-gray-400 truncate">john.doe@example.com</p>
-        </div>
-        <button on:click={toggleTheme} class="p-1 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-300 dark:hover:bg-gray-600">
-          {#if isDarkMode}
-            <Sun class="w-4 h-4" />
-          {:else}
-            <Moon class="w-4 h-4" />
-          {/if}
-        </button>
-      {/if}
-    </div>
-  </div>
-</nav>
-
+</div>
 
 <style>
-  nav {
-    z-index: 1000;
-    font-family: 'Inter', sans-serif;
-  }
+  /* Add any additional styles here */
 </style>

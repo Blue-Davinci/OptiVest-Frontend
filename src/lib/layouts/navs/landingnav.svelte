@@ -1,9 +1,9 @@
 <script>
 	let menuOpen = $state(false);
-    import { fly, slide } from 'svelte/transition';
+	import { fly, slide } from 'svelte/transition';
 
 	// props for isLogged in to control showing of login and signup buttons
-	let	{isValidUser} = $props();
+	let { isValidUser } = $props();
 	//console.log("In Nav Link: ",isValidUser);
 </script>
 
@@ -18,7 +18,13 @@
 			<span class="text-xl font-bold text-white">Optivest</span>
 		</div>
 		<nav class="hidden space-x-6 md:flex">
-			<a href="/" class="text-white transition duration-300 hover:text-blue-300">Home</a>
+			{#if !isValidUser}
+				<a href="/" class="text-white transition duration-300 hover:text-blue-300">Home</a>
+			{:else}
+				<a href="/dashboard" class="text-white transition duration-300 hover:text-blue-300"
+					>Dashboard</a
+				>
+			{/if}
 			<a href="#about" class="text-white transition duration-300 hover:text-blue-300">About Us</a>
 			<a href="#services" class="text-white transition duration-300 hover:text-blue-300">Services</a
 			>
@@ -28,19 +34,19 @@
 		</nav>
 		<div class="flex items-center space-x-4">
 			{#if !isValidUser}
-			<a href="/login" class="text-white transition duration-300 hover:text-blue-300">Log In</a>
-			<a
-				href="/signup"
-				class="rounded-md bg-white px-4 py-2 font-semibold text-blue-700 transition duration-300 hover:bg-gray-100"
-				>Sign Up</a
-			>
+				<a href="/login" class="text-white transition duration-300 hover:text-blue-300">Log In</a>
+				<a
+					href="/signup"
+					class="rounded-md bg-white px-4 py-2 font-semibold text-blue-700 transition duration-300 hover:bg-gray-100"
+					>Sign Up</a
+				>
 			{:else}
-			<!-- Log out -->
-			<a
-				href="/logout"
-				class="rounded-md bg-white px-4 py-2 font-semibold text-blue-700 transition duration-300 hover:bg-gray-100"
-				>Log Out</a
-			>
+				<!-- Log out -->
+				<a
+					href="/logout"
+					class="rounded-md bg-white px-4 py-2 font-semibold text-blue-700 transition duration-300 hover:bg-gray-100"
+					>Log Out</a
+				>
 			{/if}
 		</div>
 		<button
