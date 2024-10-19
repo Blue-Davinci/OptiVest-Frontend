@@ -6,8 +6,12 @@
       Users, UserPlus, Bell, Settings, HelpCircle, Moon, Sun, Newspaper, GraduationCap,
       ChevronsLeft, ChevronsRight
     } from 'lucide-svelte';
-    export let data;
-    console.log("Data found: ", data);
+    export let userInfo;
+
+    let profile_url = userInfo.profile_url;
+    let full_name = `${userInfo.first_name} ${userInfo.last_name}`;
+    let userEmail = userInfo.user_role;
+    console.log("Data found: ", userInfo);
     let isOpen = true;
     let activeItem = 'Dashboard';
     let isDarkMode = false;
@@ -164,15 +168,25 @@
   
     <div class="p-3 bg-gray-100 dark:bg-gray-800 shadow-md rounded-lg mx-3 mb-4">
       <div class="flex items-center space-x-3 {isOpen ? '' : 'justify-center'}">
-        <img src="https://images.unsplash.com/photo-1543610892-0b1f7e6d8ac1?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" alt="User Avatar" class="w-10 h-10 rounded-full object-cover">
+        <img src={profile_url} alt="User Avatar" class="w-10 h-10 rounded-full object-cover">
         {#if isOpen}
           <div class="flex-1 min-w-0">
-            <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">John Doe</p>
-            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">john.doe@example.com</p>
+            <p class="text-sm font-medium text-gray-900 dark:text-gray-100 truncate">{full_name}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">{userEmail}</p>
           </div>
           <Themer />
         {/if}
       </div>
+      {#if isOpen}
+      <!-- Logout Form -->
+      <div class="mt-4">
+        <form method="POST" action="/logout">
+          <button type="submit" class="w-full flex items-center justify-center px-4 py-2 text-[13px] font-medium text-red-600 bg-red-100 dark:bg-red-900 dark:text-red-400 hover:bg-red-200 dark:hover:bg-red-800 hover:rounded-lg transition-colors duration-200">
+            Logout
+          </button>
+        </form>
+      </div>
+    {/if}
     </div>
   </nav>
   

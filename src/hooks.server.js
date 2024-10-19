@@ -51,16 +51,8 @@ export const handle = async ({ event, resolve }) => {
 		}
 		// proceed with writting the locals
 		// we also set the user's name and their img data.
-		/*
-		    country_code: 'KE',
-    currency_code: 'USD',
-    first_name: 'john',
-    last_name: 'doe',
-    profile_completed: 'true',
-    profile_url: 'https://res.cloudinary.com/djg9a13ka/image/upload/v1721808901/avatars/avatar_1721808896310.png',
-    user_role: 'regular'
-		*/
 		event.locals.userInfromation = credentials.userinfo
+		console.log('[H.S.J] Event Locals User:', event.locals.userInfromation.first_name);
 		// add isAdmin
 		event.locals.isAdmin = credentials.userinfo.user_role === 'admin';
 		// Safeguard the "/admin" path
@@ -73,7 +65,6 @@ export const handle = async ({ event, resolve }) => {
 			});
 		}
 	}
-	console.log('[H.S.J] Event Locals User:', event.locals.userInfromation.first_name);
 	const response = await resolve(event);
 
 	return response;

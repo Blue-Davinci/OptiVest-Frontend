@@ -39,6 +39,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"intl-tel-input": "^24.6.0"
+		"intl-tel-input": "^24.6.0",
+		"layerchart": "^0.54.0"
 	}
 }
