@@ -11,7 +11,7 @@
     let profile_url = userInfo.profile_url;
     let full_name = `${userInfo.first_name} ${userInfo.last_name}`;
     let userEmail = userInfo.user_role;
-    console.log("Data found: ", userInfo);
+    //console.log("Data found: ", userInfo);
     let isOpen = true;
     let activeItem = 'Dashboard';
     let isDarkMode = false;

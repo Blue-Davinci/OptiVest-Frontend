@@ -25,10 +25,10 @@ export const GET = async ({ cookies }) => {
                 return json({error: errorData.error}, {status: response.status});
             }
             let responseData = await response.json();
-            console.log('GPEP Server: API Response:', responseData);
+            //console.log('GPEP Server: API Response:', responseData);
             return json(responseData);
         }catch(err){
-            console.log("GPSE error: ", err);
+            console.log("GPEP-SE error: ", err);
             return json({error: "An error occured while fetching data"});
         }
 }
