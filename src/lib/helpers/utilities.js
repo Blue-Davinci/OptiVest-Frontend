@@ -22,4 +22,23 @@ function toastManager(type, message) {
       }
 }
 
-export { toastManager };
+function buildFeedFollowUrl(baseUrl, params) {
+  let queryParts = [];
+
+  if (params.name) {
+      queryParts.push(`name=${encodeURIComponent(params.name)}`);
+  }
+  if (params.page && params.page > 0) {
+      queryParts.push(`page=${encodeURIComponent(params.page)}`);
+  }
+  if (params.page_size && params.page_size > 0) {
+      queryParts.push(`page_size=${encodeURIComponent(params.page_size)}`);
+  }
+
+  return queryParts.length > 0 ? `${baseUrl}?${queryParts.join('&')}` : baseUrl;
+}
+
+export { 
+  toastManager, 
+  buildFeedFollowUrl 
+};
