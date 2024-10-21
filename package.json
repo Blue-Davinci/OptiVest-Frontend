@@ -42,6 +42,7 @@
 		"d3-array": "^3.2.4",
 		"d3-scale": "^4.0.2",
 		"intl-tel-input": "^24.6.0",
-		"layerchart": "^0.54.0"
+		"layerchart": "^0.54.0",
+		"lodash": "^4.17.21"
 	}
 }
