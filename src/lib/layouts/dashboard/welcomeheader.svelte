@@ -1,5 +1,6 @@
 <script>
   import { Bell, BarChart, PieChart, CheckCircle, AlertCircle } from 'lucide-svelte';
+  import InvestmentAnalysisDrawer from '$lib/layouts/dashboard/investmentanalysisdrawer.svelte';
 
   let { userInfo, notificationCount } = $props();
   let firstName = $state(userInfo.first_name);
@@ -21,6 +22,7 @@
   <div class="flex items-center space-x-4">
     <img src={profileUrl} alt="User profile" class="w-16 h-16 rounded-full object-cover border-2 dark:border-gray-700 border-gray-300" />
     <div>
+      <InvestmentAnalysisDrawer />
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Hi, {firstName} {lastName}! Welcome back.</h1>
       <p class="text-gray-600 dark:text-gray-300">Manage your cards and review recent transactions.</p>
       
