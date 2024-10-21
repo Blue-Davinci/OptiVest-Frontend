@@ -22,35 +22,35 @@
       />
     </div>
   
-    <!-- Balance Value and Percentage Change -->
-    <div class="flex items-baseline space-x-2">
-      <!-- Balance value with bold and larger font size -->
-      <h3 class="text-3xl font-extrabold text-gray-900 dark:text-white">
-        ${formatNumber(balance)}
-      </h3>
-  
-      <!-- Percentage change with dynamic icon and color -->
-      <span
-        class={getArrowClass(budgetPercentageChange) + ' flex items-center transition-colors duration-300'}
-      >
-        {#if budgetPercentageChange > 0}
-          <ArrowUp size={18} class="text-green-500" /> <!-- Green arrow for increasing balance -->
-          <span class="ml-1 rounded-lg bg-green-100 px-2 py-1 text-xs font-medium text-green-600">
-            {Math.abs(budgetPercentageChange).toFixed(2)}%
-          </span>
-        {:else if budgetPercentageChange < 0}
-          <ArrowDown size={18} class="text-red-500" /> <!-- Red arrow for decreasing balance -->
-          <span class="ml-1 rounded-lg bg-red-100 px-2 py-1 text-xs font-medium text-red-600">
-            {Math.abs(budgetPercentageChange).toFixed(2)}%
-          </span>
-        {:else}
-          <Minus size={18} class="text-yellow-500" /> <!-- Yellow dash for no change -->
-          <span class="ml-1 rounded-lg bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-600">
-            {Math.abs(budgetPercentageChange).toFixed(2)}%
-          </span>
-        {/if}
+<!-- Balance Value and Percentage Change -->
+<div class="flex items-baseline space-x-2 flex-wrap min-w-0">
+  <!-- Balance value with responsive font size, ensuring it doesn't overflow -->
+  <h3 class="text-3xl font-extrabold text-gray-900 dark:text-white truncate sm:text-2xl md:text-3xl lg:text-4xl">
+    ${formatNumber(balance)}
+  </h3>
+
+  <!-- Percentage change with dynamic icon and color, wrapped and sized responsively -->
+  <span class={getArrowClass(budgetPercentageChange) + ' flex items-center transition-colors duration-300 truncate'}>
+    {#if budgetPercentageChange > 0}
+      <ArrowUp size={18} class="text-green-500" /> <!-- Green arrow for increasing balance -->
+      <span class="ml-1 rounded-lg bg-green-100 px-2 py-1 text-xs font-medium text-green-600 sm:text-xs md:text-sm lg:text-base truncate">
+        {Math.abs(budgetPercentageChange).toFixed(2)}%
       </span>
-    </div>
+    {:else if budgetPercentageChange < 0}
+      <ArrowDown size={18} class="text-red-500" /> <!-- Red arrow for decreasing balance -->
+      <span class="ml-1 rounded-lg bg-red-100 px-2 py-1 text-xs font-medium text-red-600 sm:text-xs md:text-sm lg:text-base truncate">
+        {Math.abs(budgetPercentageChange).toFixed(2)}%
+      </span>
+    {:else}
+      <Minus size={18} class="text-yellow-500" /> <!-- Yellow dash for no change -->
+      <span class="ml-1 rounded-lg bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-600 sm:text-xs md:text-sm lg:text-base truncate">
+        {Math.abs(budgetPercentageChange).toFixed(2)}%
+      </span>
+    {/if}
+  </span>
+</div>
+
+    
   
     <!-- Statement with dynamic coloring for amount -->
     <p class="text-sm mt-3 text-gray-500 dark:text-gray-400 font-light">
