@@ -7,7 +7,7 @@
 
 
 	let { data } = $props();
-	let firstName = $state(data.userInformation.first_name);
+	let userInfo = $state(data.userInformation);
 	let goalsData = $state(data.goalData.data.goals);
 	let expenseTransactions = $state(data.expenses.data);
 	let expenseIncomeSummary = $state(data.expenseIncomeSummary.data.expense_income_summary_report);
@@ -39,7 +39,7 @@
 <div class="min-h-screen bg-gray-100 p-8 dark:bg-gray-900">
 	<div class="mx-auto max-w-7xl">
 		<!-- Welcome Header -->
-		<WelcomeHeader {firstName} />
+		<WelcomeHeader {userInfo} />
 		<!-- Updated Component -->
 		<ExpenseIncomeSummary {expenseIncomeSummary} />
 		<!-- Placeholder for Chart -->
