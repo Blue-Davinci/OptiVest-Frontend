@@ -44,13 +44,13 @@
 		<!-- Updated Component -->
 		<ExpenseIncomeSummary {expenseIncomeSummary} />
 		<!-- Placeholder for Chart -->
-		<div class="grid grid-cols-3 gap-6">
-			<div class="col-span-2 rounded-xl bg-white p-6 shadow-md dark:bg-gray-800">
-				<ChartSummary {chartData} />
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+			<div class="lg:col-span-2 rounded-xl bg-white p-6 shadow-md dark:bg-gray-800">
+			  <ChartSummary {chartData} />
 			</div>
 			<!-- Savings Goals -->
 			<GoalProgressions {goalsData} {getProgressColor} />
-		</div>
+		  </div>
 		<InvestmentAnalysisSummary  {investmentAnalysisSummary}/>
 		<!-- Transactions Table -->
 		<Expensetransactiontable {expenseTransactions} />
