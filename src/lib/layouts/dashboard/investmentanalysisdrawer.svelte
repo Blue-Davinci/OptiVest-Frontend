@@ -41,7 +41,7 @@
 			class="flex transform items-center rounded-lg bg-gradient-to-r from-green-500 to-teal-500 p-3 text-white shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:shadow-xl"
 		>
 			<ChartPie class="mr-2" size={20} />
-			<span class="font-semibold">Investment Portfolio AI</span>
+			<span class="font-semibold">Investment Portfolio Summary</span>
 		</button>
 	</Drawer.Trigger>
 

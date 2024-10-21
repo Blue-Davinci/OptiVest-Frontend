@@ -22,7 +22,6 @@
   <div class="flex items-center space-x-4">
     <img src={profileUrl} alt="User profile" class="w-16 h-16 rounded-full object-cover border-2 dark:border-gray-700 border-gray-300" />
     <div>
-      <InvestmentAnalysisDrawer />
       <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Hi, {firstName} {lastName}! Welcome back.</h1>
       <p class="text-gray-600 dark:text-gray-300">Manage your cards and review recent transactions.</p>
       
@@ -59,10 +58,7 @@
       </button>
 
       <!-- Investment Portfolio AI Button -->
-      <button class="flex items-center p-3 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105">
-        <PieChart class="mr-2" size={20} />
-        <span class="font-semibold">Investment Portfolio AI</span>
-      </button>
+      <InvestmentAnalysisDrawer />
     </div>
 
     <!-- Notification bell with dynamic badge -->
