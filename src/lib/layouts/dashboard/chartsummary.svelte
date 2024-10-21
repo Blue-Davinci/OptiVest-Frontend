@@ -30,8 +30,6 @@
     };
   });
 
-  // Check the processed data in the console
-  console.log("Processed Chart Data: ", processedChartData);
 </script>
 
 <div class="text-gray-500 dark:text-gray-300 w-full h-full">

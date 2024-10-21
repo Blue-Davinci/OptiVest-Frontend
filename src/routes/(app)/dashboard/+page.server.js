@@ -5,6 +5,7 @@ import {
     getExpenseIncomeSummary
 } from '$lib/dataservice/dashboard/goalsDataService.js';
 import {getAllExpenses} from '$lib/dataservice/expenses/expenses.js';
+import {getPersonalFinanceSumary} from '$lib/dataservice/personalfinance/personalfinanceDataService.js';
 
 export const load = async ({fetch}) => {
     // get our auth
@@ -12,10 +13,12 @@ export const load = async ({fetch}) => {
         let goalDataResponse = await getGoalProgressions({fetch});
         let expenseIncomeSummaryResponse = await getExpenseIncomeSummary({fetch});
         let expensesResponse = await getAllExpenses({fetch},0,10,'');
+        let personalFinanceSummary = await getPersonalFinanceSumary({fetch});
         return {
             goalData: goalDataResponse, 
             expenseIncomeSummary: expenseIncomeSummaryResponse,
-            expenses: expensesResponse
+            expenses: expensesResponse,
+            personalFinanceSummary: personalFinanceSummary
           };
             
     }catch(err){

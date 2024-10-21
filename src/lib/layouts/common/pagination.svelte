@@ -12,7 +12,7 @@
     <Pagination.Root count={totalRecords} perPage={pageSize} let:pages let:currentPage>
       <Pagination.Content>
         <Pagination.Item>
-          <Pagination.PrevButton onclick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+          <Pagination.PrevButton on:click={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
         </Pagination.Item>
         {#each pages as page (page.key)}
           {#if page.type === "ellipsis"}

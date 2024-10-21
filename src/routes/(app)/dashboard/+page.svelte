@@ -4,14 +4,15 @@
 	import ChartSummary from '$lib/layouts/dashboard/chartsummary.svelte';
 	import GoalProgressions from '$lib/layouts/dashboard/goalprogressions.svelte';
 	import Expensetransactiontable from '$lib/layouts/expenses/expensetransactiontable.svelte';
-
+	import InvestmentAnalysisSummary from '$lib/layouts/financemanager/investmentanalysissummary.svelte';
 
 	let { data } = $props();
 	let userInfo = $state(data.userInformation);
 	let goalsData = $state(data.goalData.data.goals);
 	let expenseTransactions = $state(data.expenses.data);
 	let expenseIncomeSummary = $state(data.expenseIncomeSummary.data.expense_income_summary_report);
-	$inspect({expenseIncomeSummary, expenseTransactions});
+	let investmentAnalysisSummary = $state(data.personalFinanceSummary.data. investment_analysis);
+	$inspect(investmentAnalysisSummary);
 
 	// page metadata
 	
@@ -50,6 +51,7 @@
 			<!-- Savings Goals -->
 			<GoalProgressions {goalsData} {getProgressColor} />
 		</div>
+		<InvestmentAnalysisSummary  {investmentAnalysisSummary}/>
 		<!-- Transactions Table -->
 		<Expensetransactiontable {expenseTransactions} />
 	</div>

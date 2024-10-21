@@ -48,6 +48,7 @@
 	}
 
 	function handlePageChange(page) {
+		//console.log(page);
 		fetchData(page, searchQuery);
 	}
 </script>
