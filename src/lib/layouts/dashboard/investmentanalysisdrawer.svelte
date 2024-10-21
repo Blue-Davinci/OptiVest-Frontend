@@ -2,11 +2,11 @@
 	import { onMount } from 'svelte';
 	import * as Drawer from '$lib/components/ui/drawer';
 	import {
-		PieChart,
+		ChartPie,
 		AlertCircle,
 		TrendingUp,
 		RotateCw,
-		BarChart,
+		ChartBar,
 		Shield,
 		FileText
 	} from 'lucide-svelte';
@@ -40,7 +40,7 @@
 		<button
 			class="flex transform items-center rounded-lg bg-gradient-to-r from-green-500 to-teal-500 p-3 text-white shadow-lg transition-all duration-300 ease-in-out hover:-translate-y-1 hover:scale-105 hover:shadow-xl"
 		>
-			<PieChart class="mr-2" size={20} />
+			<ChartPie class="mr-2" size={20} />
 			<span class="font-semibold">Investment Portfolio AI</span>
 		</button>
 	</Drawer.Trigger>
@@ -131,7 +131,7 @@
 					{#if analysisSummary.Analysis?.actions?.sector_rotation?.length}
 						<div class="rounded-lg bg-gray-100 p-6 shadow-lg dark:bg-gray-800">
 							<div class="mb-4 flex items-center">
-								<BarChart class="mr-3 text-purple-500" size={24} />
+								<ChartBar class="mr-3 text-purple-500" size={24} />
 								<h3 class="text-lg font-semibold text-gray-700 dark:text-gray-300">
 									Sector Rotation
 								</h3>
