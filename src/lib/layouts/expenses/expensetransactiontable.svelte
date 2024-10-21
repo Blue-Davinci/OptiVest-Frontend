@@ -54,10 +54,10 @@
 </script>
 
 <div class="mt-4 rounded-xl bg-white p-6 shadow-md dark:bg-gray-800">
-	<div class="mb-6 flex items-center justify-between">
+	<div class="mb-6 flex flex-wrap items-center justify-between gap-4">
 		<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Recent Transactions</h2>
-		<div class="flex items-center space-x-4">
-			<div class="relative">
+		<div class="flex w-full flex-wrap items-center space-x-4 md:w-auto">
+			<div class="relative flex-grow w-full md:w-auto">
 				<Search
 					class="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400 dark:text-gray-500"
 					size={16}
@@ -67,14 +67,19 @@
 					bind:value={searchQuery}
 					oninput={debounce(handleSearch, 500)}
 					placeholder="Search transactions"
-					class="rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
+					class="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
 				/>
 				<Filter
 					class="absolute right-3 top-1/2 -translate-y-1/2 transform text-gray-400 dark:text-gray-500"
 					size={16}
 				/>
 			</div>
-			<Button variant="outline" onclick={handleSearch}>
+
+			<Button
+				class="w-full mt-2 md:w-auto md:mt-0"
+				variant="outline"
+				onclick={handleSearch}
+			>
 				{#if isSearching}
 					<svg
 						width="20"
