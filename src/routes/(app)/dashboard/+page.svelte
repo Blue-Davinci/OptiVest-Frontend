@@ -1,4 +1,5 @@
 <script>
+	import { fly, slide } from 'svelte/transition';
 	import ExpenseIncomeSummary from '$lib/layouts/dashboard/expenseincomesummary.svelte';
 	import WelcomeHeader from '$lib/layouts/dashboard/welcomeheader.svelte';
 	import ChartSummary from '$lib/layouts/dashboard/chartsummary.svelte';
@@ -37,7 +38,10 @@
 	}));
 </script>
 
-<div class="min-h-screen bg-gray-100 p-8 dark:bg-gray-900">
+<div class="min-h-screen bg-gray-100 p-8 dark:bg-gray-900"
+in:fly={{ y: 200, duration: 400 }}
+out:slide={{ y: -200, duration: 400 }}
+>
 	<div class="mx-auto max-w-7xl">
 		<!-- Welcome Header -->
 		<WelcomeHeader {userInfo} />

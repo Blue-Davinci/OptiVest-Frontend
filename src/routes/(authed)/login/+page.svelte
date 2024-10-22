@@ -1,11 +1,11 @@
 <script>
+	import { page } from '$app/stores';
 	import * as Form from '$lib/components/ui/form';
 	import { toastManager } from '$lib/helpers/utilities.js';
 	import {
 		TOAST_TYPE_ERROR,
 		TOAST_TYPE_SUCCESS,
 		TOAST_TYPE_LOADING,
-		TOAST_TYPE_INFO
 	} from '$lib/settings/constants.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -15,19 +15,22 @@
 	import { fly, fade } from 'svelte/transition';
 
 	let { data } = $props();
+	let redirectionPage = $page.url.searchParams.get('redirectTo') ?? '/dashboard';
 	const form = superForm(data.form, {
 		validators: zodClient(formSchema),
 		dataType: 'json',
 		onUpdated({ form }) {
 			//const action = result.data
 			if (form.message) {
+				// http://localhost:5173/login?redirectTo=/dashboard/budgets
 				// Display the message using a toast library
 				//console.log(form.message.data);
 				if (form.message.status === 'success') {
 					let name = `${form.message.data.first_name} ${form.message.data.last_name}`;
 					let message = `${form.message.message} Welcome back, ${name}!`;
 					toastManager(TOAST_TYPE_SUCCESS, message);
-					goto('/dashboard');
+					console.log('Redirecting to:', redirectionPage);
+					goto(redirectionPage);
 				} else {
 					toastManager(TOAST_TYPE_ERROR, form.message.message);
 				}

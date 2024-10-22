@@ -36,14 +36,14 @@
 			shortLabel: 'Main',
 			items: [
 				{ name: 'Home', icon: Home, url: '/' },
-				{ name: 'Dashboard', icon: LayoutDashboard, url: '#1' }
+				{ name: 'Dashboard', icon: LayoutDashboard, url: '/dashboard' }
 			]
 		},
 		{
 			name: 'Finance Management',
 			shortLabel: 'Finance',
 			items: [
-				{ name: 'Budget Manager', icon: DollarSign, url: '#1' },
+				{ name: 'Budget Manager', icon: DollarSign, url: '/dashboard/budgets' },
 				{ name: 'Goal Manager', icon: Target, url: '#1' }
 			]
 		},
@@ -113,11 +113,11 @@
 	<div class="flex items-center justify-between bg-blue-100 p-4 dark:bg-gray-800">
 		{#if isOpen}
 			<div class="flex items-center space-x-2">
-				<img src="optivest-cropped.png" alt="OptiVest Logo" class="h-10 w-10 rounded-full" />
+				<img src="/optivest-cropped.png" alt="OptiVest Logo" class="h-10 w-10 rounded-full" />
 				<span class="text-lg font-bold text-blue-800 dark:text-blue-300">OptiVest</span>
 			</div>
 		{:else}
-			<img src="optivest-cropped.png" alt="OptiVest Logo" class="mx-auto h-8 w-8" />
+			<img src="/optivest-cropped.png" alt="OptiVest Logo" class="mx-auto h-8 w-8" />
 		{/if}
 		<button onclick={toggleSidebar} class="text-gray-500 hover:text-gray-700 dark:text-gray-300">
 			{#if isOpen}
