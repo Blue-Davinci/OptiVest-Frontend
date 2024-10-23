@@ -38,14 +38,18 @@
 <!-- FAB (Floating Action Button) -->
 <div class="fab-container fixed bottom-8 right-8 z-[1]">
 	<button
-		aria-label="Add your feed"
-		class="flex items-center rounded-full bg-blue-500 px-4 py-2 font-bold text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
+		aria-label="Add a budget"
+		class="flex items-center justify-center rounded-full bg-blue-500 p-2 font-bold text-white shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 sm:p-3"
 		onclick={() => (isDrawerOpen = true)}
 	>
-		<Plus class="h-8 w-8" />
-		<span class="ml-2">Add A Budget</span>
+		<!-- Icon -->
+		<Plus class="h-5 w-5 sm:h-6 sm:w-6" />
+
+		<!-- Text (only visible on larger screens) -->
+		<span class="ml-2 hidden sm:inline-block text-xs sm:text-sm">Add A Budget</span>
 	</button>
 </div>
+
 
 <!-- Drawer for the form -->
 <Dialog.Root bind:open={isDrawerOpen}>

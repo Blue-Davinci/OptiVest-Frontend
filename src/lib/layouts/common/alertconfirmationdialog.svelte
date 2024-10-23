@@ -1,5 +1,5 @@
 <script>
-	import { CheckCircle, XCircle } from 'lucide-svelte';
+	import { CheckCircle, Trash2, Delete } from 'lucide-svelte';
 	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 
     let {
@@ -25,7 +25,7 @@
 		<button
 		class="flex transform items-center space-x-1 rounded-full bg-red-100 px-3 py-1 text-sm font-semibold text-red-600 transition-transform hover:scale-105 hover:bg-red-200 dark:bg-red-800 dark:text-red-200"
 	>
-		<XCircle class="h-4 w-4" /> <span>Delete</span>
+		<Trash2 class="h-4 w-4" /> <span>Delete</span>
 	</button>
 		{/if}
 	</AlertDialog.Trigger>
@@ -33,7 +33,7 @@
 		<AlertDialog.Header>
 			<AlertDialog.Title>{dlgTitle}?</AlertDialog.Title>
 			<AlertDialog.Description>
-				{dlgMessage}
+				{@html dlgMessage}
 			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>

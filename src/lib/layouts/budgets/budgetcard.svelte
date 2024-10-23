@@ -2,10 +2,10 @@
 	import AlertConfirmationDialog from '../common/alertconfirmationdialog.svelte';
 	import BudgetsGoalsNotFound from './notfound/budgetsgoalsnotfound.svelte';
 	import BudgetsRecurringExpensesNotFound from './notfound/budgetsrecurringexpensesnotfound.svelte';
-	import {deleteBudgetByBudgetID} from '$lib/dataservice/budgets/budgetsDataService';
+	import { deleteBudgetByBudgetID } from '$lib/dataservice/budgets/budgetsDataService';
 	import { PieChart } from 'layerchart';
 	import { schemeTableau10 } from 'd3-scale-chromatic';
-	import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS } from '$lib/settings/constants.js';
+	import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS, DELETE_BUDGET_CONFIRMATION_MESSAGE } from '$lib/settings/constants.js';
 	import { toastManager } from '$lib/helpers/utilities.js';
 	import {
 		ChevronDown,
@@ -14,12 +14,16 @@
 		Target,
 		Repeat,
 		Edit,
+		Search,
+		Banknote
 	} from 'lucide-svelte';
-	import { fly, fade, slide } from 'svelte/transition';
+	import { fly, fade } from 'svelte/transition';
 
 	let { defaultCurrency, budgetItem, performDelete } = $props();
 	let expandedBudget = $state(null);
-	let hasData = $state(budgetItem.goal_summary.length > 0 || budgetItem.recurring_expenses.length > 0);
+	let hasData = $state(
+		budgetItem.goal_summary.length > 0 || budgetItem.recurring_expenses.length > 0
+	);
 
 	const prepareChartData = (goalContribution, recurringExpenses, totalExpenses) => {
 		// Handle null or NaN values safely by providing default numbers
@@ -54,14 +58,13 @@
 	async function handleDelete(budgetId) {
 		// verify if budget id is a valid number and not <= 0
 		if (budgetId && budgetId > 0) {
-			try{
+			try {
 				const response = await deleteBudgetByBudgetID(budgetId);
-				if(response.success){
+				if (response.success) {
 					toastManager(TOAST_TYPE_SUCCESS, response.message);
 					// remove the budget from the list
 					performDelete(budgetId);
-					
-				}else{
+				} else {
 					toastManager(TOAST_TYPE_ERROR, response.message);
 				}
 			} catch (error) {
@@ -71,11 +74,10 @@
 			console.error('Budget ID is invalid.');
 		}
 	}
-
 </script>
 
 <div
-	class="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-lg transition-transform duration-300 hover:transform hover:scale-[1.02] dark:border-gray-600 dark:bg-gray-800"
+	class="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-lg transition-transform duration-300 hover:scale-[1.02] hover:transform dark:border-gray-600 dark:bg-gray-800"
 >
 	<div class="flex flex-col justify-between lg:flex-row lg:items-center">
 		<!-- Left: Budget Details -->
@@ -134,26 +136,48 @@
 				</div>
 			{:else}
 				<!-- Fallback section -->
-				<div class="flex justify-center items-center w-full h-auto py-8">
-					<div class="flex flex-col items-center justify-center w-auto max-w-sm text-center p-4 ml-2 dark:bg-gray-800 bg-gray-50 rounded-md shadow-sm">
-					  <svg class="w-12 h-12 text-gray-400 dark:text-gray-600 mb-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3M5 3h14l2 6H3l2-6z" />
-					  </svg>
-					  <h2 class="text-base font-semibold text-gray-600 dark:text-gray-300 mb-1">No Budget Data</h2>
-					  <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">It looks like you haven't set any goals or expenses yet.</p>
-					  <div class="flex space-x-4">
-						<a href="/dashboard/goals" 
-						  class="text-blue-600 dark:text-blue-400 text-sm font-medium underline hover:text-blue-500 dark:hover:text-blue-300 transition duration-300">
-						  Create Goals
-						</a>
-						<a href="/dashboard/expenses" 
-						  class="text-blue-600 dark:text-blue-400 text-sm font-medium underline hover:text-blue-500 dark:hover:text-blue-300 transition duration-300">
-						  Create Expenses
-						</a>
-					  </div>
+				<div class="flex h-auto w-full items-center justify-center py-8">
+					<div
+						class="ml-2 flex w-auto max-w-sm flex-col items-center justify-center rounded-md bg-gray-50 p-4 text-center shadow-sm dark:bg-gray-800"
+					>
+						<svg
+							class="mb-1 h-12 w-12 text-gray-400 dark:text-gray-600"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+						>
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M12 8v4l3 3M5 3h14l2 6H3l2-6z"
+							/>
+						</svg>
+						<h2 class="mb-1 text-base font-semibold text-gray-600 dark:text-gray-300">
+							No Budget Data
+						</h2>
+						<p class="mb-2 text-xs text-gray-500 dark:text-gray-400">
+							It looks like you haven't set any goals or expenses yet.
+						</p>
+
+						<!-- Updated URL section with subtle styling -->
+						<div class="flex space-x-6">
+							<a
+								href="/dashboard/goals"
+								class="inline-flex items-center text-sm font-medium text-blue-600 transition duration-300 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+							>
+								<Search class="mr-1 h-4 w-4" />Create Goals
+							</a>
+							<a
+								href="/dashboard/expenses"
+								class="inline-flex items-center text-sm font-medium text-blue-600 transition duration-300 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+							>
+								<Banknote class="mr-1 h-4 w-4" />Create Expenses
+							</a>
+						</div>
 					</div>
-				  </div>
-				  
+				</div>
 			{/if}
 
 			<!-- Summary -->
@@ -186,7 +210,10 @@
 		>
 			<Edit class="mr-1 h-5 w-5" /> <span class="text-sm">Update</span>
 		</button>
-		<AlertConfirmationDialog alertHandleContinue={() => handleDelete(budgetItem.budget.id)} />
+		<AlertConfirmationDialog
+			alertHandleContinue={() => handleDelete(budgetItem.budget.id)}
+			dlgMessage={DELETE_BUDGET_CONFIRMATION_MESSAGE}
+		/>
 	</div>
 
 	<!-- Expand/Collapse Button -->
