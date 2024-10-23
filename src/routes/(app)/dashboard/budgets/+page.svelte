@@ -1,4 +1,5 @@
 <script>
+    import Pagination from '$lib/layouts/common/pagination.svelte';
     import CreateBudget from '$lib/layouts/budgets/createbudget.svelte';
 	import BudgetTileConnector from '$lib/layouts/budgets/budgettileconnector.svelte';
 	import BudgetCard from '$lib/layouts/budgets/budgetcard.svelte';
@@ -13,6 +14,12 @@
 
 	let defaultCurrency = $state(data.userInformation.currency_code);
 	let searchQuery = $state('');
+
+    // metadata
+    let currentPage = data.data.metadata.current_page;
+	let pageSize = data.data.metadata.page_size;
+	let totalRecords = data.data.metadata.total_records;
+	let totalPages = Math.ceil(totalRecords / pageSize);
 	// Filter budgets with null/empty checks
 	function filterBudgets() {
 		return (budgets ?? []).filter((budget) =>
@@ -36,6 +43,17 @@
         };
         console.log("After Delte", data.data.budgets);
     }
+
+    function handleSearch() {
+		// if search
+		currentPage = 1;
+		//fetchData(currentPage, searchQuery);
+	}
+    function handlePageChange(page) {
+		console.log(page);
+		//fetchData(page, searchQuery);
+	}
+    
     $inspect(data);
 	// States and calculations with safe fallbacks
 </script>
@@ -45,7 +63,7 @@
 
 <!-- Main Container -->
 <div
-  class="container mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg transition-all duration-300 transform"
+  class="container mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg"
   in:fly={{ y: 200, duration: 400 }}
   out:slide={{ y: -200, duration: 400 }}
 >
@@ -75,6 +93,7 @@
     {#each filterBudgets() as budgetItem}
       <BudgetCard {defaultCurrency} {budgetItem} {performDelete} />
     {/each}
+    <Pagination {totalPages} {pageSize} {totalRecords} {handlePageChange} />
   {/if}
 </div>
 

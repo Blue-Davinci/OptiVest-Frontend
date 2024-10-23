@@ -75,7 +75,7 @@
 </script>
 
 <div
-	class="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-lg dark:border-gray-600 dark:bg-gray-800"
+	class="mb-6 rounded-lg border border-gray-200 bg-white p-6 shadow-lg transition-transform duration-300 hover:transform hover:scale-[1.02] dark:border-gray-600 dark:bg-gray-800"
 >
 	<div class="flex flex-col justify-between lg:flex-row lg:items-center">
 		<!-- Left: Budget Details -->

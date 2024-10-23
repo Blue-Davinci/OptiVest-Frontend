@@ -1,4 +1,5 @@
 import {VITE_API_BASE_BUDGETS} from  '$env/static/private';
+import {getAllBudgetInformation} from '$lib/dataservice/budgets/budgetsDataService.js';
 import {getCurrencies, getBudgetOptions} from '$lib/dataservice/searchoptions/searchoptions';
 import { checkAuthentication } from '$lib/helpers/auths';
 import { superValidate, message, setError} from 'sveltekit-superforms';
@@ -7,35 +8,13 @@ import { budgetSchema } from '$lib/settings/schema.js';
 import { redirect } from '@sveltejs/kit';
 import { fail} from '@sveltejs/kit';
 
-export const load = async ({fetch, cookies}) => {
-    let auth = checkAuthentication(cookies).user;
-    if (!auth){
-        console.log('GEIEP Server: User is not authenticated, REDIRECTING..');
-        return redirect(303, `/login?redirectTo=/dashboard`);
-    }
-    let finalEndpoint = VITE_API_BASE_BUDGETS;
-    console.log('GBLEIP Server: User is authenticated, token: ', auth);
+export const load = async ({fetch}) => {
     try{
-        const response = await fetch(finalEndpoint, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${auth}`
-            }
-        });
-        if (!response.ok){
-            let errorData = await response.json();
-            return {
-                success: false,
-                status: response.status,
-                error: errorData.error
-            };
-        }
-        let responseData = await response.json();
+        let responseData = await getAllBudgetInformation({fetch});
         console.log('GBLEIP Server: API Response:', responseData);
         return {
             success: true,
-            data: responseData,
+            data: responseData.data,
             form: await superValidate(zod(budgetSchema)),
             currencies: await getCurrencies({fetch}),
             budgetCategories: await getBudgetOptions({fetch})
