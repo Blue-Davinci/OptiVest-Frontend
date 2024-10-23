@@ -25,10 +25,10 @@
 	let profile_url = userInfo.profile_url;
 	let full_name = `${userInfo.first_name} ${userInfo.last_name}`;
 	let userEmail = userInfo.user_role;
-	//console.log("Data found: ", userInfo);
 	let isOpen = $state(true);
 	let activeItem = $state('Dashboard');
 	let isDarkMode = $state(false);
+	let showHamburgerMenu = $state(false);
 
 	const navSections = [
 		{
@@ -91,6 +91,10 @@
 		isDarkMode = !isDarkMode;
 	}
 
+	function toggleHamburgerMenu() {
+		showHamburgerMenu = !showHamburgerMenu;
+	}
+
 	onMount(() => {
 		const mediaQuery = window.matchMedia('(max-width: 768px)');
 		const handleMediaQueryChange = (e) => {
@@ -105,10 +109,27 @@
 	});
 </script>
 
+<!-- Hamburger Menu for smaller screens -->
+<div class="flex justify-between bg-blue-100 p-4 dark:bg-gray-800 sm:hidden">
+	<img src="/optivest-cropped.png" alt="OptiVest Logo" class="h-10 w-10 rounded-full" />
+	<button
+		onclick={toggleHamburgerMenu}
+		class="text-gray-500 hover:text-gray-700 dark:text-gray-300"
+	>
+		{#if showHamburgerMenu}
+			<ChevronsLeft class="h-5 w-5" />
+		{:else}
+			<ChevronsRight class="h-5 w-5" />
+		{/if}
+	</button>
+</div>
+
 <nav
 	class="fixed left-0 top-0 h-full bg-white shadow-lg transition-all duration-300 ease-in-out dark:bg-gray-900 {isOpen
 		? 'w-64'
-		: 'w-20'} flex flex-col text-gray-700 dark:text-gray-400"
+		: 'w-20'} flex flex-col text-gray-700 dark:text-gray-400 {showHamburgerMenu
+		? 'block'
+		: 'hidden'} sm:flex"
 >
 	<div class="flex items-center justify-between bg-blue-100 p-4 dark:bg-gray-800">
 		{#if isOpen}
@@ -128,6 +149,7 @@
 		</button>
 	</div>
 
+	<!-- Sidebar content remains unchanged -->
 	<div class="flex-grow overflow-y-auto">
 		<div class="mt-2 space-y-1">
 			{#each navSections as section}
@@ -139,7 +161,6 @@
 							{section.name}
 						</h3>
 					{:else}
-						<!-- Display short label for collapsed view -->
 						<p
 							class="mb-2 text-center text-[10px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400"
 						>
@@ -211,7 +232,6 @@
 			{/each}
 		</ul>
 	</div>
-
 	<div class="mx-3 mb-4 rounded-lg bg-gray-100 p-3 shadow-md dark:bg-gray-800">
 		<div class="flex items-center space-x-3 {isOpen ? '' : 'justify-center'}">
 			<img src={profile_url} alt="User Avatar" class="h-10 w-10 rounded-full object-cover" />
@@ -240,7 +260,7 @@
 </nav>
 
 <style>
-	nav {
+		nav {
 		z-index: 1000;
 		font-family: 'Inter', sans-serif;
 	}
