@@ -33,7 +33,7 @@ const getAllExpenses  = async({ fetch: customFetch } = {}, page = 0, page_size =
             data: responseData
         }
     }catch(err){
-        console.log("[gaeDS] ERROR: ", err.Error());
+        console.log("[gaeDS] ERROR: ", err.message);
         return {
             success: false,
             status: 500,

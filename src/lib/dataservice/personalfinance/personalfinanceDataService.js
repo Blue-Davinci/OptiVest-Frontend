@@ -27,7 +27,7 @@ const getPersonalFinanceSumary = async({ fetch: customFetch } = {})=>{
             data: responseData
         }
     }catch(err){
-        console.log("[gpfsDS] ERROR: ", err.Error());
+        console.log("[gpfsDS] ERROR: ", err.message);
         return {
             success: false,
             status: 500,

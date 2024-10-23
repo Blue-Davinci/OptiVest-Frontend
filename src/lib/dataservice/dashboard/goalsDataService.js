@@ -25,7 +25,7 @@ const getGoalProgressions = async({ fetch: customFetch } = {})=>{
             data: responseData
         }
     }catch(err){
-        console.log("[ggpDS] ERROR: ", err.Error());
+        console.log("[ggpDS] ERROR: ", err.message);
         return {
             success: false,
             status: 500,
@@ -59,7 +59,7 @@ const getGoalProgressions = async({ fetch: customFetch } = {})=>{
             data: responseData
         }
     }catch(err){
-        console.log("[geisDS] ERROR: ", err.Error());
+        console.log("[geisDS] ERROR: ", err.message);
         return {
             success: false,
             status: 500,

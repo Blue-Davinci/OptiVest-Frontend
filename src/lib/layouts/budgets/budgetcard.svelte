@@ -1,8 +1,12 @@
 <script>
+	import AlertConfirmationDialog from '../common/alertconfirmationdialog.svelte';
 	import BudgetsGoalsNotFound from './notfound/budgetsgoalsnotfound.svelte';
 	import BudgetsRecurringExpensesNotFound from './notfound/budgetsrecurringexpensesnotfound.svelte';
+	import {deleteBudgetByBudgetID} from '$lib/dataservice/budgets/budgetsDataService';
 	import { PieChart } from 'layerchart';
 	import { schemeTableau10 } from 'd3-scale-chromatic';
+	import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS } from '$lib/settings/constants.js';
+	import { toastManager } from '$lib/helpers/utilities.js';
 	import {
 		ChevronDown,
 		ChevronUp,
@@ -15,7 +19,7 @@
 	} from 'lucide-svelte';
 	import { fly, fade, slide } from 'svelte/transition';
 
-	let { defaultCurrency, budgetItem } = $props();
+	let { defaultCurrency, budgetItem, performDelete } = $props();
 	let expandedBudget = $state(null);
 	let hasData = $state(budgetItem.goal_summary.length > 0 || budgetItem.recurring_expenses.length > 0);
 
@@ -49,13 +53,27 @@
 	}
 
 	// Safely handle delete actions
-	function handleDelete(budgetId) {
-		if (budgetId) {
-			console.log(`Delete budget: ${budgetId}`);
+	async function handleDelete(budgetId) {
+		// verify if budget id is a valid number and not <= 0
+		if (budgetId && budgetId > 0) {
+			try{
+				const response = await deleteBudgetByBudgetID(budgetId);
+				if(response.success){
+					toastManager(TOAST_TYPE_SUCCESS, response.message);
+					// remove the budget from the list
+					performDelete(budgetId);
+					
+				}else{
+					toastManager(TOAST_TYPE_ERROR, response.message);
+				}
+			} catch (error) {
+				console.error('Error deleting budget:', error);
+			}
 		} else {
 			console.error('Budget ID is invalid.');
 		}
 	}
+
 </script>
 
 <div
@@ -170,12 +188,7 @@
 		>
 			<Edit class="mr-1 h-5 w-5" /> <span class="text-sm">Update</span>
 		</button>
-		<button
-			class="flex items-center text-gray-500 transition duration-150 ease-in-out hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
-			onclick={() => handleDelete(budgetItem.budget.id)}
-		>
-			<Trash class="mr-1 h-5 w-5" /> <span class="text-sm">Delete</span>
-		</button>
+		<AlertConfirmationDialog alertHandleContinue={() => handleDelete(budgetItem.budget.id)} />
 	</div>
 
 	<!-- Expand/Collapse Button -->
