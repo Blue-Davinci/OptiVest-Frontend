@@ -1,3 +1,7 @@
+<script>
+    import {Repeat} from 'lucide-svelte';
+    </script>
+
 <div
 class="flex flex-col items-center justify-center rounded-lg bg-gray-200 p-6 dark:bg-gray-700"
 >

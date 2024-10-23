@@ -1,4 +1,6 @@
-
+<script>
+    import {FileX} from 'lucide-svelte';
+    </script>
 <div
 class="flex flex-col items-center justify-center rounded-lg bg-gray-100 p-6 dark:bg-gray-800"
 >

@@ -1,28 +1,31 @@
 <script>
+    import { invalidateAll } from '$app/navigation';
+    import CreateBudget from '$lib/layouts/budgets/createbudget.svelte';
 	import BudgetTileConnector from '$lib/layouts/budgets/budgettileconnector.svelte';
 	import BudgetCard from '$lib/layouts/budgets/budgetcard.svelte';
 	import BudgetsNotFound from '$lib/layouts/budgets/notfound/budgetsnotfound.svelte';
 	import { Search } from 'lucide-svelte';
-	import { fly, fade, slide } from 'svelte/transition';
+	import { fly, slide } from 'svelte/transition';
 
 	let { data } = $props();
-	let budgets = $state(data.data.budgets);
+	let budgets = $derived(data.data.budgets);
+    let currencies = $derived(data?.currencies?.data?.currencies?.conversion_rates ?? {});
+    let budgetCategories = $derived(data?.budgetCategories?.data?.budget_categories ?? []);
 
 	let defaultCurrency = $state(data.userInformation.currency_code);
 	let searchQuery = $state('');
-
-	$inspect(budgets);
 	// Filter budgets with null/empty checks
 	function filterBudgets() {
 		return (budgets ?? []).filter((budget) =>
 			budget?.budget?.name?.toLowerCase().includes(searchQuery.toLowerCase())
 		);
 	}
-
+    $inspect(data);
 	// States and calculations with safe fallbacks
 </script>
 
 <BudgetTileConnector {budgets} />
+<CreateBudget {data} {defaultCurrency} {currencies} {budgetCategories} />
 
 <!-- Main Container -->
 <div
@@ -47,7 +50,7 @@
 		<BudgetsNotFound />
 	{:else}
 		{#each filterBudgets() as budgetItem}
-			<BudgetCard {defaultCurrency} {budgetItem} />
+			<BudgetCard {defaultCurrency} {budgetItem}/>
 		{/each}
 	{/if}
 </div>

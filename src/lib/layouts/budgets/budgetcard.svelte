@@ -1,6 +1,6 @@
 <script>
-    import BudgetsGoalsNotFound from './notfound/budgetsgoalsnotfound.svelte';
-    import BudgetsRecurringExpensesNotFound from './notfound/budgetsrecurringexpensesnotfound.svelte';
+	import BudgetsGoalsNotFound from './notfound/budgetsgoalsnotfound.svelte';
+	import BudgetsRecurringExpensesNotFound from './notfound/budgetsrecurringexpensesnotfound.svelte';
 	import { PieChart } from 'layerchart';
 	import { schemeTableau10 } from 'd3-scale-chromatic';
 	import {
@@ -17,6 +17,7 @@
 
 	let { defaultCurrency, budgetItem } = $props();
 	let expandedBudget = $state(null);
+	let hasData = $state(budgetItem.goal_summary.length > 0 || budgetItem.recurring_expenses.length > 0);
 
 	const prepareChartData = (goalContribution, recurringExpenses, totalExpenses) => {
 		// Handle null or NaN values safely by providing default numbers
@@ -98,22 +99,46 @@
 
 		<!-- Right: Pie Chart, Summary, and Actions -->
 		<div class="flex w-full flex-col items-center space-x-6 lg:w-auto lg:flex-row">
-			<!-- Pie Chart -->
-			<div class="mb-4 h-40 w-full lg:mb-0 lg:w-40">
-				<PieChart
-					data={prepareChartData(
-						budgetItem.goal_summary_totals.total_monthly_contribution,
-						budgetItem.goal_summary_totals.projected_recurring_expenses,
-						budgetItem.goal_summary_totals.total_expenses
-					)}
-					key="name"
-					value="value"
-					innerRadius={-10}
-					cornerRadius={5}
-					padAngle={0.02}
-					cRange={schemeTableau10}
-				/>
-			</div>
+			{#if hasData}
+				<!-- Pie Chart -->
+				<div class="mb-4 h-40 w-full lg:mb-0 lg:w-40">
+					<PieChart
+						data={prepareChartData(
+							budgetItem.goal_summary_totals.total_monthly_contribution,
+							budgetItem.goal_summary_totals.projected_recurring_expenses,
+							budgetItem.goal_summary_totals.total_expenses
+						)}
+						key="name"
+						value="value"
+						innerRadius={-10}
+						cornerRadius={5}
+						padAngle={0.02}
+						cRange={schemeTableau10}
+					/>
+				</div>
+			{:else}
+				<!-- Fallback section -->
+				<div class="flex justify-center items-center w-full h-auto py-8">
+					<div class="flex flex-col items-center justify-center w-auto max-w-sm text-center p-4 ml-2 dark:bg-gray-800 bg-gray-50 rounded-md shadow-sm">
+					  <svg class="w-12 h-12 text-gray-400 dark:text-gray-600 mb-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3M5 3h14l2 6H3l2-6z" />
+					  </svg>
+					  <h2 class="text-base font-semibold text-gray-600 dark:text-gray-300 mb-1">No Budget Data</h2>
+					  <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">It looks like you haven't set any goals or expenses yet.</p>
+					  <div class="flex space-x-4">
+						<a href="/dashboard/goals" 
+						  class="text-blue-600 dark:text-blue-400 text-sm font-medium underline hover:text-blue-500 dark:hover:text-blue-300 transition duration-300">
+						  Create Goals
+						</a>
+						<a href="/dashboard/expenses" 
+						  class="text-blue-600 dark:text-blue-400 text-sm font-medium underline hover:text-blue-500 dark:hover:text-blue-300 transition duration-300">
+						  Create Expenses
+						</a>
+					  </div>
+					</div>
+				  </div>
+				  
+			{/if}
 
 			<!-- Summary -->
 			<div
@@ -180,7 +205,7 @@
 					</div>
 					<ul class="space-y-3">
 						{#if budgetItem.goal_summary.length === 0}
-                            <BudgetsGoalsNotFound />
+							<BudgetsGoalsNotFound />
 						{:else}
 							{#each budgetItem.goal_summary as goal}
 								<li class="rounded-lg bg-gray-200 p-3 dark:bg-gray-700">
@@ -204,7 +229,7 @@
 					</div>
 					<ul class="space-y-3">
 						{#if budgetItem.recurring_expenses.length === 0}
-                            <BudgetsRecurringExpensesNotFound />
+							<BudgetsRecurringExpensesNotFound />
 						{:else}
 							{#each budgetItem.recurring_expenses as expense}
 								<li class="rounded-lg bg-gray-200 p-3 dark:bg-gray-700">

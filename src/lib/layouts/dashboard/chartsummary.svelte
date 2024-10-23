@@ -2,7 +2,14 @@
   import { AreaChart } from 'layerchart';
 
   // Incoming data from props
-  let { chartData } = $props();
+  let { expenseIncomeSummary } = $props();
+
+  	// Transform data for the chart
+	let chartData = expenseIncomeSummary.map((item) => ({
+		month: item.month,
+		income: parseFloat(item.total_income), // Make sure values are numbers
+		expenses: -parseFloat(item.total_expenses) // Expenses as negative for diverging bars
+	}));
 
   // Get the current year dynamically
   const currentYear = new Date().getFullYear();
