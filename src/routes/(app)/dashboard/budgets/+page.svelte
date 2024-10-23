@@ -3,7 +3,7 @@
 	import BudgetTileConnector from '$lib/layouts/budgets/budgettileconnector.svelte';
 	import BudgetCard from '$lib/layouts/budgets/budgetcard.svelte';
 	import BudgetsNotFound from '$lib/layouts/budgets/notfound/budgetsnotfound.svelte';
-	import { Search } from 'lucide-svelte';
+	import { Search, Award } from 'lucide-svelte';
 	import { fly, slide } from 'svelte/transition';
 
 	let { data } = $props();
@@ -45,31 +45,40 @@
 
 <!-- Main Container -->
 <div
-	class="container mx-auto p-4"
-	in:fly={{ y: 200, duration: 400 }}
-	out:slide={{ y: -200, duration: 400 }}
+  class="container mx-auto p-6 bg-white dark:bg-gray-900 rounded-lg shadow-lg transition-all duration-300 transform"
+  in:fly={{ y: 200, duration: 400 }}
+  out:slide={{ y: -200, duration: 400 }}
 >
-	<!-- Header with Search Field -->
-	<div class="mb-6 flex items-center justify-between">
-		<h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-200">Budget Overview</h1>
-		<div class="relative w-64">
-			<input
-				type="text"
-				placeholder="Search budgets..."
-				bind:value={searchQuery}
-				class="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200"
-			/>
-			<Search class="absolute left-3 top-2.5 h-5 w-5 text-gray-500 dark:text-gray-300" />
-		</div>
-	</div>
-	{#if filterBudgets().length === 0}
-		<BudgetsNotFound />
-	{:else}
-		{#each filterBudgets() as budgetItem}
-			<BudgetCard {defaultCurrency} {budgetItem} {performDelete}/>
-		{/each}
-	{/if}
+  <!-- Header with Search Field -->
+  <div class="mb-6 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <Award class="h-7 w-7 text-blue-500 dark:text-yellow-400" />
+      <h1 class="text-2xl font-semibold text-gray-900 dark:text-gray-200">
+        Budget Overview
+      </h1>
+    </div>
+    
+    <div class="relative w-64">
+      <input
+        type="text"
+        placeholder="Search budgets..."
+        bind:value={searchQuery}
+        class="w-full rounded-full border border-gray-300 py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 transition-all duration-300 shadow-sm"
+      />
+      <Search class="absolute left-3 top-2.5 h-5 w-5 text-gray-500 dark:text-gray-300" />
+    </div>
+  </div>
+
+  {#if filterBudgets().length === 0}
+    <BudgetsNotFound />
+  {:else}
+    {#each filterBudgets() as budgetItem}
+      <BudgetCard {defaultCurrency} {budgetItem} {performDelete} />
+    {/each}
+  {/if}
 </div>
+
+
 
 <style>
 	/* Custom styles for responsiveness */

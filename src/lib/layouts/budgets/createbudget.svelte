@@ -36,14 +36,14 @@
 </script>
 
 <!-- FAB (Floating Action Button) -->
-<div class="fab-container fixed bottom-8 right-8">
+<div class="fab-container fixed bottom-8 right-8 z-[1]">
 	<button
 		aria-label="Add your feed"
 		class="flex items-center rounded-full bg-blue-500 px-4 py-2 font-bold text-white shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300"
 		onclick={() => (isDrawerOpen = true)}
 	>
 		<Plus class="h-8 w-8" />
-		<span class="ml-2">Add Your Feed</span>
+		<span class="ml-2">Add A Budget</span>
 	</button>
 </div>
 

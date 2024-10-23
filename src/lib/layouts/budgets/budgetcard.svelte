@@ -14,8 +14,6 @@
 		Target,
 		Repeat,
 		Edit,
-		Trash,
-		Search
 	} from 'lucide-svelte';
 	import { fly, fade, slide } from 'svelte/transition';
 
