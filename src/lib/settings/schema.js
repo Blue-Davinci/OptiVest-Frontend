@@ -79,16 +79,6 @@ export const signUpFormSchema =  z
   }
 });
 
-/*
-{
-  "name": "Tech Budget 1",
-  "is_strict": true,
-  "category": "Technology",
-  "total_amount": "1000.00",
-  "currency_code": "USD",
-  "description": "This is the budget for technology-related expenses."
-}
-*/
 export const budgetSchema = z.object({
   name: z.string().min(1, { message: 'Budget name is required' }).max(64, { message: 'Budget name must be less than 64 characters' }),
   is_strict: z.boolean().default(true),
@@ -97,6 +87,19 @@ export const budgetSchema = z.object({
   currency_code: z.string().min(1, { message: 'Currency code is required' }).max(64, { message: 'Currency code must be less than 64 characters' }),
   description: z.string().min(1, { message: 'Description is required' }).max(64, { message: 'Description must be less than 64 characters' }),
  });
+
+export const debtSchema = z.object({
+  name: z.string().min(1, { message: 'Debt name is required' }).max(64, { message: 'Debt name must be less than 64 characters' }),
+  amount: z.number().min(0, { message: 'Amount must be greater than 0' }),
+  interest_rate: z.number().min(0, { message: 'Interest rate must be greater than 0' }),
+  description: z.string().min(1, { message: 'Description is required' }).max(64, { message: 'Description must be less than 64 characters' }),
+  due_date: z.string().min(1, { message: 'Due date is required' }).max(64, { message: 'Due date must be less than 64 characters' }),
+  minimum_payment: z.number().min(0, { message: 'Minimum payment must be greater than 0' }),
+ });
+
+export const debtInstallmentSchema = z.object({
+  payment_amount: z.number().min(0, { message: 'Payment amount must be greater than 0' }),
+});
 
 export const tokenSchema = z
 	.string({ required_error: 'A Token is required' })

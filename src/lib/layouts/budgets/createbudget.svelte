@@ -20,7 +20,7 @@
 		dataType: 'json',
         invalidateAll: true,
 		onUpdated({ form }) {
-			if (form.message.status === 'success') {
+			if (form.message.status) {
 				toastManager(TOAST_TYPE_SUCCESS, form.message.message);
 				console.log('Budget created:', form.message.data);
                 //submitSuccess();

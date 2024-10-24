@@ -62,7 +62,7 @@ export const actions = {
             return message(form, {
                 message: 'Budget created successfully!',
                 data: responseData,
-                status: 'success'
+                status: true
             });
             
         }catch(err){

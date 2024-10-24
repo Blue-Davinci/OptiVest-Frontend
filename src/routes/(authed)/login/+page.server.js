@@ -17,7 +17,7 @@ export const actions = {
     if (!form.valid) {
       return fail(400,{form});
     }
-    await new Promise((resolve) => setTimeout(resolve, 3000));
+    //await new Promise((resolve) => setTimeout(resolve, 3000));
     console.log(form.data);
     // Handle successful form submission here (e.g., saving data)
     try {
