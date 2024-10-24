@@ -22,10 +22,10 @@ export const load = async ({fetch}) => {
           };
             
     }catch(err){
-        console.log("[ggpDS] ERROR: ", err.message);
+        console.log("[dashLD] ERROR: ", err.message);
         return {
             status: 500,
-            error: '[ggpDS]An error occured while fetching data'
+            error: '[dashLD]An error occured while fetching data'
         }
     }
 }

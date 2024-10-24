@@ -44,7 +44,7 @@
 			shortLabel: 'Finance',
 			items: [
 				{ name: 'Budget Manager', icon: DollarSign, url: '/dashboard/budgets' },
-				{ name: 'Goal Manager', icon: Target, url: '#1' }
+				{ name: 'Goal Manager', icon: Target, url: '/dashboard/goals' }
 			]
 		},
 		{
@@ -52,7 +52,7 @@
 			shortLabel: 'Trackers',
 			items: [
 				{ name: 'Expense Manager', icon: PiggyBank, url: '#1' },
-				{ name: 'Debt Manager', icon: Wallet, url: '#1' }
+				{ name: 'Debt Manager', icon: Wallet, url: '/dashboard/debts' }
 			]
 		},
 		{
