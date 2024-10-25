@@ -3,7 +3,7 @@
 	import FrequentCurrencyBudget from './tiles/frequentcurrencybudget.svelte';
 	import MostGoalsBudget from './tiles/mostgoalsbudget.svelte';
 
-	let { budgets } = $props();
+	let { budgets = [] } = $props();
 
 	// Calculate the budget with the highest amount safely
 	let highestBudget = budgets.reduce((prev, current) => {

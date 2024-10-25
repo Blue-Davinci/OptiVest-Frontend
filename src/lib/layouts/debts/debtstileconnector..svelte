@@ -1,5 +1,6 @@
 <script>
     import { CreditCard, ChevronDown, ArrowLeft, ArrowRight, Info } from 'lucide-svelte';
+    import ChartsNotFound from './notfound/chartsnotfound.svelte';
     import { PieChart } from 'layerchart';
 	import { schemeTableau10 } from 'd3-scale-chromatic';
 
@@ -118,7 +119,7 @@ function prepareTotalPaymentsAndDebtAmount() {
                 <CreditCard class="mr-2"></CreditCard>
                 <span>Pay Down Total Debt</span>
             </h2>
-
+            {#if debts.length > 0}
             <!-- Charts Section -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <!-- First Chart -->
@@ -163,6 +164,9 @@ function prepareTotalPaymentsAndDebtAmount() {
                     </div>
                 </div>
             </div>
+            {:else}
+                <ChartsNotFound />
+            {/if}
 
             <!-- Tips Carousel -->
             <div class="bg-gray-50 dark:bg-gray-700 p-6 rounded-lg mt-8">

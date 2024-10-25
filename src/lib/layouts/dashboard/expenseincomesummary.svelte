@@ -53,14 +53,14 @@ function formatNumber(value) {
 
 </script>
 
-
-<div class="grid grid-cols-3 gap-6 mb-8">
-    <!-- Income Tile -->
-    <IncomeTile {getArrowClass}{formatNumber} {income} {prevIncome} {incomePercentageChange}/>
-    <!-- Expense Tile -->
-    <Expensetile {getArrowClass}{formatNumber} {expenses} {expensePercentageChange}/>
-    <!-- My Balance Tile -->
-    <Balancestiles {getArrowClass}{formatNumber} {balance} {budgetPercentageChange}/>
-
-</div>
   
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+  <!-- Income Tile -->
+  <IncomeTile {getArrowClass}{formatNumber} {income} {prevIncome} {incomePercentageChange} />
+  
+  <!-- Expense Tile -->
+  <Expensetile {getArrowClass}{formatNumber} {expenses} {expensePercentageChange} />
+  
+  <!-- My Balance Tile -->
+  <Balancestiles {getArrowClass}{formatNumber} {balance} {budgetPercentageChange} />
+</div>

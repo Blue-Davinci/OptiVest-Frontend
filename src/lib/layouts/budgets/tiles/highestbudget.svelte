@@ -1,7 +1,7 @@
 <script>
     import { MoreHorizontal } from 'lucide-svelte';
 
-    let {formatNumber, highestBudget} = $props();
+    let {formatNumber, highestBudget=0} = $props();
 
 </script>
 

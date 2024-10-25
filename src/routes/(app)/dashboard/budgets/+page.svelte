@@ -4,14 +4,15 @@
 	import Pagination from '$lib/layouts/common/pagination.svelte';
 	import CreateBudget from '$lib/layouts/budgets/createbudget.svelte';
 	import BudgetTileConnector from '$lib/layouts/budgets/budgettileconnector.svelte';
+	import TilesNotFound from '$lib/layouts/budgets/notfound/tilesnotfound.svelte';
 	import BudgetCard from '$lib/layouts/budgets/budgetcard.svelte';
 	import BudgetsNotFound from '$lib/layouts/budgets/notfound/budgetsnotfound.svelte';
-	import { Search, Award } from 'lucide-svelte';
+	import { Search, Award, ChartBarIcon } from 'lucide-svelte';
 	import { fly, slide } from 'svelte/transition';
 	import lodash from 'lodash';
 
 	let { data } = $props();
-	let budgets = $derived(data.data.budgets);
+	let budgets = $derived(data?.data?.budgets ?? []);
 	let currencies = $derived(data?.currencies?.data?.currencies?.conversion_rates ?? {});
 	let budgetCategories = $derived(data?.budgetCategories?.data?.budget_categories ?? []);
 
@@ -21,9 +22,9 @@
 	const { debounce } = lodash;
 
 	// metadata
-	let currentPage = data.data.metadata.current_page;
-	let pageSize = data.data.metadata.page_size;
-	let totalRecords = data.data.metadata.total_records;
+	let currentPage = data?.data?.metadata?.current_page ?? 0;
+	let pageSize = data?.data?.metadata?.page_size ?? 0;
+	let totalRecords = data?.data?.metadata?.total_records ?? 0;
 	let totalPages = Math.ceil(totalRecords / pageSize);
 	// Filter budgets with null/empty checks
 	function filterBudgets() {
@@ -97,9 +98,13 @@
 <div class="container mx-auto mb-6 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900">
 	<Headers />
 </div>
-<div class="flex flex-wrap justify-center gap-3 px-2 py-4">
-	<BudgetTileConnector {budgets} />
-</div>
+{#if budgets.length !== 0}
+	<div class="flex flex-wrap justify-center gap-3 px-2 py-4">
+		<BudgetTileConnector {budgets} />
+	</div>
+{:else}
+	<TilesNotFound />
+{/if}
 <CreateBudget {data} {defaultCurrency} {currencies} {budgetCategories} />
 
 <!-- Main Container -->
@@ -128,7 +133,7 @@
 	</div>
 
 	{#if filterBudgets().length === 0}
-		<BudgetsNotFound />
+		<BudgetsNotFound {searchQuery} />
 	{:else}
 		{#each filterBudgets() as budgetItem}
 			<BudgetCard {defaultCurrency} {budgetItem} {performDelete} />

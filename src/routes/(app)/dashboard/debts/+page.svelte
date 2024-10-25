@@ -48,7 +48,7 @@
   
     <!-- Fallback if no data is available -->
     {#if fallback}
-        <DebtsNotFound />
+        <DebtsNotFound {searchQuery} />
     {/if}
   
     <!-- Debt Cards -->
