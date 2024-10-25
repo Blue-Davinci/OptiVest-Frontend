@@ -66,10 +66,11 @@
 				{error}
 			</div>
 		{:else if !analysisSummary}
-			<div class="flex flex-grow items-center justify-center">
-				<div class="loader"></div>
-				<div class="mt-2 text-gray-600 dark:text-gray-400">Loading investment analysis...</div>
-			</div>
+		<div class="flex flex-col items-center justify-center flex-grow space-y-2">
+			<div class="loader"></div>
+			<div class="text-gray-600 dark:text-gray-400">Loading investment analysis...</div>
+		</div>
+		
 		{:else}
 			<!-- Scrollable content area -->
 			<div class="flex-grow space-y-8 overflow-y-auto px-6">
