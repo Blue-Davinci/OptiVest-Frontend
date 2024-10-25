@@ -1,9 +1,10 @@
 <script>
 	import { Progress } from '$lib/components/ui/progress';
+	import CreateDebtInstallment from './createdebtinstallment.svelte';
 	import { fly } from 'svelte/transition';
-	import { CreditCard, ChevronDown, ChevronUp, Search } from 'lucide-svelte';
+	import { CreditCard, ChevronDown, ChevronUp, Search , CheckCircle} from 'lucide-svelte';
 
-	let { debtItem, searchQuery, expandedDebt } = $props();
+	let { data, defaultCurrency, debtItem, searchQuery, expandedDebt } = $props();
 
 	const toggleExpanded = (id) => {
 		expandedDebt = expandedDebt === id ? null : id;
@@ -15,8 +16,14 @@
 	};
 
 	const calculatePaymentProgress = (debt) => {
+		// Ensure totalAmount and remainingBalance are valid numbers
 		const totalAmount = parseFloat(debt.debt.amount);
 		const remainingBalance = parseFloat(debt.debt.remaining_balance);
+
+		if (isNaN(totalAmount) || isNaN(remainingBalance) || totalAmount === 0) {
+			return 0; // Return 0% progress if inputs are invalid or totalAmount is zero
+		}
+
 		const paidAmount = totalAmount - remainingBalance;
 		return (paidAmount / totalAmount) * 100;
 	};
@@ -24,10 +31,18 @@
 	const assessProgress = (debt) => {
 		const progress = calculatePaymentProgress(debt);
 		const now = new Date();
+
+		// Ensure dueDate and created_at are valid dates
 		const dueDate = new Date(debt.debt.due_date);
-		const timeLeft = (dueDate - now) / (1000 * 60 * 60 * 24); // days left
-		const timeElapsedPercentage =
-			((now - new Date(debt.debt.created_at)) / (dueDate - new Date(debt.debt.created_at))) * 100;
+		const createdAt = new Date(debt.debt.created_at);
+
+		if (isNaN(dueDate) || isNaN(createdAt) || dueDate <= createdAt) {
+			return { status: 'Invalid Dates', color: 'text-gray-600' }; // Handle invalid date range
+		}
+
+		const timeLeft = (dueDate - now) / (1000 * 60 * 60 * 24); // Days left
+
+		const timeElapsedPercentage = ((now - createdAt) / (dueDate - createdAt)) * 100;
 
 		if (progress >= timeElapsedPercentage) {
 			return { status: 'On Track', color: 'text-green-600' };
@@ -64,6 +79,10 @@
 
 		return estimatedPaymentsLeft <= monthsBetween ? 'Likely' : 'Unlikely';
 	};
+
+	function addInstallment(){
+		console.log('Add Installment');
+	}
 </script>
 
 <div
@@ -206,43 +225,63 @@
 
 	<!-- Expandable Payments Section -->
 	{#if expandedDebt === debtItem.debt.id}
-		<div in:fly={{ y: -20 }} class="mt-6">
-			<div class="mb-2 flex items-center justify-between">
-				<h3 class="text-lg font-semibold dark:text-gray-200">Installments</h3>
+	<div in:fly={{ y: -20 }} class="mt-6">
+		<div class="mb-2 flex items-center justify-between">
+			<h3 class="text-lg font-semibold dark:text-gray-200">Installments</h3>
 
-				<!-- Search Input -->
-				<div class="relative w-64">
-					<input
-						type="text"
-						placeholder="Search by date"
-						bind:value={searchQuery}
-						class="w-full rounded-full border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-300 focus:outline-none focus:ring dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
-					/>
-					<Search
-						class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400"
-					/>
-				</div>
+			<!-- Search Input -->
+			<div class="relative w-64">
+				<input
+					type="text"
+					placeholder="Search by date"
+					bind:value={searchQuery}
+					class="w-full rounded-full border border-gray-300 py-2 pl-10 pr-4 focus:border-blue-300 focus:outline-none focus:ring dark:border-gray-700 dark:bg-gray-800 dark:text-gray-200"
+				/>
+				<Search
+					class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-gray-400"
+				/>
 			</div>
-
-			<!-- Payment List -->
-			<ul class="divide-y divide-gray-200 dark:divide-gray-700">
-				{#each filterPayments(debtItem.payments) as payment}
-					<li class="py-4">
-						<div class="flex justify-between">
-							<p class="font-semibold dark:text-gray-200">
-								Payment Date: {new Date(payment.debt_payment.payment_date).toLocaleDateString()}
-							</p>
-							<p class="text-sm text-gray-600 dark:text-gray-400">
-								Amount: ${payment.debt_payment.payment_amount}
-							</p>
-						</div>
-						<p class="text-sm text-gray-600 dark:text-gray-400">
-							Interest: ${payment.debt_payment.interest_payment}, Principal: ${payment.debt_payment
-								.principal_payment}
-						</p>
-					</li>
-				{/each}
-			</ul>
 		</div>
-	{/if}
+
+		<!-- Add Installment Button If Progress is <100 -->
+<div class="flex flex-col items-center mt-6"> <!-- Center the content with margin-top -->
+    {#if calculatePaymentProgress(debtItem) < 100}
+        <CreateDebtInstallment {data} {defaultCurrency} budgetID={debtItem.debt.id} />
+    {:else}
+	<div class="bg-green-50 dark:bg-green-700 p-4 rounded-lg shadow-md text-center mt-4 flex flex-col items-center space-y-1.5">
+		<!-- Success Icon -->
+		<CheckCircle class="h-6 w-6 text-green-500 dark:text-green-300" />
+	
+		<!-- Success Message -->
+		<p class="text-green-700 dark:text-green-100 font-semibold text-md">
+			You have paid off this debt!
+		</p>
+	</div>
+	
+	
+    {/if}
+</div>
+
+		<!-- Payment List -->
+		<ul class="divide-y divide-gray-200 dark:divide-gray-700">
+			{#each filterPayments(debtItem.payments) as payment}
+				<li class="py-4">
+					<div class="flex justify-between">
+						<p class="font-semibold dark:text-gray-200">
+							Payment Date: {new Date(payment.debt_payment.payment_date).toLocaleDateString()}
+						</p>
+						<p class="text-sm text-gray-600 dark:text-gray-400">
+							Amount: ${payment.debt_payment.payment_amount}
+						</p>
+					</div>
+					<p class="text-sm text-gray-600 dark:text-gray-400">
+						Interest: ${payment.debt_payment.interest_payment}, Principal: ${payment.debt_payment
+							.principal_payment}
+					</p>
+				</li>
+			{/each}
+		</ul>
+	</div>
+{/if}
+
 </div>

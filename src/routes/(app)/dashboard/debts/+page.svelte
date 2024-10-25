@@ -53,7 +53,7 @@
   
     <!-- Debt Cards -->
     {#each debts as debtItem}
-        <DebtCard {debtItem} {expandedDebt} {searchQuery}/>
+        <DebtCard {data} {defaultCurrency} {debtItem} {expandedDebt} {searchQuery}/>
     {/each}
   </div>
 </div>

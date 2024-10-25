@@ -90,15 +90,15 @@ export const budgetSchema = z.object({
 
 export const debtSchema = z.object({
   name: z.string().min(1, { message: 'Debt name is required' }).max(64, { message: 'Debt name must be less than 64 characters' }),
-  amount: z.number().min(0, { message: 'Amount must be greater than 0' }),
+  amount: z.number().min(1, { message: 'Amount must be greater than 0' }),
   interest_rate: z.number().min(0, { message: 'Interest rate must be greater than 0' }),
   description: z.string().min(1, { message: 'Description is required' }).max(64, { message: 'Description must be less than 64 characters' }),
   due_date: z.string().min(1, { message: 'Due date is required' }).max(64, { message: 'Due date must be less than 64 characters' }),
-  minimum_payment: z.number().min(0, { message: 'Minimum payment must be greater than 0' }),
+  minimum_payment: z.number().min(1, { message: 'Minimum payment must be greater than 0' }),
  });
 
 export const debtInstallmentSchema = z.object({
-  payment_amount: z.number().min(0, { message: 'Payment amount must be greater than 0' }),
+  payment_amount: z.number().min(1, { message: 'Payment amount must be greater than 0' }),
 });
 
 export const tokenSchema = z

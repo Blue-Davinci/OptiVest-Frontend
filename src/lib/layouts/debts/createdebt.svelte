@@ -28,8 +28,8 @@
 				toastManager(TOAST_TYPE_SUCCESS, form.message.message);
 				console.log('Debt created:', form.message.data);
 				isDrawerOpen = false;
-			} else {
-				toastManager(TOAST_TYPE_ERROR, form.message ? form.message.message : 'Unknown error');
+			}  else if (form.installmentMessage && !form.installmentMessage.success) {
+				toastManager(TOAST_TYPE_ERROR, form.installmentMessage.message);
 			}
 		}
 	});

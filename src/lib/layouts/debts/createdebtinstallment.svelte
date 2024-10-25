@@ -1,0 +1,101 @@
+<script>
+import {
+		TOAST_TYPE_ERROR,
+		TOAST_TYPE_SUCCESS,
+	} from '$lib/settings/constants.js';
+    import { superForm } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+    import {debtInstallmentSchema} from '$lib/settings/schema.js';
+    import * as Dialog from '$lib/components/ui/dialog';
+    import CurrencyInput from '@canutin/svelte-currency-input';
+    import { toastManager } from '$lib/helpers/utilities.js';
+    import * as Form from '$lib/components/ui/form';
+
+    let { data, defaultCurrency, budgetID } = $props();
+    $inspect(budgetID);
+    let isDrawerOpen = $state(false);
+    $inspect(data.debtInstallmentForm);
+    const form = superForm(data.debtInstallmentForm, {
+		validators: zodClient(debtInstallmentSchema),
+		dataType: 'json',
+        invalidateAll: true,
+		onUpdated({ form }) {
+            console.log("Debt form thing:", form);
+			if (form.message && form.message.success) {
+				toastManager(TOAST_TYPE_SUCCESS, form.message.message);
+				console.log('Debt created:', form.message.data);
+				isDrawerOpen = false;
+			} else if (form.message && !form.message.success) {
+                toastManager(TOAST_TYPE_ERROR, form.message.message);
+			}
+		}
+	});
+	const { form: installmentForm, enhance: installmentEnhance, message: installmentMessage, delayed: installmentDelayed } = form;
+</script>
+
+<div class="flex justify-end mb-4">
+	<button
+		aria-label="Add a debt"
+		class="text-sm text-blue-500 hover:text-blue-600 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-300 dark:text-blue-400 dark:hover:text-blue-500"
+		onclick={() => (isDrawerOpen = true)}
+	>
+    + Add Installment
+	</button>
+</div>
+
+<!-- Drawer for the form -->
+<Dialog.Root bind:open={isDrawerOpen}>
+	<Dialog.Content class="p-6">
+		<Dialog.Header>
+			<Dialog.Title>Add New Debt</Dialog.Title>
+			<Dialog.Description>Fill in the details of the new debt and click save.</Dialog.Description>
+		</Dialog.Header>
+		<form method="POST" action="?/newdebtinstallment" use:installmentEnhance>
+
+            <div class="flex justify-center items-center">
+                <Form.Field {form} name="payment_amount" class="w-1/2 mb-4"> 
+                    <Form.Control let:attrs>
+                        <Form.Label class="block text-center">Add the installment Amount</Form.Label> <!-- Center the label text if desired -->
+                        <CurrencyInput
+                            {...attrs}
+                            bind:value={$installmentForm.payment_amount}
+                            locale="en-US"
+                            currency={defaultCurrency}
+                            placeholder="Enter amount"
+                            class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                        />
+                    </Form.Control>
+                    <Form.FieldErrors />
+                </Form.Field>
+            </div>
+            
+            <!-- Make a Hidden form to hold the budgetID-->
+            <input type="hidden" name="budgetID" value={budgetID} />
+
+			<button
+				type="submit"
+				class="mt-4 flex w-full items-center justify-center rounded bg-blue-500 p-2 text-white shadow hover:bg-blue-700 disabled:bg-gray-400"
+				disabled={$installmentDelayed}
+			>
+				{#if $installmentDelayed}
+					<svg
+						width="20"
+						height="20"
+						fill="currentColor"
+						class="mr-2 animate-spin"
+						viewBox="0 0 1792 1792"
+						xmlns="http://www.w3.org/2000/svg"
+					>
+						<path
+							d="M526 1394q0 53-37.5 90.5t-90.5 37.5q-52 0-90-38t-38-90q0-53 37.5-90.5t90.5-37.5 90.5 37.5 37.5 90.5zm498 206q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-704-704q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm1202 498q0 52-38 90t-90 38q-53 0-90.5-37.5t-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-964-996q0 66-47 113t-113 47-113-47-47-113 47-113 113-47 113 47 47 113zm1170 498q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-640-704q0 80-56 136t-136 56-136-56-56-136 56-136 136-56 136 56 56 136zm530 206q0 93-66 158.5t-158 65.5q-93 0-158.5-65.5t-65.5-158.5q0-92 65.5-158t158.5-66q92 0 158 66t66 158z"
+						>
+						</path>
+					</svg>
+					Submitting...
+				{:else}
+					Submit Debt
+				{/if}
+			</button>
+		</form>
+	</Dialog.Content>
+</Dialog.Root>
