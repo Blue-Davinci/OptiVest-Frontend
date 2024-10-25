@@ -17,7 +17,7 @@
 
   </script>
 
-<DebtsTileConnector {debts} />
+<DebtsTileConnector {debts} {defaultCurrency} />
 <CreateDebt {data} {defaultCurrency}/>
 <!-- Main Container -->
 <div class="max-w-6xl mx-auto p-4">

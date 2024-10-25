@@ -3,7 +3,7 @@
     import { PieChart } from 'layerchart';
 	import { schemeTableau10 } from 'd3-scale-chromatic';
 
-    let {debts = []} = $props();
+    let {debts = [], defaultCurrency} = $props();
     $inspect(debts);
     const prepareInterestVsPrincipal = () => {
     // Initialize totals
@@ -136,8 +136,8 @@ function prepareTotalPaymentsAndDebtAmount() {
                     <div class="text-center mt-4">
                         <p class="font-semibold text-gray-900 dark:text-gray-100">Principal vs Interest</p>
                         <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                            <p>Principal: {interestVsPrincipal[0].value}</p>
-                            <p>Interest: {interestVsPrincipal[1].value}</p>
+                            <p>Principal: {defaultCurrency} {interestVsPrincipal[0].value}</p>
+                            <p>Interest: {defaultCurrency} {interestVsPrincipal[1].value}</p>
                         </div>
                     </div>
                 </div>
@@ -157,8 +157,8 @@ function prepareTotalPaymentsAndDebtAmount() {
                     <div class="text-center mt-4">
                         <p class="font-semibold text-gray-900 dark:text-gray-100">Payment Progress</p>
                         <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1">
-                            <p>Paid: {totalPaymentsAndDebtAmount[0].value}</p>
-                            <p>Remaining: {totalPaymentsAndDebtAmount[1].value}</p>
+                            <p>Paid: {defaultCurrency} {totalPaymentsAndDebtAmount[0].value}</p>
+                            <p>Remaining: {defaultCurrency} {totalPaymentsAndDebtAmount[1].value}</p>
                         </div>
                     </div>
                 </div>
