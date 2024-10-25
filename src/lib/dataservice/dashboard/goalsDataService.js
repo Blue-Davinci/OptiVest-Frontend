@@ -1,10 +1,17 @@
+import {buildFeedFollowUrl} from '$lib/helpers/utilities.js';
 // getGoalProgressions() is a dashboard dataservice helper that contacts our API endpoint
 // to get the user's goal progressions.
-const getGoalProgressions = async({ fetch: customFetch } = {})=>{
+const getGoalProgressions = async({ fetch: customFetch } = {}, page = 0, page_size = 0, name = '')=>{
     let fetchFunc = customFetch || fetch; // Use custom fetch if provided, else use global fetch
     let goalProgressionURL = '/api/finmanager/goals/progression';
+    let params = {
+        name: name,
+        page: page,
+        page_size: page_size,
+    }
+    let goalURL = buildFeedFollowUrl(goalProgressionURL, params);
     try{
-        const response = await fetchFunc(goalProgressionURL, {
+        const response = await fetchFunc(goalURL, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

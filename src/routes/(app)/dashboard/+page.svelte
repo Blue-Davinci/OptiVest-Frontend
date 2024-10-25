@@ -12,7 +12,7 @@
 	let goalsData = $derived(data.goalData.data.goals);
 	let expenseTransactions = $derived(data.expenses.data);
 	let expenseIncomeSummary = $derived(data.expenseIncomeSummary.data.expense_income_summary_report);
-	let investmentAnalysisSummary = $derived(data.personalFinanceSummary.data. investment_analysis);
+	let investmentAnalysisSummary = $derived(data.personalFinanceSummary?.data?.investment_analysis ?? []);
 	$inspect(investmentAnalysisSummary);
 	// page metadata
 	function getProgressColor(percentage) {

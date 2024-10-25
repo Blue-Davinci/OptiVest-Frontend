@@ -10,7 +10,7 @@ import {getPersonalFinanceSumary} from '$lib/dataservice/personalfinance/persona
 export const load = async ({fetch}) => {
     // get our auth
     try{
-        let goalDataResponse = await getGoalProgressions({fetch});
+        let goalDataResponse = await getGoalProgressions({fetch}, 0, 10, '');
         let expenseIncomeSummaryResponse = await getExpenseIncomeSummary({fetch});
         let expensesResponse = await getAllExpenses({fetch},0,10,'');
         let personalFinanceSummary = await getPersonalFinanceSumary({fetch});
