@@ -99,7 +99,10 @@
 	<Headers />
 </div>
 {#if budgets.length !== 0}
-	<div class="flex flex-wrap justify-center gap-3 px-2 py-4">
+	<div class="flex flex-wrap justify-center gap-3 px-2 py-4"
+	in:fly={{ y: 200, duration: 400 }}
+	out:slide={{ y: -200, duration: 400 }}
+	>
 		<BudgetTileConnector {budgets} />
 	</div>
 {:else}
