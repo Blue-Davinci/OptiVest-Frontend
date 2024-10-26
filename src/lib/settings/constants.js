@@ -2,7 +2,9 @@ import {
   PiggyBank,
   TrendingDown,
   ShieldCheck,
-  Target
+  Target,
+  Wallet,
+  TrendingUp
 } from 'lucide-svelte';
 // Define and export constants
 export const TOAST_TYPE_ERROR = 'error';
@@ -35,6 +37,27 @@ export const financialTips = [
       title: 'Set Financial Goals',
       description: 'Define clear, measurable financial goals and track your progress regularly.',
       color: 'orange'
+  }
+];
+
+export const BUDGET_TIPS = [
+  {
+      icon: Wallet,
+      title: "Smart Allocation",
+      description: "Follow the 50/30/20 rule: 50% for essentials, 30% for personal spending, 20% for financial goals.",
+      color: "text-purple-500"
+  },
+  {
+      icon: PiggyBank,
+      title: "Emergency Fund",
+      description: "Build a safety net of 3-6 months of expenses for unexpected situations.",
+      color: "text-purple-400"
+  },
+  {
+      icon: TrendingUp,
+      title: "Track & Adjust",
+      description: "Review your budget monthly and adjust based on changing needs and goals.",
+      color: "text-purple-300"
   }
 ];
 

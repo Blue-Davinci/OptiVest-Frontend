@@ -1,13 +1,13 @@
 <script>
-	import Headers from '$lib/layouts/common/headers.svelte';
 	import { getAllBudgetInformation } from '$lib/dataservice/budgets/budgetsDataService.js';
 	import Pagination from '$lib/layouts/common/pagination.svelte';
+	import BudgetCharts from '$lib/layouts/budgets/budgetcharts.svelte';
 	import CreateBudget from '$lib/layouts/budgets/createbudget.svelte';
 	import BudgetTileConnector from '$lib/layouts/budgets/budgettileconnector.svelte';
 	import TilesNotFound from '$lib/layouts/budgets/notfound/tilesnotfound.svelte';
 	import BudgetCard from '$lib/layouts/budgets/budgetcard.svelte';
 	import BudgetsNotFound from '$lib/layouts/budgets/notfound/budgetsnotfound.svelte';
-	import { Search, Award, ChartBarIcon } from 'lucide-svelte';
+	import { Search, Award } from 'lucide-svelte';
 	import { fly, slide } from 'svelte/transition';
 	import lodash from 'lodash';
 	import UserSection from '$lib/layouts/common/usersection.svelte';
@@ -98,8 +98,11 @@
 </script>
 
 <UserSection {userInfo} />
+
+<BudgetCharts {data} />
+
 {#if budgets.length !== 0}
-		<BudgetTileConnector {budgets} />
+	<BudgetTileConnector {budgets} />
 {:else}
 	<TilesNotFound />
 {/if}
