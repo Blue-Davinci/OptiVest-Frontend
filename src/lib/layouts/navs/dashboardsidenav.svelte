@@ -110,7 +110,7 @@
 </script>
 
 <!-- Hamburger Menu for smaller screens -->
-<div class="flex justify-between bg-blue-100 p-4 dark:bg-gray-800 sm:hidden">
+<div class="flex justify-between bg-blue-100 p-4 dark:bg-gray-800 mb-2 sm:hidden">
 	<img src="/optivest-cropped.png" alt="OptiVest Logo" class="h-10 w-10 rounded-full" />
 	<button
 		onclick={toggleHamburgerMenu}
