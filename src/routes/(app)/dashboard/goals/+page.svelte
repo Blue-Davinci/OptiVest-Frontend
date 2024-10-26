@@ -4,14 +4,17 @@
 	import GoalsSection from '$lib/layouts/goals/goalssection.svelte';
 	import GoalTrackingcCarts from '$lib/layouts/goals/goaltrackingcharts.svelte';
 	import GoalsTrackingHistory from '$lib/layouts/goals/goalstrackinghistory.svelte';
+	import CreateGoal from '$lib/layouts/goals/creategoal.svelte';
 
 
 	let { data } = $props();
 
+	let defaultCurrency = $state(data.userInformation.currency_code);
 	let goalData = $derived(data.goalData );
+	let budgetIDNames = $derived(data?.budgetIDNames?.data?.budget_id_names ?? []);	
 	let goalTrackingHistory = $derived(data.goalsTrackingHistory);
 	let userInfo = $derived(data.userInformation);
-	$inspect(goalData);
+	$inspect(budgetIDNames);
 	let goalSearchQuery = $state('');
 	let historySearchQuery = $state('');
 
@@ -74,6 +77,8 @@
 	<!-- Tracking History Table -->
 	<GoalsTrackingHistory {historySearchQuery} {filteredHistory} {formatCurrency} />
 </div>
+
+<CreateGoal {data} {defaultCurrency} {budgetIDNames} />
 
 <style lang="postcss">
 

@@ -101,6 +101,17 @@ export const debtInstallmentSchema = z.object({
   payment_amount: z.number().min(1, { message: 'Payment amount must be greater than 0' }),
 });
 
+export const goalSchema = z.object({
+  budget_id: z.number().min(1, { message: 'Budget is required' }),
+  name: z.string().min(1, { message: 'Goal name is required' }).max(64, { message: 'Goal name must be less than 64 characters' }),
+  current_amount: z.number().min(1, { message: 'Current amount must be greater than 0' }),
+  target_amount: z.number().min(1, { message: 'Target amount must be greater than 0' }).default(1),
+  monthly_contribution: z.number().min(1, { message: 'Monthly contribution must be greater than 0' }),
+  start_date: z.string().min(1, { message: 'Start date is required' }).max(64, { message: 'Start date must be less than 64 characters' }),
+  end_date: z.string().min(1, { message: 'End date is required' }).max(64, { message: 'End date must be less than 64 characters' }),
+  status: z.string().min(1, { message: 'Status is required' }).max(64, { message: 'Status must be less than 64 characters' }).default('ongoing'),
+ });
+
 export const tokenSchema = z
 	.string({ required_error: 'A Token is required' })
 	.min(26, { message: 'A Valid Token is required' })

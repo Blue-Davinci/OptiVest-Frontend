@@ -51,18 +51,23 @@ export const actions = {
             });
             if (!response.ok){
                 let errorData = await response.json();
-                // for every field in the error object, set the error
-                // in the form object
-                for (let field in errorData.error){
-                    setError(form, field, errorData.error[field]);
+                // if it's an array, iterate over it and set the error for each field
+                if (Array.isArray(errorData.error)){
+                    for (let field in errorData.error){
+                        setError(form, field, errorData.error[field]);
+                    }
+                }else{
+                    return message(form, {
+                        message: errorData.error,
+                        success: false
+                    });
                 }
-                return fail(400, {form});
             }
             let responseData = await response.json();
             return message(form, {
                 message: 'Budget created successfully!',
                 data: responseData,
-                status: true
+                success: true
             });
             
         }catch(err){

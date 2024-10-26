@@ -16,6 +16,7 @@
 
 	let { data } = $props();
 	let redirectionPage = $page.url.searchParams.get('redirectTo') ?? '/dashboard';
+	$inspect({"Redirect Page: ": redirectionPage});
 	const form = superForm(data.form, {
 		validators: zodClient(formSchema),
 		dataType: 'json',
