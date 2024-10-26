@@ -7,14 +7,14 @@
 	import { toastManager } from '$lib/helpers/utilities.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { recurringExpenseSchema } from '$lib/settings/schema.js';
+	import { expenseSchema } from '$lib/settings/schema.js';
 	import { Plus } from 'lucide-svelte';
 
 	let isDrawerOpen = $state(false);
 	let { data, defaultCurrency, budgetIDNames } = $props();
 
-	const form = superForm(data.recurringForm, {
-		validators: zodClient(recurringExpenseSchema),
+	const form = superForm(data.expenseForm, {
+		validators: zodClient(expenseSchema),
 		dataType: 'json',
 		invalidateAll: true,
 		onUpdated({ form }) {
@@ -28,19 +28,21 @@
 			}
 		}
 	});
-	const { form: formData, enhance, message, delayed } = form;
+	const { form: expenseForm, enhance: expenceEnhance, message: expenseMessage, delayed: expenseDelayed } = form;
 </script>
 
-<div class="fab-container fixed bottom-8 right-8 z-[1]">
 	<button
-		aria-label="Add recurring expense"
-		class="flex items-center justify-center rounded-full bg-purple-500 p-2 font-bold text-white shadow-lg transition-all duration-300 hover:bg-purple-600 focus:outline-none focus:ring-4 focus:ring-blue-300 sm:p-3"
+		aria-label="Add expense"
+        class="inline-flex items-center justify-center rounded-lg bg-purple-600 px-4 py-2.5 text-sm
+        font-medium text-white transition-colors hover:bg-purple-700 focus:outline-none
+        focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 dark:bg-purple-700
+        dark:hover:bg-purple-600"
 		onclick={() => (isDrawerOpen = true)}
 	>
 		<Plus class="h-5 w-5 sm:h-6 sm:w-6" />
-		<span class="ml-2 hidden text-xs sm:inline-block sm:text-sm">Add Recurring Expense</span>
+		<span class="ml-2 hidden text-xs sm:inline-block sm:text-sm">Add Expense</span>
 	</button>
-</div>
+
 
 <Dialog.Root bind:open={isDrawerOpen}>
 	<Dialog.Content class="p-6">
@@ -48,14 +50,14 @@
 			<Dialog.Title>Add New Recurring Expense</Dialog.Title>
 			<Dialog.Description>Fill in the details of the recurring expense and click save.</Dialog.Description>
 		</Dialog.Header>
-		<form method="POST" action="?/recurringexpense" use:enhance>
+		<form method="POST" action="?/expenses" use:expenceEnhance>
 			<Form.Field {form} name="budget_id">
 				<Form.Control let:attrs>
 					<Form.Label>Budget</Form.Label>
 					<select
 						id="budget_id"
 						name="budget_id"
-						bind:value={$formData.budget_id}
+						bind:value={$expenseForm.budget_id}
 						class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
 						{...attrs}
 					>
@@ -74,7 +76,20 @@
 					<Input
 						{...attrs}
 						placeholder="Enter the name of the expense"
-						bind:value={$formData.name}
+						bind:value={$expenseForm.name}
+						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+					/>
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
+
+            <Form.Field {form} name="category">
+				<Form.Control let:attrs>
+					<Form.Label>Category Name</Form.Label>
+					<Input
+						{...attrs}
+						placeholder="Enter the name of the expense"
+						bind:value={$expenseForm.category}
 						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
 					/>
 				</Form.Control>
@@ -86,7 +101,7 @@
 					<Form.Label>Amount</Form.Label>
 					<CurrencyInput
 						{...attrs}
-						bind:value={$formData.amount}
+						bind:value={$expenseForm.amount}
 						currency={defaultCurrency}
 						placeholder="Enter amount"
 						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
@@ -101,26 +116,22 @@
 					<Input
 						{...attrs}
 						placeholder="Enter a description"
-						bind:value={$formData.description}
+						bind:value={$expenseForm.description}
 						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
 					/>
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Field {form} name="recurrence_interval">
+			<Form.Field {form} name="date_occurred">
 				<Form.Control let:attrs>
-					<Form.Label>Recurrence Interval</Form.Label>
-					<select
+					<Form.Label>Due Date</Form.Label>
+					<Input
+						type="datetime-local"
 						{...attrs}
-						bind:value={$formData.recurrence_interval}
-						class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-					>
-						<option value="daily">Daily</option>
-						<option value="weekly">Weekly</option>
-						<option value="monthly">Monthly</option>
-						<option value="yearly">Yearly</option>
-					</select>
+						bind:value={$expenseForm.due_date}
+						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+					/>
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
@@ -128,9 +139,9 @@
 			<button
 				type="submit"
 				class="mt-4 flex w-full items-center justify-center rounded bg-blue-500 p-2 text-white shadow hover:bg-blue-700 disabled:bg-gray-400"
-				disabled={$delayed}
+				disabled={$expenseDelayed}
 			>
-				{#if $delayed}
+				{#if $expenseDelayed}
 					<svg
 						width="20"
 						height="20"

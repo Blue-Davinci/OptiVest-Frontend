@@ -55,7 +55,7 @@
 			currency: data?.userInformation?.currency_code ?? 'USD'
 		}).format(Number(amount));
 	};
-	/// =========================================
+
 </script>
 
 <CreateRecurringExpense {data} {budgetIDNames} {defaultCurrency} />
@@ -89,7 +89,7 @@
 
 	<!-- Regular Expenses Section -->
 	{#if filteredExpenses?.length > 0}
-		<RegularExpenseSection {filteredExpenses} {expenseSearchQuery} {formatAmount} {formatDate} />
+		<RegularExpenseSection {data} {defaultCurrency} {budgetIDNames} {filteredExpenses} {expenseSearchQuery} {formatAmount} {formatDate} />
 	{:else}
 		<RegularExpensesNotFound {expenseSearchQuery}/>
 	{/if}
