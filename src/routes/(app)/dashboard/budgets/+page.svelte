@@ -10,11 +10,13 @@
 	import { Search, Award, ChartBarIcon } from 'lucide-svelte';
 	import { fly, slide } from 'svelte/transition';
 	import lodash from 'lodash';
+	import UserSection from '$lib/layouts/common/usersection.svelte';
 
 	let { data } = $props();
 	let budgets = $derived(data?.data?.budgets ?? []);
 	let currencies = $derived(data?.currencies?.data?.currencies?.conversion_rates ?? {});
 	let budgetCategories = $derived(data?.budgetCategories?.data?.budget_categories ?? []);
+	let userInfo = $derived(data.userInformation);
 
 	let defaultCurrency = $state(data.userInformation.currency_code);
 	let searchQuery = $state('');
@@ -95,9 +97,7 @@
 	// States and calculations with safe fallbacks
 </script>
 
-<div class="container mx-auto mb-6 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-900">
-	<Headers />
-</div>
+<UserSection {userInfo} />
 {#if budgets.length !== 0}
 	<div class="flex flex-wrap justify-center gap-3 px-2 py-4"
 	in:fly={{ y: 200, duration: 400 }}

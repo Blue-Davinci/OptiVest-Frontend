@@ -5,6 +5,7 @@
 	import GoalTrackingcCarts from '$lib/layouts/goals/goaltrackingcharts.svelte';
 	import GoalsTrackingHistory from '$lib/layouts/goals/goalstrackinghistory.svelte';
 	import CreateGoal from '$lib/layouts/goals/creategoal.svelte';
+	import UserSection from '$lib/layouts/common/usersection.svelte';
 
 
 	let { data } = $props();
@@ -46,22 +47,7 @@
 </script>
 
 <div class="container mx-auto px-4 py-8">
-	{#if userInfo}
-		<div class="mb-8 flex items-center gap-4">
-			<img
-				src={userInfo.profile_url}
-				alt="Profile"
-				class="h-16 w-16 rounded-full border-2 border-primary object-cover shadow-lg"
-			/>
-			<div>
-				<h1 class="text-2xl font-bold">
-					Welcome, {userInfo.first_name}
-					{userInfo.last_name}
-				</h1>
-				<p class="text-muted-foreground">Track your financial goals and progress</p>
-			</div>
-		</div>
-	{/if}
+	<UserSection {userInfo} />
 
 	{#if !goalData.data.error && goalData.data.goals.length > 0}
 		<GoalsChart {goalData} {formatCurrency} {formatPercentage} {filteredGoals} />

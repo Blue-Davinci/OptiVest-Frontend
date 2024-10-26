@@ -5,7 +5,11 @@
 	import { deleteBudgetByBudgetID } from '$lib/dataservice/budgets/budgetsDataService';
 	import { PieChart } from 'layerchart';
 	import { schemeTableau10 } from 'd3-scale-chromatic';
-	import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS, DELETE_BUDGET_CONFIRMATION_MESSAGE } from '$lib/settings/constants.js';
+	import {
+		TOAST_TYPE_ERROR,
+		TOAST_TYPE_SUCCESS,
+		DELETE_BUDGET_CONFIRMATION_MESSAGE
+	} from '$lib/settings/constants.js';
 	import { toastManager } from '$lib/helpers/utilities.js';
 	import {
 		ChevronDown,
@@ -20,6 +24,7 @@
 	import { fly, fade } from 'svelte/transition';
 
 	let { defaultCurrency, budgetItem, performDelete } = $props();
+	$inspect(budgetItem);
 	let expandedBudget = $state(null);
 	let hasData = $state(
 		budgetItem.goal_summary.length > 0 || budgetItem.recurring_expenses.length > 0
@@ -74,6 +79,17 @@
 			console.error('Budget ID is invalid.');
 		}
 	}
+
+	function calculateTotalProjectedAmount(data) {
+  const recurringExpenses = data.recurring_expenses;
+  let totalProjectedAmount = 0;
+
+  recurringExpenses.forEach(expense => {
+    totalProjectedAmount += parseFloat(expense.projected_amount);
+  });
+
+  return totalProjectedAmount;
+}
 </script>
 
 <div
@@ -189,7 +205,7 @@
 						>Total Recurring Expenses</span
 					>
 					<p class="text-lg font-bold text-gray-900 dark:text-white">
-						${budgetItem.goal_summary_totals.projected_recurring_expenses}
+						${calculateTotalProjectedAmount(budgetItem)}
 					</p>
 				</div>
 				<div>
