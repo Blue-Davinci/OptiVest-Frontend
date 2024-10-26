@@ -51,7 +51,7 @@
 			name: 'Finance Tracker',
 			shortLabel: 'Trackers',
 			items: [
-				{ name: 'Expense Manager', icon: PiggyBank, url: '#1' },
+				{ name: 'Expense Manager', icon: PiggyBank, url: '/dashboard/expenses' },
 				{ name: 'Debt Manager', icon: Wallet, url: '/dashboard/debts' }
 			]
 		},

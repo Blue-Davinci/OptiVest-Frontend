@@ -1,30 +1,28 @@
-import {getGoalTrackingHistory} from '$lib/dataservice/goals/goalsDataService.js';
-import {getGoalProgressions} from '$lib/dataservice/dashboard/goalsDataService.js';
+import {getAllRecurringExpenses, getAllExpenses} from '$lib/dataservice/expenses/expensesDataService.js';
 import {getBudgetIDNames} from '$lib/dataservice/searchoptions/searchoptions.js';
-import {VITE_API_BASE_GOALS} from  '$env/static/private';
+import {VITE_API_BASE_EXPENSES_RECURRING} from '$env/static/private';
 import { checkAuthentication } from '$lib/helpers/auths';
 import { superValidate, message, setError} from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { goalSchema } from '$lib/settings/schema.js';
+import { expenseSchema } from '$lib/settings/schema.js';
 import { redirect } from '@sveltejs/kit';
 import { fail} from '@sveltejs/kit';
 
 export const load = async ({ fetch }) => {
     try{
-        let goalDataResponse = await getGoalProgressions({fetch}, 0, 10, '');
-        let goalsTrackingHistory = await getGoalTrackingHistory({fetch}, 0, 10, '');
-        let budgetIDNames = await getBudgetIDNames({fetch});
+        let expensesResponse = await getAllExpenses({fetch}, 0, 10, '');
+        let recurringExpensesResponse = await getAllRecurringExpenses({fetch}, 0, 10, '');
         return {
-            goalData: goalDataResponse,
-            goalsTrackingHistory,
-            budgetIDNames,
-            form: await superValidate(zod(goalSchema))
+            expenses: expensesResponse,
+            recurringExpenses: recurringExpensesResponse,
+            form: await superValidate(zod(expenseSchema)),
+            budgetIDNames: await getBudgetIDNames({fetch})
         }
     }catch(err){
-        console.log('[gthLD] ERROR: ', err.message);
+        console.log('[geLD] ERROR: ', err.message);
         return {
             status: 500,
-            error: '[gthLD]An error occured while fetching data'
+            error: '[geLD]An error occured while fetching data'
         }
     }
 }
@@ -33,16 +31,16 @@ export const actions = {
     default : async ({request, cookies}) => {
         let auth = checkAuthentication(cookies).user;
         if (!auth){
-            console.log('[gthAC] User is not authenticated, REDIRECTING..');
+            console.log('[geAC] User is not authenticated, REDIRECTING..');
             return redirect(303, `/login?redirectTo=/dashboard`);
         }
-        const form = await superValidate(request, zod(goalSchema));
+        const form = await superValidate(request, zod(expenseSchema));
         if (!form.valid) {
             return fail(400,{form});
         }
-        //console.log('[gthAC] Form data:', form.data);
+        //console.log('[geAC] Form data:', form.data);
         try{
-            const response = await fetch(VITE_API_BASE_GOALS, {
+            const response = await fetch(VITE_API_BASE_EXPENSES_RECURRING, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,17 +63,17 @@ export const actions = {
                 }
             }
             let responseData = await response.json();
-            return message(form,{
-                message: 'Goal created successfully',
+            return message(form, {
+                message : "recuring expense saved successfully",
                 data: responseData,
-                success: true
-            })
+                success : true
+            });
         }catch(err){
-            console.log('[gthAC] ERROR:', err.message);
-            return {
-                status: 500,
-                error: '[gthAC] An error occured while fetching data'
-            }
+            console.log('[geAC] ERROR: ', err.message);
+            return message(form, {
+                message: 'An error occured while saving the expense',
+                type: 'error'
+            });
         }
     }
 }

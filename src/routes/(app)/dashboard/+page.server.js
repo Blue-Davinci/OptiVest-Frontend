@@ -4,7 +4,7 @@ import {
     getGoalProgressions,
     getExpenseIncomeSummary
 } from '$lib/dataservice/dashboard/goalsDataService.js';
-import {getAllExpenses} from '$lib/dataservice/expenses/expenses.js';
+import {getAllExpenses} from '$lib/dataservice/expenses/expensesDataService.js';
 import {getPersonalFinanceSumary} from '$lib/dataservice/personalfinance/personalfinanceDataService.js';
 
 export const load = async ({fetch}) => {

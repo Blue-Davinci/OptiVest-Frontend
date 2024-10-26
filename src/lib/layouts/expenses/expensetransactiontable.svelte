@@ -11,8 +11,8 @@
 	} from 'lucide-svelte';
 	import Pagination from '../common/pagination.svelte';
 	import * as Table from '$lib/components/ui/table';
-	import { Button } from '$lib/components/ui/button'; // shadcn-svelte Button
-	import { getAllExpenses } from '$lib/dataservice/expenses/expenses.js';
+	import { Button } from '$lib/components/ui/button';
+	import { getAllExpenses } from '$lib/dataservice/expenses/expensesDataService.js';
 	import lodash from 'lodash';
 
 	const { debounce } = lodash;

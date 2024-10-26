@@ -7,14 +7,14 @@
 	import { toastManager } from '$lib/helpers/utilities.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { goalSchema } from '$lib/settings/schema.js';
+	import { expenseSchema } from '$lib/settings/schema.js';
 	import { Plus } from 'lucide-svelte';
 
 	let isDrawerOpen = $state(false);
 	let { data, defaultCurrency, budgetIDNames } = $props();
 
 	const form = superForm(data.form, {
-		validators: zodClient(goalSchema),
+		validators: zodClient(expenseSchema),
 		dataType: 'json',
 		invalidateAll: true,
 		onUpdated({ form }) {
@@ -24,7 +24,7 @@
 			} else if (form.message && !form.message.success) {
 				toastManager(TOAST_TYPE_ERROR, form.message.message);
 			} else {
-				console.log('An error happended', form);
+				console.log('An error happened', form);
 			}
 		}
 	});
@@ -33,47 +33,47 @@
 
 <div class="fab-container fixed bottom-8 right-8 z-[1]">
 	<button
-		aria-label="Add a goal"
+		aria-label="Add recurring expense"
 		class="flex items-center justify-center rounded-full bg-blue-500 p-2 font-bold text-white shadow-lg transition-all duration-300 hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 sm:p-3"
 		onclick={() => (isDrawerOpen = true)}
 	>
 		<Plus class="h-5 w-5 sm:h-6 sm:w-6" />
-		<span class="ml-2 hidden text-xs sm:inline-block sm:text-sm">Add A Goal</span>
+		<span class="ml-2 hidden text-xs sm:inline-block sm:text-sm">Add Recurring Expense</span>
 	</button>
 </div>
 
 <Dialog.Root bind:open={isDrawerOpen}>
 	<Dialog.Content class="p-6">
 		<Dialog.Header>
-			<Dialog.Title>Add New Goal</Dialog.Title>
-			<Dialog.Description>Fill in the details of the new goal and click save.</Dialog.Description>
+			<Dialog.Title>Add New Recurring Expense</Dialog.Title>
+			<Dialog.Description>Fill in the details of the recurring expense and click save.</Dialog.Description>
 		</Dialog.Header>
 		<form method="POST" use:enhance={enhance}>
 			<Form.Field {form} name="budget_id">
 				<Form.Control let:attrs>
-				  <Form.Label>Budget</Form.Label>
-				  <select
-					id="budget_id"
-					name="budget_id"
-					bind:value={$formData.budget_id}  
-					class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
-					{...attrs}
-				  >
-					<option value="" disabled>Select a budget</option>
-					{#each budgetIDNames as budget}
-					  <option value={budget.id}>{budget.name}</option> <!-- Display name, but set value as ID -->
-					{/each}
-				  </select>
+					<Form.Label>Budget</Form.Label>
+					<select
+						id="budget_id"
+						name="budget_id"
+						bind:value={$formData.budget_id}
+						class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+						{...attrs}
+					>
+						<option value="" disabled>Select a budget</option>
+						{#each budgetIDNames as budget}
+							<option value={budget.id}>{budget.name}</option>
+						{/each}
+					</select>
 				</Form.Control>
 				<Form.FieldErrors />
-			  </Form.Field>
+			</Form.Field>
 
 			<Form.Field {form} name="name">
 				<Form.Control let:attrs>
-					<Form.Label>Goal Name</Form.Label>
+					<Form.Label>Expense Name</Form.Label>
 					<Input
 						{...attrs}
-						placeholder="Enter the name of the goal"
+						placeholder="Enter the name of the expense"
 						bind:value={$formData.name}
 						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
 					/>
@@ -81,12 +81,12 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Field {form} name="current_amount">
+			<Form.Field {form} name="amount">
 				<Form.Control let:attrs>
-					<Form.Label>Current Amount</Form.Label>
+					<Form.Label>Amount</Form.Label>
 					<CurrencyInput
 						{...attrs}
-						bind:value={$formData.current_amount}
+						bind:value={$formData.amount}
 						currency={defaultCurrency}
 						placeholder="Enter amount"
 						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
@@ -95,71 +95,32 @@
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Field {form} name="target_amount">
+			<Form.Field {form} name="description">
 				<Form.Control let:attrs>
-					<Form.Label>Target Amount</Form.Label>
-					<CurrencyInput
-						{...attrs}
-						bind:value={$formData.target_amount}
-						currency={defaultCurrency}
-						placeholder="Enter amount"
-						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-					/>
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
-
-			<Form.Field {form} name="monthly_contribution">
-				<Form.Control let:attrs>
-					<Form.Label>Monthly Contribution</Form.Label>
-					<CurrencyInput
-						{...attrs}
-						bind:value={$formData.monthly_contribution}
-						currency={defaultCurrency}
-						placeholder="Enter amount"
-						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-					/>
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
-
-			<Form.Field {form} name="start_date">
-				<Form.Control let:attrs>
-					<Form.Label>Start Date</Form.Label>
+					<Form.Label>Description</Form.Label>
 					<Input
 						{...attrs}
-						type="date"
-						bind:value={$formData.start_date}
-						placeholder="Select start date"
+						placeholder="Enter a description"
+						bind:value={$formData.description}
 						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
 					/>
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
 
-			<Form.Field {form} name="end_date">
+			<Form.Field {form} name="recurrence_interval">
 				<Form.Control let:attrs>
-					<Form.Label>End Date</Form.Label>
-					<Input
+					<Form.Label>Recurrence Interval</Form.Label>
+					<select
 						{...attrs}
-						type="date"
-						bind:value={$formData.end_date}
-						placeholder="Select end date"
-						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-					/>
-				</Form.Control>
-				<Form.FieldErrors />
-			</Form.Field>
-
-			<Form.Field {form} name="status">
-				<Form.Control let:attrs>
-					<Form.Label>Status</Form.Label>
-					<Input
-						{...attrs}
-						disabled
-						bind:value={$formData.status}
-						class="block w-full rounded border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-					/>
+						bind:value={$formData.recurrence_interval}
+						class="w-full rounded-md border-gray-300 p-2 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+					>
+						<option value="daily">Daily</option>
+						<option value="weekly">Weekly</option>
+						<option value="monthly">Monthly</option>
+						<option value="yearly">Yearly</option>
+					</select>
 				</Form.Control>
 				<Form.FieldErrors />
 			</Form.Field>
@@ -183,7 +144,7 @@
 					</svg>
 					Submitting...
 				{:else}
-					Submit Goal
+					Submit Expense
 				{/if}
 			</button>
 		</form>

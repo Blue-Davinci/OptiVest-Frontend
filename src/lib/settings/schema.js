@@ -111,6 +111,22 @@ export const goalSchema = z.object({
   end_date: z.string().min(1, { message: 'End date is required' }).max(64, { message: 'End date must be less than 64 characters' }),
   status: z.string().min(1, { message: 'Status is required' }).max(64, { message: 'Status must be less than 64 characters' }).default('ongoing'),
  });
+ /*
+{
+    "budget_id": 1,
+    "amount": "3.50",
+    "name": "Buying the daily paper",
+    "description": "Daily newspaper",
+    "recurrence_interval": "daily"
+}
+ */
+export const expenseSchema = z.object({
+  budget_id: z.number().min(1, { message: 'Budget is required' }),
+  amount: z.number().min(1, { message: 'Amount must be greater than 0' }),
+  name: z.string().min(1, { message: 'Expense name is required' }).max(64, { message: 'Expense name must be less than 64 characters' }),
+  description: z.string().min(1, { message: 'Description is required' }).max(64, { message: 'Description must be less than 64 characters' }),
+  recurrence_interval: z.string().min(1, { message: 'Recurrence interval is required' }).max(64, { message: 'Recurrence interval must be less than 64 characters' }).default('monthly'),
+ });
 
 export const tokenSchema = z
 	.string({ required_error: 'A Token is required' })
