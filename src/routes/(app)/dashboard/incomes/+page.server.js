@@ -1,27 +1,21 @@
-import {getGoalTrackingHistory} from '$lib/dataservice/goals/goalsDataService.js';
-import {getGoalProgressions} from '$lib/dataservice/dashboard/goalsDataService.js';
-import {getBudgetIDNames} from '$lib/dataservice/searchoptions/searchoptions.js';
-import {VITE_API_BASE_GOALS} from  '$env/static/private';
+import {VITE_API_BASE_INCOME} from '$env/static/private';
+import {getAllIncomes} from '$lib/dataservice/incomes/incomeDataService.js';
+import {incomeSchema} from '$lib/settings/schema.js';
 import { checkAuthentication } from '$lib/helpers/auths';
 import { superValidate, message, setError} from 'sveltekit-superforms';
 import { zod } from 'sveltekit-superforms/adapters';
-import { goalSchema } from '$lib/settings/schema.js';
 import { redirect } from '@sveltejs/kit';
 import { fail} from '@sveltejs/kit';
 
 export const load = async ({ fetch }) => {
     try{
-        let goalDataResponse = await getGoalProgressions({fetch}, 0, 10, '');
-        let goalsTrackingHistory = await getGoalTrackingHistory({fetch}, 0, 10, '');
-        let budgetIDNames = await getBudgetIDNames({fetch});
+        let incomeDataResponse = await getAllIncomes({fetch}, 0, 10, '');
         return {
-            goalData: goalDataResponse,
-            goalsTrackingHistory,
-            budgetIDNames,
-            form: await superValidate(zod(goalSchema))
+            incomeData: incomeDataResponse,
+            form: await superValidate(zod(incomeSchema))
         }
     }catch(err){
-        console.log('[gthLD] ERROR: ', err.message);
+        console.log('[giLD] ERROR: ', err.message);
         return {
             status: 500,
             error: '[gthLD]An error occured while fetching data'
@@ -29,20 +23,20 @@ export const load = async ({ fetch }) => {
     }
 }
 
-export const actions = {
+export const actions ={
     default : async ({request, cookies}) => {
         let auth = checkAuthentication(cookies).user;
         if (!auth){
-            console.log('[gthAC] User is not authenticated, REDIRECTING..');
-            return redirect(303, `/login?redirectTo=/dashboard/goals`);
+            console.log('[giAC] User is not authenticated, REDIRECTING..');
+            return redirect(303, `/login?redirectTo=/dashboard/incomes`);
         }
-        const form = await superValidate(request, zod(goalSchema));
+        const form = await superValidate(request, zod(incomeSchema));
         if (!form.valid) {
             return fail(400,{form});
         }
         //console.log('[gthAC] Form data:', form.data);
         try{
-            const response = await fetch(VITE_API_BASE_GOALS, {
+            const response = await fetch(VITE_API_BASE_INCOME, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,21 +54,19 @@ export const actions = {
                 }else{
                     return message(form, {
                         message: errorData.error,
-                        success: false
+                        type: 'error'
                     });
                 }
             }
-            let responseData = await response.json();
-            return message(form,{
-                message: 'Goal created successfully',
-                data: responseData,
-                success: true
-            })
+            return message(form, {
+                message: 'Income added successfully',
+                type: 'success'
+            });
         }catch(err){
-            console.log('[gthAC] ERROR:', err.message);
+            console.log('[giAC] ERROR: ', err.message);
             return {
                 status: 500,
-                error: '[gthAC] An error occured while fetching data'
+                error: '[gthAC]An error occured while adding income'
             }
         }
     }

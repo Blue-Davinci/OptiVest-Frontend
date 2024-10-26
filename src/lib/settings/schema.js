@@ -1,9 +1,5 @@
 import { z } from 'zod';
 
-// Get the current date and time in ISO format
-const currentDateTime = new Date().toISOString();
-
-
 export const formSchema = z.object({
   email: z.string().min(2, 'Username must be at least 2 characters').max(50, 'Username must not exceed 50 characters'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
@@ -131,7 +127,15 @@ export const expenseSchema = z.object({
   category: z.string().min(1, { message: 'Category is required' }).max(64, { message: 'Category must be less than 64 characters' }),
   amount: z.number().min(1, { message: 'Amount must be greater than 0' }),
   description: z.string().min(1, { message: 'Description is required' }).max(64, { message: 'Description must be less than 64 characters' }),
-  date_occurred: z.string().min(1, { message: 'Date occurred is required' }).max(64, { message: 'Date occurred must be less than 64 characters' }).default(currentDateTime),
+  date_occurred: z.string().min(1, { message: 'Date occurred is required' }).max(64, { message: 'Date occurred must be less than 64 characters' }),
+ });
+
+export const incomeSchema = z.object({
+  source: z.string().min(1, { message: 'Source is required' }).max(64, { message: 'Source must be less than 64 characters' }),
+  currency_code: z.string().min(1, { message: 'Currency code is required' }).max(64, { message: 'Currency code must be less than 64 characters' }),
+  amount_original: z.number().min(1, { message: 'Amount must be greater than 0' }),
+  description: z.string().min(1, { message: 'Description is required' }).max(64, { message: 'Description must be less than 64 characters' }),
+  date_received: z.string().min(1, { message: 'Date received is required' }).max(64, { message: 'Date received must be less than 64 characters' }),
  });
 
 

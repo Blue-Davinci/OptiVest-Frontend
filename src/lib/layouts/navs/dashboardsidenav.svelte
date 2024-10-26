@@ -13,6 +13,7 @@
 		Bell,
 		Settings,
 		HelpCircle,
+		HandCoins,
 		Moon,
 		Sun,
 		Newspaper,
@@ -51,6 +52,7 @@
 			name: 'Finance Tracker',
 			shortLabel: 'Trackers',
 			items: [
+				{ name: 'Income Manager', icon: HandCoins, url: '/dashboard/incomes' },
 				{ name: 'Expense Manager', icon: PiggyBank, url: '/dashboard/expenses' },
 				{ name: 'Debt Manager', icon: Wallet, url: '/dashboard/debts' }
 			]
