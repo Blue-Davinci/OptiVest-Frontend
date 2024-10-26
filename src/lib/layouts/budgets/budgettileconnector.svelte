@@ -29,9 +29,8 @@
 	let formatNumber = (num) => parseFloat(num || 0).toLocaleString();
 </script>
 
-<!-- Tile for Highest Budget -->
-<HighestBudget {formatNumber} {highestBudget} />
-<!-- Tile for Most Frequent Currency -->
-<FrequentCurrencyBudget {mostFrequentCurrency} />
-<!-- Tile for Most Goals -->
-<MostGoalsBudget {mostGoalsBudget} />
+<div class="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 mb-2">
+		<HighestBudget {formatNumber} {highestBudget} />
+		<FrequentCurrencyBudget {mostFrequentCurrency} />
+		<MostGoalsBudget {mostGoalsBudget} />
+</div>

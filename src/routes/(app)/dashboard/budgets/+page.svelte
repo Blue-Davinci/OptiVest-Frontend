@@ -99,12 +99,7 @@
 
 <UserSection {userInfo} />
 {#if budgets.length !== 0}
-	<div class="flex flex-wrap justify-center gap-3 px-2 py-4"
-	in:fly={{ y: 200, duration: 400 }}
-	out:slide={{ y: -200, duration: 400 }}
-	>
 		<BudgetTileConnector {budgets} />
-	</div>
 {:else}
 	<TilesNotFound />
 {/if}
@@ -147,10 +142,4 @@
 
 <style>
 	/* Custom styles for responsiveness */
-
-	@media (min-width: 1024px) {
-		.container {
-			max-width: 80%;
-		}
-	}
 </style>

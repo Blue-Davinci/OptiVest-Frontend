@@ -24,7 +24,6 @@
 	import { fly, fade } from 'svelte/transition';
 
 	let { defaultCurrency, budgetItem, performDelete } = $props();
-	$inspect(budgetItem);
 	let expandedBudget = $state(null);
 	let hasData = $state(
 		budgetItem.goal_summary.length > 0 || budgetItem.recurring_expenses.length > 0
@@ -81,15 +80,23 @@
 	}
 
 	function calculateTotalProjectedAmount(data) {
-  const recurringExpenses = data.recurring_expenses;
-  let totalProjectedAmount = 0;
+		let totalProjectedAmount = 0;
 
-  recurringExpenses.forEach(expense => {
-    totalProjectedAmount += parseFloat(expense.projected_amount);
-  });
+		// Iterate through each budget in the data
+		if (data && data.budgets) {
+			data.budgets.forEach((budget) => {
+				// Iterate through each recurring expense for the current budget
+				if (budget.recurring_expenses && budget.recurring_expenses.length > 0) {
+					budget.recurring_expenses.forEach((expense) => {
+						// Accumulate the projected amount
+						totalProjectedAmount += parseFloat(expense.projected_amount);
+					});
+				}
+			});
+		}
 
-  return totalProjectedAmount;
-}
+		return totalProjectedAmount;
+	}
 </script>
 
 <div
@@ -205,7 +212,7 @@
 						>Total Recurring Expenses</span
 					>
 					<p class="text-lg font-bold text-gray-900 dark:text-white">
-						${calculateTotalProjectedAmount(budgetItem)}
+						${budgetItem.goal_summary_totals.projected_recurring_expenses}
 					</p>
 				</div>
 				<div>

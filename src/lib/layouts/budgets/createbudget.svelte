@@ -28,8 +28,6 @@
 				isDrawerOpen = false;
 			} else if (form.message && !form.message.success) {
 				toastManager(TOAST_TYPE_ERROR, form.message.message);
-			} else {
-				console.log('An error happended', form);
 			}
 		}
 	});
@@ -41,7 +39,7 @@
 <div class="fab-container fixed bottom-8 right-8 z-[1]">
 	<button
 		aria-label="Add a budget"
-		class="flex items-center justify-center rounded-full bg-blue-500 p-2 font-bold text-white shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 sm:p-3"
+		class="flex items-center justify-center rounded-full bg-purple-500 p-2 font-bold text-white shadow-lg hover:bg-purple-600 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all duration-300 sm:p-3"
 		onclick={() => (isDrawerOpen = true)}
 	>
 		<!-- Icon -->
