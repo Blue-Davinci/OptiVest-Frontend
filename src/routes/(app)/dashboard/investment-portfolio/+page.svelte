@@ -1,3 +1,12 @@
+<script>
+
+
+let {data} = $props();
+
+$inspect(data);
+</script>
+
+
 <div class="container">
   <h1>Investment Portfolio</h1>
   <p>Here is a list of all your investments.</p>

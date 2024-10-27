@@ -10,7 +10,7 @@
 		Shield,
 		FileText
 	} from 'lucide-svelte';
-	import { getInvestmentAnalysisSummary } from '$lib/dataservice/investments/investment';
+	import { getInvestmentAnalysisSummary } from '$lib/dataservice/investments/investmentDataService';
 
 	let analysisSummary = $state(null);
 	let error = $state(null);
