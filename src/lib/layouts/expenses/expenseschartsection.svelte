@@ -28,7 +28,7 @@
 		if (!expenses?.length) return [];
 
 		const categoryTotals = expenses.reduce((acc, expense) => {
-			const category = expense.category;
+			const category = expense.category.toLowerCase();
 			acc[category] = (acc[category] || 0) + Number(expense.amount);
 			return acc;
 		}, {});
