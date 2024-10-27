@@ -138,6 +138,36 @@ export const incomeSchema = z.object({
   date_received: z.string().min(1, { message: 'Date received is required' }).max(64, { message: 'Date received must be less than 64 characters' }),
  });
 
+export const stockSchema = z.object({
+  stock_symbol: z.string().min(1, { message: 'Stock symbol is required' }).max(10, { message: 'Stock symbol must be less than 10 characters' }),
+  quantity: z.number().min(1, { message: 'Quantity must be greater than 0' }),
+  purchase_price: z.number().min(1, { message: 'Purchase price must be greater than 0' }),
+  current_value: z.number().min(1, { message: 'Current value must be greater than 0' }),
+  sector: z.string().min(1, { message: 'Sector is required' }).max(64, { message: 'Sector must be less than 64 characters' }),
+  purchase_date: z.string().min(1, { message: 'Purchase date is required' }).max(64, { message: 'Purchase date must be less than 64 characters' }),
+  dividend_yield: z.number().min(0, { message: 'Dividend yield must be greater than 0' }),
+ });
+
+export const bondSchema = z.object({
+  bond_symbol: z.string().min(1, { message: 'Bond symbol is required' }).max(10, { message: 'Bond symbol must be less than 10 characters' }),
+  quantity: z.number().min(1, { message: 'Quantity must be greater than 0' }),
+  purchase_price: z.number().min(1, { message: 'Purchase price must be greater than 0' }),
+  current_value: z.number().min(1, { message: 'Current value must be greater than 0' }),
+  coupon_rate: z.number().min(0, { message: 'Coupon rate must be greater than 0' }),
+  maturity_date: z.string().min(1, { message: 'Maturity date is required' }).max(64, { message: 'Maturity date must be less than 64 characters' }),
+  purchase_date: z.string().min(1, { message: 'Purchase date is required' }).max(64, { message: 'Purchase date must be less than 64 characters' }),
+ });
+
+
+export const investmentSchema = z.object({
+  investment_type: z.string().min(1, { message: 'Investment type is required' }).max(64, { message: 'Investment type must be less than 64 characters' }),
+  is_business: z.boolean().default(true),
+  acquired_at: z.string().min(1, { message: 'Acquired at is required' }).max(64, { message: 'Acquired at must be less than 64 characters' }),
+  valuation: z.number().min(1, { message: 'Valuation must be greater than 0' }),
+  location: z.string().min(1, { message: 'Location is required' }).max(64, { message: 'Location must be less than 64 characters' }),
+ });
+
+
 
 export const tokenSchema = z
 	.string({ required_error: 'A Token is required' })
