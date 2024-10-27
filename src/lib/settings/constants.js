@@ -4,7 +4,9 @@ import {
   ShieldCheck,
   Target,
   Wallet,
-  TrendingUp
+  TrendingUp,
+  Shuffle,
+  Shield
 } from 'lucide-svelte';
 // Define and export constants
 export const TOAST_TYPE_ERROR = 'error';
@@ -60,6 +62,30 @@ export const BUDGET_TIPS = [
       color: "text-purple-300"
   }
 ];
+
+    // Income tips with enhanced icons and descriptions
+export const INCOME_TIPS = [
+      {
+          icon: Shuffle,
+          title: "Diversify Income",
+          description: "Build multiple income streams to reduce financial risk and increase stability"
+      },
+      {
+          icon: Target,
+          title: "Smart Budgeting",
+          description: "Track expenses and set clear financial goals for better money management"
+      },
+      {
+          icon: Shield,
+          title: "Emergency Fund",
+          description: "Save 3-6 months of expenses for unexpected financial challenges"
+      },
+      {
+          icon: PiggyBank,
+          title: "Investment Growth",
+          description: "Create a balanced investment portfolio for long-term wealth building"
+      }
+  ];
 
 export const DELETE_BUDGET_CONFIRMATION_MESSAGE = `
   <p style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; margin: 0;">

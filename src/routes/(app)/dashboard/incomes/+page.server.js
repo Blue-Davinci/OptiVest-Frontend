@@ -1,4 +1,5 @@
 import {VITE_API_BASE_INCOME} from '$env/static/private';
+import {getCurrencies} from '$lib/dataservice/searchoptions/searchoptions';
 import {getAllIncomes} from '$lib/dataservice/incomes/incomeDataService.js';
 import {incomeSchema} from '$lib/settings/schema.js';
 import { checkAuthentication } from '$lib/helpers/auths';
@@ -12,6 +13,7 @@ export const load = async ({ fetch }) => {
         let incomeDataResponse = await getAllIncomes({fetch}, 0, 10, '');
         return {
             incomeData: incomeDataResponse,
+            currencies: await getCurrencies({fetch}),
             form: await superValidate(zod(incomeSchema))
         }
     }catch(err){
@@ -54,13 +56,15 @@ export const actions ={
                 }else{
                     return message(form, {
                         message: errorData.error,
-                        type: 'error'
+                        success: false
                     });
                 }
             }
+            let responseData = await response.json();
             return message(form, {
                 message: 'Income added successfully',
-                type: 'success'
+                data: responseData,
+                success: true
             });
         }catch(err){
             console.log('[giAC] ERROR: ', err.message);

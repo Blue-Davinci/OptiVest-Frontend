@@ -2,6 +2,8 @@
 	import { onMount } from 'svelte';
 	import Themer from '../common/themer.svelte';
 	import {
+		Activity,
+		ChartCandlestick,
 		LayoutDashboard,
 		DollarSign,
 		Target,
@@ -36,7 +38,6 @@
 			name: 'Main',
 			shortLabel: 'Main',
 			items: [
-				{ name: 'Home', icon: Home, url: '/' },
 				{ name: 'Dashboard', icon: LayoutDashboard, url: '/dashboard' }
 			]
 		},
@@ -55,6 +56,14 @@
 				{ name: 'Income Manager', icon: HandCoins, url: '/dashboard/incomes' },
 				{ name: 'Expense Manager', icon: PiggyBank, url: '/dashboard/expenses' },
 				{ name: 'Debt Manager', icon: Wallet, url: '/dashboard/debts' }
+			]
+		},
+		{
+			name: "Portfolio",
+			shortLabel: "Portfolio",
+			items: [
+				{ name: "Investment Portfolio", icon: Activity, url: "/dashboard/investment-portfolio" },
+				{ name: "Finance Analysis", icon: ChartCandlestick, url: "/dashboard/personal-finance" }
 			]
 		},
 		{
