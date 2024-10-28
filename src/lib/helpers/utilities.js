@@ -34,6 +34,9 @@ function buildFeedFollowUrl(baseUrl, params) {
   if (params.page_size && params.page_size > 0) {
       queryParts.push(`page_size=${encodeURIComponent(params.page_size)}`);
   }
+  if(params.is_educational){
+      queryParts.push(`is_educational=${encodeURIComponent(params.is_educational)}`);
+  }
 
   return queryParts.length > 0 ? `${baseUrl}?${queryParts.join('&')}` : baseUrl;
 }

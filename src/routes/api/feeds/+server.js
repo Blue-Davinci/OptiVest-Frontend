@@ -1,15 +1,24 @@
 import {VITE_API_BASE_FEEDS} from '$env/static/private';
+import {buildFeedFollowUrl} from '$lib/helpers/utilities.js';
 import { checkAuthentication } from '$lib/helpers/auths';
 import { json, redirect } from '@sveltejs/kit';
 
-export const GET = async({ cookies }) => {
+export const GET = async({ cookies, url }) => {
+    let params = {
+		name: url.searchParams.get('name'),
+        is_educational: url.searchParams.get('is_educational'),
+		page: url.searchParams.get('page'),
+		page_size: url.searchParams.get('page_size')
+	};
     let auth = checkAuthentication(cookies).user;
     if (!auth){
         console.log('GFIEP Server: User is not authenticated, REDIRECTING..');
-        return redirect(303, `/login?redirectTo=/dashboard`);
+        return redirect(303, `/login?redirectTo=/dashboard/feeds`);
     }
+    let finalEndpoint = buildFeedFollowUrl(VITE_API_BASE_FEEDS, params);
+    console.log('GFIEP Server: Final Endpoint:', finalEndpoint);
     try{
-        const response = await fetch(VITE_API_BASE_FEEDS, {
+        const response = await fetch(finalEndpoint, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

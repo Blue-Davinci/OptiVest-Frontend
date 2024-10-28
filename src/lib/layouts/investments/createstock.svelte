@@ -15,7 +15,7 @@
 
     let { data, defaultCurrency } = $props();
     let isDrawerOpen = $state(false);
-    $inspect(data.stockForm);
+    //data.stockForm);
     const form = superForm(data.stockForm, {
 		validators: zodClient(stockSchema),
 		dataType: 'json',

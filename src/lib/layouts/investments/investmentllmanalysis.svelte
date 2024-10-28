@@ -3,7 +3,7 @@
 
 	let { investmentAnalysis, formatPercentage, getPerformanceColorClass, formatCurrency } = $props();
 
-	console.log('Investment Analysis: ', investmentAnalysis);
+	//console.log('Investment Analysis: ', investmentAnalysis);
 </script>
 
 {#if investmentAnalysis?.Analysis}
