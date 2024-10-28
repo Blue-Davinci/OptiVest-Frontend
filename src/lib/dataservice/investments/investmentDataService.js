@@ -155,9 +155,44 @@ const getAllAlternativeInvestments =  async({ fetch: customFetch } = {}, page = 
     }
 }
 
+const getInvestmentAnalysis = async({ fetch: customFetch } = {})=>{
+    let fetchFunc = customFetch || fetch; // Use custom fetch if provided, else use global fetch
+    let investmentAnalysisURL = '/api/investments/analysis';
+    try{
+        const response = await fetchFunc(investmentAnalysisURL, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (!response.ok){
+            let errorData = await response.json();
+            return {
+                success: false,
+                status: response.status,
+                error: errorData.error
+            }
+        }
+        let responseData = await response.json();
+        return {
+            success: true,
+            status: response.status,
+            data: responseData
+        }
+    }catch(err){
+        console.log("[gaDS] ERROR: ", err.message);
+        return {
+            success: false,
+            status: 500,
+            error: '[gpfsDS]An error occured while fetching data'
+        }
+    }
+}
+
 export{
     getInvestmentAnalysisSummary,
     getAllStocks,
     getAllBonds,
-    getAllAlternativeInvestments
+    getAllAlternativeInvestments,
+    getInvestmentAnalysis
 }

@@ -9,6 +9,7 @@
 	
 	let { data, formatCurrency, formatPercentage, alternativeInvestments, altSearchQuery, filterAlternatives, formatDate } = $props();
 	
+	//$inspect(alternativeInvestments);
 	// State management
 	let sortBy = $state('valuation');
 	let sortOrder = $state('desc');

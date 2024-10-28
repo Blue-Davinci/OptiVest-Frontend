@@ -1,4 +1,6 @@
 <script>
+	import {getInvestmentAnalysis} from '$lib/dataservice/investments/investmentDataService.js';
+	import {invalidateAll} from '$app/navigation';
   import InvestmentHeader from '$lib/layouts/investments/investmentheader.svelte';
   import InvestmentTileConnector from '$lib/layouts/investments/investmenttileconnector.svelte';
   import InvestmentRedFlag from '$lib/layouts/investments/investmentredflag.svelte';
@@ -20,6 +22,13 @@
 	let stockSearchQuery = $state('');
 	let bondSearchQuery = $state('');
 	let altSearchQuery = $state('');
+
+	// perform a new analysis using getInvestmentAnalysis and invalidateall the 
+	async function handleNewAnalysis() {
+		const newAnalysis = await getInvestmentAnalysis();
+		console.log("Analysis: ", newAnalysis);
+		invalidateAll();
+	}
 
 	function filterStocks(stocks) {
 		return stocks.filter(
@@ -115,7 +124,7 @@
 
 <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 text-gray-900 dark:from-gray-900 dark:to-gray-800 dark:text-gray-100">
 	<!-- Header -->
-  <InvestmentHeader {data} />
+  <InvestmentHeader {data} {investmentAnalysis} {formatDate} {handleNewAnalysis} />
 
 	<div class="mx-auto max-w-7xl space-y-8 px-4 py-8">
     <InvestmentTileConnector {formatCurrency} {formatDate} {formatPercentage} {safeGet} {totalPortfolioValue }  {investmentAnalysis}/>
@@ -131,8 +140,8 @@
 		<AlternativeInvestmentSection {data} {formatCurrency} {formatPercentage} {alternativeInvestments} {altSearchQuery} {filterAlternatives} {formatDate} />
 
 		<!-- LLM Analysis -->
-		<InvestmentLlmanAlysis {investmentAnalysis} {formatPercentage} {getPerformanceColorClass } />
-	</div>
+		<InvestmentLlmanAlysis {investmentAnalysis} {formatPercentage} {formatCurrency} {getPerformanceColorClass } />
+	</div> 
 </main>
 
 <style>
