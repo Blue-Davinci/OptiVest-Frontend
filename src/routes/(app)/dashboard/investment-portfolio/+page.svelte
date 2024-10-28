@@ -15,7 +15,7 @@
 	let bondInvestments = $derived(data?.bondData?.data?.bond ?? []);
 	let stockInvestments = $derived(data?.stockData?.data?.stock ?? []);
 	let investmentAnalysis = $derived(data?.investmentAnalysis?.data?.llm_analysis ?? {});
-  $inspect(data);
+  	//$inspect(data);
 	// Add these state variables after your existing ones
 	let stockSearchQuery = $state('');
 	let bondSearchQuery = $state('');
@@ -124,7 +124,7 @@
     <!-- Main Charts -->
 		<Investmentcharts {stockInvestments} {bondInvestments} {alternativeInvestments} {calculateTotalPortfolioValue} {formatCurrency} {formatPercentage} {safeGet} />
 		<!-- Stock Investments -->
-		<StockInvestmentSection  {formatCurrency} {formatPercentage} {stockInvestments} {stockSearchQuery}  {getPerformanceColorClass} {filterStocks} />
+		<StockInvestmentSection  {data} {formatCurrency} {formatPercentage} {stockInvestments} {stockSearchQuery}  {getPerformanceColorClass} {filterStocks} />
 		<!-- Bond Investments -->
 		<BondInvestmentSection {formatCurrency} {formatPercentage} {bondInvestments} {bondSearchQuery} {filterBonds} {formatDate}/>
 		<!-- Alternative Investments -->

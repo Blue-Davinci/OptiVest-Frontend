@@ -46,15 +46,15 @@ export const load = async ({ fetch }) => {
 export const actions = {
     stockinvestment : async ({request, cookies}) => {
         let auth = checkAuthentication(cookies).user;
+        const stockForm = await superValidate(request, zod(stockSchema));
         if (!auth){
             console.log('[geAC] User is not authenticated, REDIRECTING..');
             return redirect(303, `/login?redirectTo=/dashboard/investment-portfolio`);
         }
-        const form = await superValidate(request, zod(stockSchema));
-        if (!form.valid) {
-            return fail(400,{form});
+        if (!stockForm.valid) {
+            return fail(400,{stockForm});
         }
-
+        console.log('[geAC] stockForm: ', stockForm);
         try{
             const response = await fetch(VITE_API_BASE_INVESTMENTS_STOCKS, {
                 method: 'POST',
@@ -62,34 +62,31 @@ export const actions = {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${auth}`
                 },
-                body: JSON.stringify(form.data)
+                body: JSON.stringify(stockForm.data)
             });
             if (!response.ok){
                 let errorData = await response.json();
                 // if it's an array, iterate over it and set the error for each field
                 if (Array.isArray(errorData.error)){
                     for (let field in errorData.error){
-                        setError(form, field, errorData.error[field]);
+                        setError(stockForm, field, errorData.error[field]);
                     }
                 }else{
-                    return message(form, {
+                    return message(stockForm, {
                         message: errorData.error,
                         success: false
                     });
                 }
             }
             let responseData = await response.json();
-            return {
+            return message(stockForm, {
                 message: 'Stock investment added successfully',
-                data: responseData,
+                data: responseData.stock,
                 success: true
-            };
+            })
         }catch(err){
             console.log('[geAC] ERROR: ', err.message);
-            return {
-                status: 500,
-                message: 'An error occured while saving the stock investment'
-            };
+            return fail(500, { stockForm, error: 'An unexpected error occurred' });;
         }
 
     },

@@ -1,8 +1,8 @@
 <script>
+import CreateStock from './createstock.svelte';
+import { ChartLine, ArrowRight, Search, Building, ArrowUpRight, ArrowDownRight } from 'lucide-svelte';
 
-import { ChartLine, Plus, Search, Building, ArrowUpRight, ArrowDownRight } from 'lucide-svelte';
-
-let { formatCurrency, formatPercentage, stockInvestments, stockSearchQuery, filterStocks, getPerformanceColorClass } = $props();
+let { data, formatCurrency, formatPercentage, stockInvestments, stockSearchQuery, filterStocks, getPerformanceColorClass } = $props();
 </script>
 
 {#if stockInvestments.length > 0}
@@ -16,12 +16,7 @@ let { formatCurrency, formatPercentage, stockInvestments, stockSearchQuery, filt
 					<ChartLine class="text-purple-500" size={24} />
 					<h2 class="text-2xl font-bold">Stock Investments</h2>
 				</div>
-				<button
-					class="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
-				>
-					<Plus size={16} />
-					Add Stock
-				</button>
+				<CreateStock {data} {formatCurrency} />
 			</div>
 			<div class="relative">
 				<Search class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -64,8 +59,10 @@ let { formatCurrency, formatPercentage, stockInvestments, stockSearchQuery, filt
 								<span class="inline-flex items-center gap-1">
 									{#if parseFloat(stock.analysis?.returns?.[0]) > 0}
 										<ArrowUpRight class="text-emerald-500" size={16} />
-									{:else}
+									{:else if parseFloat(stock.analysis?.returns?.[0]) < 0}
 										<ArrowDownRight class="text-rose-500" size={16} />
+									{:else}
+										<ArrowRight class="text-yellow-500" size={16} />
 									{/if}
 									<span class={getPerformanceColorClass(stock.analysis?.returns?.[0])}>
 										{formatPercentage(stock.analysis?.returns?.[0] ?? 0)}
