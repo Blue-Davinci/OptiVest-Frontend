@@ -54,7 +54,7 @@
       isFavorited = !isFavorited;
   
       // Call the onFavorite function with the post ID to handle any backend update
-      onFavorite?.(post.rss_feed.id);
+      onFavorite?.(post.rss_feed.id, post.feed_id);
     }
   </script>
   

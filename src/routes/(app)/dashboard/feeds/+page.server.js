@@ -1,8 +1,15 @@
 import {getFeeds} from '$lib/dataservice/feeds/feedsDataService.js';
 
-export const load = async ({ fetch }) => {
+export const load = async ({ fetch, url }) => {
     try {
-        let feedDataResponse = await getFeeds({ fetch }, 0, 0, '', '');
+        let is_educational = url.searchParams.get('is_educational');
+        let feedDataResponse 
+        // if is_educational is true, fetch educational feeds else fetch all feeds
+        if(is_educational === 'true'){
+            feedDataResponse = await getFeeds({ fetch }, 0, 0, '', 'true');;
+        }else{
+            feedDataResponse = await getFeeds({ fetch }, 0, 0, '');
+        }
         return {
             feedData: feedDataResponse
         };

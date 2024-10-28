@@ -76,7 +76,7 @@
 			shortLabel: 'News',
 			items: [
 				{ name: 'Finance News', icon: Newspaper, url: '/dashboard/feeds' },
-				{ name: 'Education', icon: GraduationCap, url: '/dashboard/educational' }
+				{ name: 'Education', icon: GraduationCap, url: '/dashboard/feeds?is_educational=true' }
 			]
 		}
 	];
