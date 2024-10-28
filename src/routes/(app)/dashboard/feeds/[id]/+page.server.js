@@ -30,7 +30,7 @@ export const load = async ({ params, cookies }) => {
         const responseData = await response.json(); 
         return {
             status: response.status,
-            feedData: responseData
+            postData: responseData
         };
     }catch(err){
         console.log('[gfLD] ERROR: ', err.message);
