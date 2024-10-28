@@ -1,7 +1,8 @@
 <script>
     import { BarChart4, Plus, Search, Percent, Calendar } from 'lucide-svelte';
+	import CreateBond from './createbond.svelte';
 
-    let { formatCurrency, formatPercentage, bondInvestments, bondSearchQuery, filterBonds, formatDate } = $props();
+    let { data, formatCurrency, formatPercentage, bondInvestments, bondSearchQuery, filterBonds, formatDate } = $props();
 </script>
 
 {#if bondInvestments.length > 0}
@@ -14,12 +15,7 @@
 					<BarChart4 class="text-purple-500" size={24} />
 					<h2 class="text-2xl font-bold">Bond Investments</h2>
 				</div>
-				<button
-					class="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
-				>
-					<Plus size={16} />
-					Add Bond
-				</button>
+				<CreateBond {data}/>
 			</div>
 			<div class="relative">
 				<Search class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />

@@ -126,9 +126,9 @@
 		<!-- Stock Investments -->
 		<StockInvestmentSection  {data} {formatCurrency} {formatPercentage} {stockInvestments} {stockSearchQuery}  {getPerformanceColorClass} {filterStocks} />
 		<!-- Bond Investments -->
-		<BondInvestmentSection {formatCurrency} {formatPercentage} {bondInvestments} {bondSearchQuery} {filterBonds} {formatDate}/>
+		<BondInvestmentSection {data}  {formatCurrency} {formatPercentage} {bondInvestments} {bondSearchQuery} {filterBonds} {formatDate}/>
 		<!-- Alternative Investments -->
-		<AlternativeInvestmentSection {formatCurrency} {formatPercentage} {alternativeInvestments} {altSearchQuery} {filterAlternatives} {formatDate} />
+		<AlternativeInvestmentSection {data} {formatCurrency} {formatPercentage} {alternativeInvestments} {altSearchQuery} {filterAlternatives} {formatDate} />
 
 		<!-- LLM Analysis -->
 		<InvestmentLlmanAlysis {investmentAnalysis} {formatPercentage} {getPerformanceColorClass } />

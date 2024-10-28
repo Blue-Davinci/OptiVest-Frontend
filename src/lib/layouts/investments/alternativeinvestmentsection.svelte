@@ -1,7 +1,8 @@
 <script>
 import { Building2, Plus, Search, Briefcase, MapPin, BadgeDollarSign, Percent, DollarSign, Calendar } from 'lucide-svelte';
+import CreateAlternative from './createalternative.svelte';
 
-let { formatCurrency, formatPercentage, alternativeInvestments, altSearchQuery, filterAlternatives, formatDate } = $props();
+let { data, formatCurrency, formatPercentage, alternativeInvestments, altSearchQuery, filterAlternatives, formatDate } = $props();
 </script>
 
 {#if alternativeInvestments.length > 0}
@@ -14,12 +15,7 @@ let { formatCurrency, formatPercentage, alternativeInvestments, altSearchQuery, 
 							<Building2 class="text-purple-500" size={24} />
 							<h2 class="text-2xl font-bold">Alternative Investments</h2>
 						</div>
-						<button
-							class="flex items-center gap-2 rounded-lg bg-purple-600 px-4 py-2 text-white transition-colors hover:bg-purple-700"
-						>
-							<Plus size={16} />
-							Add Alternative
-						</button>
+						<CreateAlternative {data} />
 					</div>
 					<div class="relative">
 						<Search class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
@@ -37,7 +33,7 @@ let { formatCurrency, formatPercentage, alternativeInvestments, altSearchQuery, 
 							class="rounded-lg border border-gray-200 bg-gray-50 p-6 transition-all hover:shadow-md dark:border-gray-600 dark:bg-gray-700/50"
 						>
 							<h3 class="mb-4 text-xl font-semibold text-purple-600 dark:text-purple-400">
-								{alt.alternative.investment_name}
+								{alt.alternative.investment_name ? alt.alternative.investment_name : alt.alternative.investment_type}
 							</h3>
 							<div class="space-y-3">
 								<p class="flex items-center gap-2">

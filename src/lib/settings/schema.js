@@ -157,12 +157,26 @@ export const bondSchema = z.object({
   maturity_date: z.string().min(1, { message: 'Maturity date is required' }).max(64, { message: 'Maturity date must be less than 64 characters' }),
   purchase_date: z.string().min(1, { message: 'Purchase date is required' }).max(64, { message: 'Purchase date must be less than 64 characters' }),
  });
-
+/*
+    "investment_type": "Business",
+    "investment_name": "John's Law firm",
+    "is_business": true,
+    "quantity": 1,
+    "annual_revenue": "80000.00",
+    "acquired_at": "2024-08-10T00:00:00Z",
+    "profit_margin": "10.00",
+    "valuation": "200000.00",
+    "location": "Nairobi Kenya"
+*/
 
 export const investmentSchema = z.object({
   investment_type: z.string().min(1, { message: 'Investment type is required' }).max(64, { message: 'Investment type must be less than 64 characters' }),
+  investment_name: z.string().min(0, { message: 'Investment name is required' }).max(64, { message: 'Investment name must be less than 64 characters' }),
   is_business: z.boolean().default(true),
+  quantity: z.number().min(1, { message: 'Quantity must be greater than 0' }).default(1),
+  annual_revenue: z.number().min(0, { message: 'Annual revenue must be greater than 0' }),
   acquired_at: z.string().min(1, { message: 'Acquired at is required' }).max(64, { message: 'Acquired at must be less than 64 characters' }),
+  profit_margin: z.number().min(0, { message: 'Profit margin must be provided if it is a business' }),
   valuation: z.number().min(1, { message: 'Valuation must be greater than 0' }),
   location: z.string().min(1, { message: 'Location is required' }).max(64, { message: 'Location must be less than 64 characters' }),
  });

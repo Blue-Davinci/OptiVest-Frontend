@@ -23,14 +23,14 @@ import {
             console.log("Debt form thing:", form);
 			if (form.message && form.message.success) {
 				toastManager(TOAST_TYPE_SUCCESS, form.message.message);
-				console.log('Debt created:', form.message.data);
+				//console.log('Debt created:', form.message.data);
 				isDrawerOpen = false;
 			} else if (form.message && !form.message.success) {
                 toastManager(TOAST_TYPE_ERROR, form.message.message);
 			}
 		}
 	});
-	const { form: installmentForm, enhance: installmentEnhance, message: installmentMessage, delayed: installmentDelayed } = form;
+	const { form: installmentForm, enhance: installmentEnhance, message: installmentMessage, delayed } = form;
 </script>
 
 <div class="flex justify-end mb-4">
@@ -75,9 +75,9 @@ import {
 			<button
 				type="submit"
 				class="mt-4 flex w-full items-center justify-center rounded bg-blue-500 p-2 text-white shadow hover:bg-blue-700 disabled:bg-gray-400"
-				disabled={$installmentDelayed}
+				disabled={$delayed}
 			>
-				{#if $installmentDelayed}
+				{#if $delayed}
 					<svg
 						width="20"
 						height="20"

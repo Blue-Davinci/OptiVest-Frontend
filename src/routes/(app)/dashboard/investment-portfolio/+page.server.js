@@ -43,6 +43,11 @@ export const load = async ({ fetch }) => {
 	}
 };
 
+/*async function delayedFunction() {
+    console.log('Waiting for 3 seconds...');
+    await new Promise(resolve => setTimeout(resolve, 300)); // Wait for 3 seconds
+    return true
+  }*/
 export const actions = {
     stockinvestment : async ({request, cookies}) => {
         let auth = checkAuthentication(cookies).user;
@@ -86,7 +91,7 @@ export const actions = {
             })
         }catch(err){
             console.log('[geAC] ERROR: ', err.message);
-            return fail(500, { stockForm, error: 'An unexpected error occurred' });;
+            return fail(500, { stockForm, error: 'An unexpected error occurred' });
         }
 
     },
@@ -96,11 +101,10 @@ export const actions = {
             console.log('[geAC] User is not authenticated, REDIRECTING..');
             return redirect(303, `/login?redirectTo=/dashboard/investment-portfolio`);
         }
-        const form = await superValidate(request, zod(bondSchema));
-        if (!form.valid) {
-            return fail(400,{form});
+        const bondForm = await superValidate(request, zod(bondSchema));
+        if (!bondForm.valid) {
+            return fail(400,{bondForm});
         }
-
         try{
             const response = await fetch(VITE_API_BASE_INVESTMENTS_BONDS, {
                 method: 'POST',
@@ -108,34 +112,31 @@ export const actions = {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${auth}`
                 },
-                body: JSON.stringify(form.data)
+                body: JSON.stringify(bondForm.data)
             });
             if (!response.ok){
                 let errorData = await response.json();
                 // if it's an array, iterate over it and set the error for each field
                 if (Array.isArray(errorData.error)){
                     for (let field in errorData.error){
-                        setError(form, field, errorData.error[field]);
+                        setError(bondForm, field, errorData.error[field]);
                     }
                 }else{
-                    return message(form, {
+                    return message(bondForm, {
                         message: errorData.error,
                         success: false
                     });
                 }
             }
             let responseData = await response.json();
-            return {
+            return message(bondForm, {
                 message: 'Bond investment added successfully',
-                data: responseData,
+                data: responseData.bond,
                 success: true
-            };
+            })
         }catch(err){
             console.log('[geAC] ERROR: ', err.message);
-            return {
-                status: 500,
-                message: 'An error occured while saving the bond investment'
-            };
+            return fail(500, { bondForm, error: 'An unexpected error occurred' });
         }
     },
     alternativeinvestment : async ({request, cookies}) => {
@@ -144,9 +145,9 @@ export const actions = {
             console.log('[geAC] User is not authenticated, REDIRECTING..');
             return redirect(303, `/login?redirectTo=/dashboard/investment-portfolio`);
         }
-        const form = await superValidate(request, zod(investmentSchema));
-        if (!form.valid) {
-            return fail(400,{form});
+        const alternativeForm = await superValidate(request, zod(investmentSchema));
+        if (!alternativeForm.valid) {
+            return fail(400,{alternativeForm});
         }
 
         try{
@@ -156,28 +157,28 @@ export const actions = {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${auth}`
                 },
-                body: JSON.stringify(form.data)
+                body: JSON.stringify(alternativeForm.data)
             });
             if (!response.ok){
                 let errorData = await response.json();
                 // if it's an array, iterate over it and set the error for each field
                 if (Array.isArray(errorData.error)){
                     for (let field in errorData.error){
-                        setError(form, field, errorData.error[field]);
+                        setError(alternativeForm, field, errorData.error[field]);
                     }
                 }else{
-                    return message(form, {
+                    return message(alternativeForm, {
                         message: errorData.error,
                         success: false
                     });
                 }
             }
             let responseData = await response.json();
-            return {
+            return message(alternativeForm, {
                 message: 'Alternative investment added successfully',
-                data: responseData,
+                data: responseData.alternative,
                 success: true
-            };
+            })
         }catch(err){
             console.log('[geAC] ERROR: ', err.message);
             return {
