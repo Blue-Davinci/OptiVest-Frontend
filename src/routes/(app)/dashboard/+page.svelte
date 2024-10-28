@@ -40,23 +40,29 @@
 			<ExpenseIncomeSummary {expenseIncomeSummary} />
 		{/if}
 
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-			<!-- Chart Summary Fallback -->
-			<div class="lg:col-span-2">
-				{#if expenseIncomeSummary.length === 0}
-					<DashchartsNotFound />
-				{:else}
-					<ChartSummary {expenseIncomeSummary} />
-				{/if}
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[400px]">
+			<!-- Chart Summary Section -->
+			<div class="lg:col-span-2 bg-white rounded-lg shadow h-full">
+			  {#if expenseIncomeSummary.length === 0}
+				<DashchartsNotFound />
+			  {:else}
+				<ChartSummary {expenseIncomeSummary} class="h-full" />
+			  {/if}
 			</div>
-
-			<!-- Goal Progressions Fallback -->
-			{#if goalsData.length === 0}
+		  
+			<!-- Goal Progressions Section -->
+			<div class="bg-white rounded-lg shadow h-full">
+			  {#if goalsData.length === 0}
 				<DashGoalsNotFound />
-			{:else}
-				<GoalProgressions {goalsData} {getProgressColor} />
-			{/if}
-		</div>
+			  {:else}
+				<GoalProgressions 
+				  {goalsData} 
+				  {getProgressColor}
+				  class="h-full" 
+				/>
+			  {/if}
+			</div>
+		  </div>
 
 		<!-- Investment Analysis Summary Fallback -->
 		{#if investmentAnalysisSummary.length === 0}
