@@ -182,6 +182,9 @@ You will find:
 - The application uses different API connection strings based on the environment (development or production).
 - The settings can be found in the `.env.development` and `.env.production` files. The prod strings involve connections to & from the docker container.
 
+## 🚀 Deployment <a name = "deployment"></a>
+  **(Will Be Added Soon)**
+
 ## ⛏️ Built Using <a name = "built_using"></a>
 
 - [Node.js](https://nodejs.org/en/) - Server Environment
