@@ -133,6 +133,8 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## 🎈 Usage <a name="usage"></a>
 
+![Homepage Screenshot](./images/portfolio.png)
+
 <b>The basics of the app includes:</b>
 
 1. Homepage: This is the first page for users `http://localhost:5173` and contains the landing page 
