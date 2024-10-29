@@ -133,8 +133,6 @@ End with an example of getting some data out of the system or using it for a lit
 
 ## 🎈 Usage <a name="usage"></a>
 
-![Homepage Screenshot](./images/portfolio.png)
-
 <b>The basics of the app includes:</b>
 
 1. Homepage: This is the first page for users `http://localhost:5173` and contains the landing page 
@@ -185,6 +183,9 @@ You will find:
 - The settings can be found in the `.env.development` and `.env.production` files. The prod strings involve connections to & from the docker container.
 
 ## 🚀 Deployment <a name = "deployment"></a>
+
+![Homepage Screenshot](./images/portfolio.png)
+
   **(Will Be Added Soon)**
 
 ## ⛏️ Built Using <a name = "built_using"></a>
