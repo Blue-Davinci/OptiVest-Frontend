@@ -44,7 +44,7 @@
 
   <div class="chart-container">
     {#if processedChartData && processedChartData.length > 0}
-      <div class="h-[400px] p-4 border rounded bg-white dark:bg-gray-800">
+      <div class="h-[500px] p-4 border rounded bg-white dark:bg-gray-800">
         <AreaChart
           data={processedChartData} 
           x="date"  
