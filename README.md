@@ -20,7 +20,7 @@
     <br> 
 </p>
 
-[![Watch the video](https://img.youtube.com/vi/9VY3v9PmZkA/hqdefault.jpg)](https://www.youtube.com/watch?v=9VY3v9PmZkA)
+![Homepage Screenshot](./images/portfolio.png)
 
 ## 📝 Table of Contents
 
