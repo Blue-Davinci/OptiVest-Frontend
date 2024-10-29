@@ -11,7 +11,7 @@
 	let { data } = $props();
 
 	let defaultCurrency = $state(data.userInformation.currency_code);
-	let goalData = $derived(data.goalData );
+	let goalData = $derived(data?.goalData ?? {} );
 	let budgetIDNames = $derived(data?.budgetIDNames?.data?.budget_id_names ?? []);	
 	let goalTrackingHistory = $derived(data.goalsTrackingHistory);
 	let userInfo = $derived(data.userInformation);
@@ -49,7 +49,7 @@
 <div class="container mx-auto px-4 py-8">
 	<UserSection {userInfo} />
 
-	{#if !goalData.data.error && goalData.data.goals.length > 0}
+	{#if goalData?.data?.goals && !goalData?.data?.error && goalData?.data?.goals.length > 0}
 		<GoalsChart {goalData} {formatCurrency} {formatPercentage} {filteredGoals} />
 	{:else}
 		<GoalChartNotFound />

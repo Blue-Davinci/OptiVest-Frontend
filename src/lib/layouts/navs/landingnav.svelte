@@ -42,11 +42,20 @@
 				>
 			{:else}
 				<!-- Log out -->
-				<a
-					href="/logout"
-					class="rounded-md bg-white px-4 py-2 font-semibold text-blue-700 transition duration-300 hover:bg-gray-100"
-					>Log Out</a
-				>
+<!-- Log out -->
+<div class="mt-4">
+	<form method="POST" action="/logout">
+		<button
+			type="submit"
+			class="rounded-md px-4 py-2 font-semibold text-blue-700 bg-white dark:bg-gray-800 dark:text-blue-300 
+                   hover:bg-blue-600 hover:text-white dark:hover:bg-blue-500 dark:hover:text-gray-100 
+                   transition duration-300 shadow-md"
+		>
+			Logout
+		</button>
+	</form>
+</div>
+
 			{/if}
 		</div>
 		<button

@@ -49,14 +49,14 @@
             <!-- Animated buttons with enhanced hover effects -->
             <div class="mb-12 flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4 opacity-0 animate-fade-in-up delay-700">
                 <a
-                    href="#get-started"
+                    href="/signup"
                     class="group relative overflow-hidden rounded-md bg-blue-600 px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-blue-700 hover:shadow-lg hover:scale-105"
                 >
                     <span class="relative z-10">Get Started</span>
                     <div class="absolute inset-0 -translate-x-full group-hover:translate-x-0 bg-gradient-to-r from-blue-500 to-blue-700 transition-transform duration-500 ease-out"></div>
                 </a>
                 <a
-                    href="#learn-more"
+                    href="https://github.com/Blue-Davinci/OptiVest-Frontend"
                     class="group relative overflow-hidden rounded-md border border-white px-6 py-3 font-semibold text-white transition-all duration-300 hover:bg-white hover:text-blue-600 hover:shadow-lg hover:scale-105"
                 >
                     <span class="relative z-10">Visit Github</span>
