@@ -1,47 +1,114 @@
-# OptiVest Frontend
+<p align="center">
+  <a href="" rel="noopener">
+ <img width=300px height=190px src="https://i.ibb.co/2tkXm7R/optivest-high-resolution-logo-transparent.png" alt="Project logo"></a>
+</p>
 
-This is the Svelte-powered frontend for OptiVest, an AI-powered financial advisor designed to help you manage savings, incomes, debts, expenses, perform portfolio management, and forecast future financial trends.
+<h3 align="center">optivest-frontend</h3>
 
-**PLEASE NOTE:** This is a placeholder readme as I proceed with the development.
+<div align="center">
 
-## Features
-- User-friendly interface for managing savings, incomes, debts, and expenses
-- Interactive portfolio management and financial goal setting
-- Real-time financial data visualization and analysis
-- Secure communication with the backend for financial forecasting
+[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![GitHub Issues](https://img.shields.io/github/issues/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/issues)
+[![GitHub Pull Requests](https://img.shields.io/github/issues-pr/kylelobo/The-Documentation-Compendium.svg)](https://github.com/kylelobo/The-Documentation-Compendium/pulls)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
 
+</div>
 
-## Creating a project
+---
 
-If you're seeing this, you've probably already done this step. Congrats!
+<p align="center"> Few lines describing your project.
+    <br> 
+</p>
 
-```bash
-# create a new project in the current directory
-npm create svelte@latest
+## 📝 Table of Contents
 
-# create a new project in my-app
-npm create svelte@latest my-app
+- [About](#about)
+- [Getting Started](#getting_started)
+- [Deployment](#deployment)
+- [Usage](#usage)
+- [Built Using](#built_using)
+- [TODO](../TODO.md)
+- [Contributing](../CONTRIBUTING.md)
+- [Authors](#authors)
+- [Acknowledgments](#acknowledgement)
+
+## 🧐 About <a name = "about"></a>
+
+Write about 1-2 paragraphs describing the purpose of your project.
+
+## 🏁 Getting Started <a name = "getting_started"></a>
+
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+
+### Prerequisites
+
+What things you need to install the software and how to install them.
+
+```
+Give examples
 ```
 
-## Developing
+### Installing
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+A step by step series of examples that tell you how to get a development env running.
 
-```bash
-npm run dev
+Say what the step will be
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+```
+Give the example
 ```
 
-## Building
+And repeat
 
-To create a production version of your app:
-
-```bash
-npm run build
+```
+until finished
 ```
 
-You can preview the production build with `npm run preview`.
+End with an example of getting some data out of the system or using it for a little demo.
 
-> To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
+## 🔧 Running the tests <a name = "tests"></a>
+
+Explain how to run the automated tests for this system.
+
+### Break down into end to end tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+### And coding style tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+## 🎈 Usage <a name="usage"></a>
+
+Add notes about how to use the system.
+
+## 🚀 Deployment <a name = "deployment"></a>
+
+Add additional notes about how to deploy this on a live system.
+
+## ⛏️ Built Using <a name = "built_using"></a>
+
+- [MongoDB](https://www.mongodb.com/) - Database
+- [Express](https://expressjs.com/) - Server Framework
+- [VueJs](https://vuejs.org/) - Web Framework
+- [NodeJs](https://nodejs.org/en/) - Server Environment
+
+## ✍️ Authors <a name = "authors"></a>
+
+- [@kylelobo](https://github.com/kylelobo) - Idea & Initial work
+
+See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
+
+## 🎉 Acknowledgements <a name = "acknowledgement"></a>
+
+- Hat tip to anyone whose code was used
+- Inspiration
+- References
