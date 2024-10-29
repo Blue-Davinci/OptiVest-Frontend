@@ -20,7 +20,7 @@
     <br> 
 </p>
 
-![Homepage Screenshot](./images/portfolio.png)
+![Homepage Screenshot](./images/landing.png)
 
 ## 📝 Table of Contents
 
