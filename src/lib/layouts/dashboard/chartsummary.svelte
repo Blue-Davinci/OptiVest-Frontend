@@ -44,7 +44,7 @@
 
   <div class="chart-container">
     {#if processedChartData && processedChartData.length > 0}
-      <div class="h-[500px] p-4 border rounded bg-white dark:bg-gray-800">
+      <div class="h-[550px] p-4 border border-gray-200 dark:border-gray-700 rounded bg-white dark:bg-gray-800">
         <AreaChart
           data={processedChartData} 
           x="date"  
@@ -70,10 +70,11 @@
         />
       </div>
     {:else}
-      <p>No data available for the chart.</p>
+      <p class="text-center text-gray-600 dark:text-gray-400">No data available for the chart.</p>
     {/if}
   </div>
 </div>
+
 
 <style>
   .chart-container {

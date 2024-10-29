@@ -42,7 +42,7 @@
 
 		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[400px]">
 			<!-- Chart Summary Section -->
-			<div class="lg:col-span-2 bg-white rounded-lg shadow h-full">
+			<div class="lg:col-span-2 rounded-lg shadow h-full">
 			  {#if expenseIncomeSummary.length === 0}
 				<DashchartsNotFound />
 			  {:else}
@@ -51,7 +51,7 @@
 			</div>
 		  
 			<!-- Goal Progressions Section -->
-			<div class="bg-white rounded-lg shadow h-full">
+			<div class="rounded-lg shadow h-full">
 			  {#if goalsData.length === 0}
 				<DashGoalsNotFound />
 			  {:else}
