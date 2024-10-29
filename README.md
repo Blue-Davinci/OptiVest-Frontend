@@ -141,42 +141,42 @@ You will find:
             - Contact Us
             - Features
 2. User Dashboard: This is the gist of everything and contains all you'll need to administer your finances includeing:
-            - User management with:
-                - Login capability
-                - Account recovery
-                - Signup & Register
-                - Startup Wizard (in progress)
-                - User settings and profile changes (in progress)
-            - User Dashboard
-            - Personal Finance manager with:
-                - Budget Manager
-                - Goal Manager
-            - Personal Finance Tracker with:
-                - Expense Tracker
-                - Income Tracker
-                - Debt Tracker
-            - Group Manager (in progress) with:
-                - Create your group
-                - Manage your group including setting it as private or public
-                - Invite users, if private, and set goals, manage expenses together
-            - Investment Portfolio with:
-                - In depth analysis of uour potfolio
-                - Add stocks, bonds and alternative investmnets
-                - Manage these investments via setting indicators and reminders
-                - Ask for indepth analysis including risks and different information
-                - Portfolio rebalancing
-            - Personal Finance Portfolio
-                - In depth analysis of your personal finances
-                - Ask for in-depth analysis of your portfolio
-            - Feeds And Edication
-                - A ffeds section that allows you to peruse and gain actionable data & info
-                 on invetsments you own or follow.
-                - Like, un-like, save and share feeds to your friends and family.
-                - Gain educational materials from different finance educators.
-            - Payment Capability (in progress)
-            - Notification manager which include: (in progress)
-                - Management of your notifications and remonders
-                - Custom pings on different stock changes.
+- User management with:
+  - Login capability
+  - Account recovery
+  - Signup & Register
+  - Startup Wizard (in progress)
+  - User settings and profile changes (in progress)
+- User Dashboard with:
+  - Personal Finance manager with:
+     - Budget Manager
+     - Goal Manager
+  - Personal Finance Tracker with:
+      - Expense Tracker
+      - Income Tracker
+      - Debt Tracker
+  - Group Manager (in progress) with:
+      - Create your group
+      - Manage your group including setting it as private or public
+      - Invite users, if private, and set goals, manage expenses together
+  - Investment Portfolio with:
+      - In depth analysis of uour potfolio
+      - Add stocks, bonds and alternative investmnets
+      - Manage these investments via setting indicators and reminders
+      - Ask for indepth analysis including risks and different information
+      - Portfolio rebalancing
+  - Personal Finance Portfolio
+      - In depth analysis of your personal finances
+      - Ask for in-depth analysis of your portfolio
+  - Feeds And Edication
+      - A ffeds section that allows you to peruse and gain actionable data & info
+       on invetsments you own or follow.
+      - Like, un-like, save and share feeds to your friends and family.
+      - Gain educational materials from different finance educators.
+  - Payment Capability (in progress)
+  - Notification manager which include: (in progress)
+      - Management of your notifications and remonders
+      - Custom pings on different stock changes.
 
 ## A note:
 - The application uses different API connection strings based on the environment (development or production).
