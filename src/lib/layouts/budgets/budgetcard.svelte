@@ -97,6 +97,8 @@
 
 		return totalProjectedAmount;
 	}
+
+	$inspect(budgetItem);
 </script>
 
 <div
@@ -298,7 +300,7 @@
 									<span
 										class="rounded-full bg-red-100 px-2 py-1 text-sm font-medium text-red-700 dark:bg-red-600 dark:text-red-100"
 									>
-										Amount: ${expense.amount}
+										Amount: ${expense.projected_amount}
 									</span>
 								</li>
 							{/each}
