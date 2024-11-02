@@ -14,7 +14,7 @@
 </svelte:head>
 
 <div class="flex flex-col items-center justify-center h-screen p-4 transition-all duration-500">
-	<div class="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg transition-transform transform hover:scale-105">
+	<div class="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg w-full max-w-lg transition-transform transform hover:scale-[1.02]">
 		<div class="mb-4">
 			<h1 class="font-extrabold text-transparent bg-clip-text bg-center bg-cover leading-none" 
 			    style="background-image: url('https://i.ibb.co/W5xrrRN/bg.jpg'); font-size: 150px;">

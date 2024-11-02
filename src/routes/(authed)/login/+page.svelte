@@ -26,7 +26,7 @@
 				// http://localhost:5173/login?redirectTo=/dashboard/budgets
 				// Display the message using a toast library
 				//console.log(form.message.data);
-				if (form.message.status === 'success') {
+				if (form.message.success) {
 					let name = `${form.message.data.first_name} ${form.message.data.last_name}`;
 					let message = `${form.message.message} Welcome back, ${name}!`;
 					toastManager(TOAST_TYPE_SUCCESS, message);

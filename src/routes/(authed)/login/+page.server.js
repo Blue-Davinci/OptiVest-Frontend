@@ -41,7 +41,7 @@ export const actions = {
           }else{
             return message(form,{
               message:  errorData.error,
-              status: "failure"
+              success: false
             }, {
               status: 403
             })
@@ -59,7 +59,7 @@ export const actions = {
             {
               message: 'Login successful!',
               data: responseData.user,
-              status: 'success',
+              success: true,
             },
           );
 				} else {
@@ -69,7 +69,12 @@ export const actions = {
 
       } catch (error) {
         console.error('Fetch Error:', error);
-        return fail(500, { form, error: 'An unexpected error occurred' });
+        return message(form,{
+          message:  'An unexpected error occurred and we could not log you in',
+          success: false
+        }, {
+          status: 403
+        })
       }
   },
 };
