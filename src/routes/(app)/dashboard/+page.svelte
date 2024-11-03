@@ -40,7 +40,7 @@
 			<ExpenseIncomeSummary {expenseIncomeSummary} />
 		{/if}
 
-		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-[400px]">
+		<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 min-h-full">
 			<!-- Chart Summary Section -->
 			<div class="lg:col-span-2 rounded-lg shadow h-full">
 			  {#if expenseIncomeSummary.length === 0}

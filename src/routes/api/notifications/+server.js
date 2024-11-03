@@ -6,7 +6,6 @@ import { json, redirect } from '@sveltejs/kit';
 export const GET = async ({ cookies, url }) => {
 	let params = {
 		name: url.searchParams.get('name'),
-
 		page: url.searchParams.get('page'),
 		page_size: url.searchParams.get('page_size')
 	};
@@ -48,6 +47,7 @@ export const PATCH = async ({ cookies, url, request }) => {
     let notificationID = url.searchParams.get('notificationID');
     let finalEndpoint = `${VITE_API_BASE_NOTIFICATIONS}/${notificationID}`;
     let status =  await request.json();
+    console.log('PNIEP Server: Status:', status);
     console.log('PNIEP Server: Final Endpoint:', finalEndpoint);
     try{
         const response = await fetch(finalEndpoint, {
@@ -56,7 +56,7 @@ export const PATCH = async ({ cookies, url, request }) => {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${auth}`
             },
-            body: JSON.stringify(status)
+            body: JSON.stringify({status: status})
         });
         if (!response.ok){
             let errorData = await response.json();
@@ -67,6 +67,44 @@ export const PATCH = async ({ cookies, url, request }) => {
         return json(responseData);
     }catch(err){
         console.log("PNIEP-SE error: ", err);
+        return json({error: "An error occured while fetching data"});
+    }
+}
+
+export const DELETE = async ({ cookies, url }) => {
+    let auth = checkAuthentication(cookies).user;
+    if (!auth){
+        console.log('DNIEP Server: User is not authenticated, REDIRECTING..');
+        return redirect(303, `/login?redirectTo=/dashboard/notifications`);
+    }
+    let deleteall = url.searchParams.get('deleteall');
+    let finalEndpoint
+    // if delete all is "true" then do not include notificationID in the final endpoint
+    // thereby deleting all notifications otherwise delete the notification with the notificationID
+    if (deleteall === "true"){
+        finalEndpoint = VITE_API_BASE_NOTIFICATIONS;
+    }else{
+        let notificationID = url.searchParams.get('notificationID');
+        finalEndpoint = `${VITE_API_BASE_NOTIFICATIONS}/${notificationID}`;
+    }
+    console.log('DNIEP Server: Final Endpoint:', finalEndpoint);
+    try{
+        const response = await fetch(finalEndpoint, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${auth}`
+            }
+        });
+        if (!response.ok){
+            let errorData = await response.json();
+            return json({error: errorData.error}, {status: response.status});
+        }
+        let responseData = await response.json();
+        console.log('DNIEP Server: API Response:', responseData);
+        return json(responseData);
+    }catch(err){
+        console.log("DNIEP-SE error: ", err);
         return json({error: "An error occured while fetching data"});
     }
 }

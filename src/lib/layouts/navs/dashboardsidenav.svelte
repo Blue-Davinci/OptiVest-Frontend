@@ -1,5 +1,5 @@
 <script>
-	import { onMount } from 'svelte';
+	import { getContext, onMount } from 'svelte';
 	import Themer from '../common/themer.svelte';
 	import {
 		Activity,
@@ -30,6 +30,8 @@
 	let isDarkMode = $state(false);
 	let showHamburgerMenu = $state(false);
 
+	const sseContext = getContext('sseMessages');
+	let notificationCount = $derived(sseContext.count);
 	const navSections = [
 		{
 			name: 'Main',
@@ -81,11 +83,11 @@
 		}
 	];
 
-	const bottomItems = [
-		{ name: 'Notifications', icon: Bell, badge: 4, url: '#1' },
-		{ name: 'Settings', icon: Settings, url: '#1' },
-		{ name: 'Support', icon: HelpCircle, url: '#1' }
-	];
+	const bottomItems = $derived([
+    { name: 'Notifications', icon: Bell, badge: notificationCount, url: '/dashboard/notifications' },
+    { name: 'Settings', icon: Settings, url: '#1' },
+    { name: 'Support', icon: HelpCircle, url: '#1' }
+]);
 
 	function toggleSidebar() {
 		isOpen = !isOpen;
