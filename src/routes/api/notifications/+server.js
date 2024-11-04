@@ -15,7 +15,7 @@ export const GET = async ({ cookies, url }) => {
         return redirect(303, `/login?redirectTo=/dashboard/notifications`);
     }
     let finalEndpoint = buildFeedFollowUrl(VITE_API_BASE_NOTIFICATIONS, params);
-    console.log('GNEP Server: Final Endpoint:', finalEndpoint);
+    console.log('GNEP Server: Final GET Endpoint:', finalEndpoint);
     try{
         const response = await fetch(finalEndpoint, {
             method: 'GET',
@@ -48,7 +48,7 @@ export const PATCH = async ({ cookies, url, request }) => {
     let finalEndpoint = `${VITE_API_BASE_NOTIFICATIONS}/${notificationID}`;
     let status =  await request.json();
     console.log('PNIEP Server: Status:', status);
-    console.log('PNIEP Server: Final Endpoint:', finalEndpoint);
+    console.log('PNIEP Server: Final PATCH Endpoint:', finalEndpoint);
     try{
         const response = await fetch(finalEndpoint, {
             method: 'PATCH',
@@ -87,7 +87,7 @@ export const DELETE = async ({ cookies, url }) => {
         let notificationID = url.searchParams.get('notificationID');
         finalEndpoint = `${VITE_API_BASE_NOTIFICATIONS}/${notificationID}`;
     }
-    console.log('DNIEP Server: Final Endpoint:', finalEndpoint);
+    console.log('DNIEP Server: Final DELETE Endpoint:', finalEndpoint);
     try{
         const response = await fetch(finalEndpoint, {
             method: 'DELETE',
