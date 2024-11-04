@@ -1,7 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { browser } from '$app/environment';
-    import { TOAST_TYPE_ERROR, TOAST_TYPE_LOADING } from '$lib/settings/constants.js';
+    import { TOAST_TYPE_ERROR, TOAST_TYPE_RETRYING } from '$lib/settings/constants.js';
     import { toastManager } from '$lib/helpers/utilities.js';
     import { setContext } from 'svelte';
     import Dashboardsidenav from '$lib/layouts/navs/dashboardsidenav.svelte';
@@ -63,7 +63,7 @@
         pingTimeout = setTimeout(() => {
             if (!unmounted && !isConnectionValid()) {
                 toastManager(
-                    TOAST_TYPE_LOADING,
+                    TOAST_TYPE_RETRYING,
                     'Connection appears stale. Reconnecting...'
                 );
                 cleanupConnection();
@@ -154,7 +154,7 @@
                     status = 'reconnecting';
                     retryCount++;
                     toastManager(
-                        TOAST_TYPE_LOADING,
+                        TOAST_TYPE_RETRYING,
                         `Connection lost. Retrying... (${retryCount}/${maxRetries})`
                     );
                     connectSSE();

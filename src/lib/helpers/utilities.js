@@ -1,4 +1,4 @@
-import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS, TOAST_TYPE_LOADING, TOAST_TYPE_INFO } from '../settings/constants';
+import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS, TOAST_TYPE_LOADING, TOAST_TYPE_INFO, TOAST_TYPE_RETRYING } from '../settings/constants';
 import { toast } from 'svelte-sonner';
 
 function toastManager(type, message) {
@@ -12,6 +12,10 @@ function toastManager(type, message) {
         });
       } else if (type === TOAST_TYPE_LOADING) {
         toast.loading('Loading', {
+          description: message
+        });
+      }else if (type === TOAST_TYPE_RETRYING) {
+        toast.loading('Retrying', {
           description: message
         });
       } else if (type === TOAST_TYPE_INFO) {
