@@ -4,7 +4,8 @@
     let { notification, type = 'new', onMarkAsRead, onDelete } = $props();
 
     function formatDate(dateString) {
-        const date = new Date(dateString);
+        try{
+            const date = new Date(dateString);
         return new Intl.DateTimeFormat('en-US', {
             hour: 'numeric',
             minute: 'numeric',
@@ -12,6 +13,9 @@
             month: 'short',
             day: 'numeric'
         }).format(date);
+        }catch(e){
+            return dateString;
+        }
     }
 
     function getNotificationTypeStyles(notificationType) {

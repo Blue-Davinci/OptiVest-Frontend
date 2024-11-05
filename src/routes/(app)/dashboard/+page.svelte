@@ -1,4 +1,5 @@
 <script>
+	import { getContext } from 'svelte';
 	import { fly, slide } from 'svelte/transition';
 	import ExpensesNotFound from '$lib/layouts/dashboard/notfound/expensesnotfound.svelte';
 	import DashchartsNotFound from '$lib/layouts/dashboard/notfound/dashchartsnotfound.svelte';
@@ -13,6 +14,9 @@
 	import InvestmentAnalysisSummary from '$lib/layouts/financemanager/investmentanalysissummary.svelte';
 
 	let { data } = $props();
+	// Get the SSE context
+	const sseContext = getContext('sseMessages');
+	let budgetNotificationCount = $derived(sseContext.budgetCount);
 	let userInfo = $derived(data.userInformation);
 	let goalsData = $derived(data?.goalData?.data?.goals ?? []);
 	let expenseTransactions = $derived(data?.expenses?.data && !data.expenses.data.error ? data.expenses.data : {});
@@ -31,7 +35,7 @@
 <div class="min-h-screen bg-gray-100 p-8 dark:bg-gray-900" in:fly={{ y: 200, duration: 400 }} out:slide={{ y: -200, duration: 400 }}>
 	<div class="mx-auto max-w-7xl space-y-6">
 		
-		<WelcomeHeader {userInfo} />
+		<WelcomeHeader {userInfo} notificationCount={budgetNotificationCount} />
 
 		<!-- Expense Income Summary Fallback -->
 		{#if expenseIncomeSummary.length === 0}

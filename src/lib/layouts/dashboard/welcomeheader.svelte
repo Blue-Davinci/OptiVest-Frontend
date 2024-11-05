@@ -2,13 +2,12 @@
   import { Bell, BarChart, PieChart, CheckCircle, AlertCircle, Home } from 'lucide-svelte';
   import InvestmentAnalysisDrawer from '$lib/layouts/dashboard/investmentanalysisdrawer.svelte';
 
-  let { userInfo, notificationCount } = $props();
+  let { userInfo, notificationCount=0 } = $props();
   let firstName = $state(userInfo.first_name);
   let lastName = $state(userInfo.last_name);
   let currency = $state(userInfo.currency_code);
   let profileCompleted = $state(userInfo.profile_completed);
   let profileUrl = $state(userInfo.profile_url);
-  notificationCount = 4;
 
   // Notification click handler (for routing or action)
   const handleNotificationClick = () => {

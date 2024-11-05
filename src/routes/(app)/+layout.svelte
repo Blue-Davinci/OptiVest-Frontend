@@ -1,218 +1,213 @@
 <script>
-    import { onMount, onDestroy } from 'svelte';
-    import { browser } from '$app/environment';
-    import { TOAST_TYPE_ERROR, TOAST_TYPE_RETRYING } from '$lib/settings/constants.js';
-    import { toastManager } from '$lib/helpers/utilities.js';
-    import { setContext } from 'svelte';
-    import Dashboardsidenav from '$lib/layouts/navs/dashboardsidenav.svelte';
-    
-    let { children, data } = $props();
-    let status = $state('disconnected');
-    let retryInterval = 1000;
-    let maxRetries = 6;
-    let retryCount = 0;
-    let retrying = false;
-    let messages = $state([]);
-    let eventSource = null;
-    let unmounted = false;
-    let pingTimeout = null;
-    let lastMessageTime = Date.now();
-    let visibilityHandler = null;
-    
-    // Add timestamp and prevent caching
-    function getSSEUrl() {
-        return `/api/sse?client_id=${generateClientId()}&t=${Date.now()}`;
+import { onMount, onDestroy } from 'svelte';
+import { browser } from '$app/environment';
+import { TOAST_TYPE_ERROR, TOAST_TYPE_RETRYING } from '$lib/settings/constants.js';
+import { toastManager } from '$lib/helpers/utilities.js';
+import { setContext } from 'svelte';
+import Dashboardsidenav from '$lib/layouts/navs/dashboardsidenav.svelte';
+
+const ConnectionState = {
+    DISCONNECTED: 'disconnected',
+    CONNECTING: 'connecting',
+    CONNECTED: 'connected',
+    RECONNECTING: 'reconnecting',
+    ERROR: 'error'
+};
+
+class ConnectionManager {
+    constructor() {
+        this.eventSource = null;
+        this.retryCount = 0;
+        this.maxRetries = 6;
+        this.connectionId = this.generateConnectionId();
+        this.isCleaningUp = false;
+        this.lastActiveTime = Date.now();
+        this.cleanupCallbacks = new Set();
+        this.isDestroyed = false;
     }
-    
-    // Generate a unique client ID for this session
-    function generateClientId() {
-        return `client_${Math.random().toString(36).substr(2, 9)}`;
+
+    generateConnectionId() {
+        return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
     }
-    
-    function isConnectionValid() {
-        return eventSource && 
-               eventSource.readyState !== EventSource.CLOSED && 
-               eventSource.readyState !== EventSource.CONNECTING &&
-               (Date.now() - lastMessageTime) < 30000; // Consider connection stale after 30s
-    }
-    
-    function cleanupConnection() {
-        if (pingTimeout) {
-            clearTimeout(pingTimeout);
-            pingTimeout = null;
+
+    // Synchronous cleanup for unload events
+    cleanupSync() {
+        if (this.eventSource) {
+            this.eventSource.onopen = null;
+            this.eventSource.onmessage = null;
+            this.eventSource.onerror = null;
+            this.eventSource.close();
+            this.eventSource = null;
         }
-        
-        if (eventSource) {
-            try {
-                eventSource.onopen = null;
-                eventSource.onmessage = null;
-                eventSource.onerror = null;
-                eventSource.close();
-            } catch (error) {
-                console.error('Error cleaning up EventSource:', error);
-            }
-            eventSource = null;
+
+        if (this.healthCheckInterval) {
+            clearInterval(this.healthCheckInterval);
+            this.healthCheckInterval = null;
         }
     }
-    
-    function setupPingCheck() {
-        if (pingTimeout) {
-            clearTimeout(pingTimeout);
-        }
-        
-        pingTimeout = setTimeout(() => {
-            if (!unmounted && !isConnectionValid()) {
-                toastManager(
-                    TOAST_TYPE_RETRYING,
-                    'Connection appears stale. Reconnecting...'
-                );
-                cleanupConnection();
-                connectSSE();
-            }
-            setupPingCheck();
-        }, 30000); // Check every 30 seconds
-    }
-    
-    function connectSSE() {
-        if (!browser || unmounted) return;
-        
-        if (isConnectionValid()) {
-            console.log('SSE connection already active. Skipping new connection.');
-            return;
-        }
-    
-        cleanupConnection();
-    
-        console.log('Connecting to SSE...');
+
+    async cleanup() {
+        if (this.isCleaningUp) return;
+
+        this.isCleaningUp = true;
         try {
-            eventSource = new EventSource(getSSEUrl());
-    
-            eventSource.onopen = () => {
-                if (unmounted) {
-                    cleanupConnection();
+            // Execute cleanup callbacks
+            for (const callback of this.cleanupCallbacks) {
+                await callback();
+            }
+
+            this.cleanupSync();
+        } finally {
+            this.isCleaningUp = false;
+        }
+    }
+
+    addCleanupCallback(callback) {
+        this.cleanupCallbacks.add(callback);
+    }
+
+    removeCleanupCallback(callback) {
+        this.cleanupCallbacks.delete(callback);
+    }
+
+    incrementRetry() {
+        this.retryCount++;
+        return this.retryCount <= this.maxRetries;
+    }
+
+    resetRetry() {
+        this.retryCount = 0;
+    }
+
+    shouldRetry() {
+        return this.retryCount < this.maxRetries;
+    }
+}
+
+function createSSEStore() {
+    let _status = $state(ConnectionState.DISCONNECTED);
+    let _messages = $state([]);
+    let connectionManager = new ConnectionManager();
+    let unmounted = false;
+
+    function getSSEUrl() {
+        const params = new URLSearchParams({
+            connection_id: connectionManager.connectionId,
+            timestamp: Date.now().toString(),
+            retry_count: connectionManager.retryCount.toString()
+        });
+        return `/api/sse?${params.toString()}`;
+    }
+
+    async function connect() {
+        if (!browser || unmounted || connectionManager.isCleaningUp || 
+            connectionManager.eventSource || connectionManager.isDestroyed) return;
+
+        try {
+            await connectionManager.cleanup();
+            _status = ConnectionState.CONNECTING;
+
+            connectionManager.eventSource = new EventSource(getSSEUrl());
+
+            connectionManager.eventSource.onopen = () => {
+                if (unmounted || connectionManager.isDestroyed) {
+                    connectionManager.cleanupSync();
                     return;
                 }
-                
-                status = 'connected';
-                retryInterval = 1000;
-                retryCount = 0;
-                lastMessageTime = Date.now();
-                console.log('Connected to SSE.');
-                setupPingCheck();
+                _status = ConnectionState.CONNECTED;
+                connectionManager.resetRetry();
             };
-    
-            eventSource.onmessage = (event) => {
-                if (unmounted) {
-                    cleanupConnection();
+
+            connectionManager.eventSource.onmessage = (event) => {
+                if (unmounted || connectionManager.isDestroyed) {
+                    connectionManager.cleanupSync();
                     return;
                 }
-    
-                lastMessageTime = Date.now();
+
                 try {
                     const data = JSON.parse(event.data);
-                    messages = Array.isArray(data) 
-                        ? [...data, ...messages] 
-                        : [data, ...messages];
+                    _messages = Array.isArray(data) ? [...data, ..._messages] : [data, ..._messages];
                 } catch (error) {
                     console.error('Error parsing SSE message:', error);
                 }
             };
-    
-            eventSource.onerror = (error) => {
-                console.error('Error connecting to SSE endpoint:', error);
-                status = 'error';
-                cleanupConnection();
-    
-                if (!unmounted && !retrying) {
-                    retryConnection();
+
+            connectionManager.eventSource.onerror = async (error) => {
+                console.error('SSE connection error:', error);
+                _status = ConnectionState.ERROR;
+
+                if (!unmounted && !connectionManager.isDestroyed) {
+                    await handleRetry();
                 }
             };
         } catch (error) {
             console.error('Failed to create EventSource:', error);
-            if (!unmounted && !retrying) {
-                retryConnection();
+            if (!unmounted && !connectionManager.isDestroyed) {
+                await handleRetry();
             }
         }
     }
-    
-    function retryConnection() {
-        if (!browser || unmounted || retryCount >= maxRetries) {
-            if (!unmounted) {
-                toastManager(
-                    TOAST_TYPE_ERROR,
-                    'Maximum retry attempts reached. Please check your network connection.'
-                );
-                status = 'disconnected';
+
+    async function handleRetry() {
+        if (!browser || unmounted || connectionManager.isDestroyed) return;
+
+        if (connectionManager.shouldRetry()) {
+            _status = ConnectionState.RECONNECTING;
+            connectionManager.incrementRetry();
+
+            console.log(`Retry attempt ${connectionManager.retryCount}/${connectionManager.maxRetries}`);
+            toastManager(
+                TOAST_TYPE_RETRYING,
+                `Reconnecting... (${connectionManager.retryCount}/${connectionManager.maxRetries})`
+            );
+
+            const delay = Math.min(1000 * Math.pow(1.5, connectionManager.retryCount - 1), 15000);
+            await new Promise((resolve) => setTimeout(resolve, delay));
+
+            if (!unmounted && !connectionManager.isDestroyed) {
+                await connect();
             }
-            return;
-        }
-    
-        if (!retrying) {
-            retrying = true;
-            setTimeout(() => {
-                if (!unmounted) {
-                    status = 'reconnecting';
-                    retryCount++;
-                    toastManager(
-                        TOAST_TYPE_RETRYING,
-                        `Connection lost. Retrying... (${retryCount}/${maxRetries})`
-                    );
-                    connectSSE();
-                    retryInterval = Math.min(retryInterval * 2, 30000);
-                }
-                retrying = false;
-            }, retryInterval);
+        } else {
+            toastManager(TOAST_TYPE_ERROR, 'Connection lost. Please refresh the page.');
+            _status = ConnectionState.DISCONNECTED;
         }
     }
-    
-    // Handle visibility change
-    function handleVisibilityChange() {
-        if (browser && !document.hidden && !isConnectionValid()) {
-            console.log('Page became visible, reconnecting SSE...');
-            retryCount = 0; // Reset retry count on visibility change
-            connectSSE();
+
+    async function handleVisibilityChange() {
+        if (!browser || connectionManager.isDestroyed) return;
+
+        if (document.hidden) {
+            console.log('Tab hidden, closing connection...');
+            connectionManager.cleanupSync(); // Use sync cleanup for immediate effect
+            _status = ConnectionState.DISCONNECTED;
+        } else if (!connectionManager.eventSource && !connectionManager.isDestroyed) {
+            console.log('Tab visible, establishing new connection...');
+            connectionManager.resetRetry();
+            await connect();
         }
     }
-    
-    onMount(() => {
-        if (!browser) return;
-        
-        unmounted = false;
-        connectSSE();
-        
-        // Setup visibility change listener
-        visibilityHandler = () => handleVisibilityChange();
-        document.addEventListener('visibilitychange', visibilityHandler);
-        
-        // Setup beforeunload handler to cleanup properly
-        window.addEventListener('beforeunload', () => {
-            cleanupConnection();
-        });
-    });
-    
-    onDestroy(() => {
-        unmounted = true;
-        status = 'disconnected';
-        
-        if (browser && visibilityHandler) {
-            document.removeEventListener('visibilitychange', visibilityHandler);
-        }
-        
-        cleanupConnection();
-    });
-    
-    const sseContext = {
-        get messages() {
-            return messages;
-        },
+
+    // Synchronous cleanup handler for page unload
+    function handleUnload() {
+        connectionManager.cleanupSync();
+        _status = ConnectionState.DISCONNECTED;
+    }
+
+    const store = {
         get status() {
-            return status;
+            return _status;
+        },
+        get messages() {
+            return _messages;
         },
         get count() {
-            return messages.length;
+            return _messages.length;
+        },
+        get budgetCount() {
+            return _messages.filter((message) => message.NotificationType === 'budget').length;
         },
         updateMessageStatus: (notificationId, newStatus) => {
-            messages = messages.map((message) => {
+            _messages = _messages.map((message) => {
                 if (message.notification_id === notificationId) {
                     return { ...message, status: newStatus };
                 }
@@ -220,25 +215,70 @@
             });
         },
         deleteNotification: (notificationId) => {
-            console.log('deleteNotification', notificationId);
-            messages = messages.filter(
-                (message) => message.notification_id !== notificationId
-            );
+            _messages = _messages.filter((message) => message.notification_id !== notificationId);
         },
         resetNotificationCount: () => {
-            messages = [];
+            _messages = [];
         },
-        reconnect: () => {
-            if (browser) {
-                retryCount = 0;
-                connectSSE();
+        reconnect: async () => {
+            if (browser && !connectionManager.isDestroyed) {
+                connectionManager.resetRetry();
+                await connect();
             }
+        },
+        cleanup: () => connectionManager.cleanup(),
+        initialize: () => {
+            if (!browser) return;
+
+            unmounted = false;
+            connectionManager.isDestroyed = false;
+
+            // Add event listeners
+            const visibilityHandler = () => handleVisibilityChange();
+            document.addEventListener('visibilitychange', visibilityHandler);
+
+            // Use synchronous cleanup for unload events
+            window.addEventListener('beforeunload', handleUnload);
+            window.addEventListener('unload', handleUnload);
+
+            connect();
+
+            return () => {
+                window.removeEventListener('beforeunload', handleUnload);
+                window.removeEventListener('unload', handleUnload);
+                document.removeEventListener('visibilitychange', visibilityHandler);
+                handleUnload(); // Ensure cleanup on cleanup function call
+            };
+        },
+        destroy: () => {
+            unmounted = true;
+            connectionManager.isDestroyed = true;
+            handleUnload(); // Use sync cleanup for immediate effect
+            _status = ConnectionState.DISCONNECTED;
         }
     };
-    
-    setContext('sseMessages', sseContext);
-    $inspect(sseContext);
-    </script>
-    
-    <Dashboardsidenav userInfo={data.userInformation} />
-    {@render children()}
+
+    return store;
+}
+
+// Component usage
+let { children, data } = $props();
+const sseStore = createSSEStore();
+
+onMount(() => {
+    const cleanup = sseStore.initialize();
+    return () => {
+        if (cleanup) cleanup();
+    };
+});
+
+onDestroy(() => {
+    sseStore.destroy();
+});
+
+setContext('sseMessages', sseStore);
+$inspect(sseStore);
+</script>
+
+<Dashboardsidenav userInfo={data.userInformation} />
+{@render children()}
