@@ -1,4 +1,4 @@
-<script>
+<script>;
 	import { onMount, onDestroy } from 'svelte';
 	import { browser } from '$app/environment';
 	import { TOAST_TYPE_ERROR, TOAST_TYPE_RETRYING } from '$lib/settings/constants.js';
@@ -24,15 +24,23 @@
 			this.lastActiveTime = Date.now();
 			this.cleanupCallbacks = new Set();
 			this.isDestroyed = false;
+			this.connectionTimeout = null;
+			this.hasReachedMaxRetries = false; // New flag to track max retries
 		}
 
 		generateConnectionId() {
 			return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 		}
 
-		// Synchronous cleanup for unload events
+		// Enhanced cleanup with timeout handling
 		cleanupSync() {
+			if (this.connectionTimeout) {
+				clearTimeout(this.connectionTimeout);
+				this.connectionTimeout = null;
+			}
+
 			if (this.eventSource) {
+				// Remove all event listeners first
 				this.eventSource.onopen = null;
 				this.eventSource.onmessage = null;
 				this.eventSource.onerror = null;
@@ -66,6 +74,7 @@
 		resetConnectionFlags() {
 			this.isCleaningUp = false;
 			this.eventSource = null;
+			this.connectionTimeout = null;
 		}
 
 		addCleanupCallback(callback) {
@@ -78,15 +87,19 @@
 
 		incrementRetry() {
 			this.retryCount++;
+			if (this.retryCount >= this.maxRetries) {
+				this.hasReachedMaxRetries = true; // Set flag when max retries reached
+			}
 			return this.retryCount <= this.maxRetries;
 		}
 
 		resetRetry() {
 			this.retryCount = 0;
+			this.hasReachedMaxRetries = false; // Reset max retries flag
 		}
 
 		shouldRetry() {
-			return this.retryCount < this.maxRetries;
+			return !this.hasReachedMaxRetries && this.retryCount < this.maxRetries;
 		}
 	}
 
@@ -111,7 +124,8 @@
 				unmounted ||
 				connectionManager.isCleaningUp ||
 				connectionManager.eventSource ||
-				connectionManager.isDestroyed
+				connectionManager.isDestroyed ||
+				connectionManager.hasReachedMaxRetries // Check max retries flag
 			)
 				return;
 
@@ -121,11 +135,27 @@
 
 				connectionManager.eventSource = new EventSource(getSSEUrl());
 
+				// Set connection timeout
+				connectionManager.connectionTimeout = setTimeout(() => {
+					console.log('Connection timeout reached');
+					if (connectionManager.eventSource) {
+						connectionManager.cleanupSync();
+						handleRetry();
+					}
+				}, 30000); // 30 second timeout
+
 				connectionManager.eventSource.onopen = () => {
 					if (unmounted || connectionManager.isDestroyed) {
 						connectionManager.cleanupSync();
 						return;
 					}
+					
+					// Clear connection timeout on successful connection
+					if (connectionManager.connectionTimeout) {
+						clearTimeout(connectionManager.connectionTimeout);
+						connectionManager.connectionTimeout = null;
+					}
+					
 					_status = ConnectionState.CONNECTED;
 					connectionManager.resetRetry();
 				};
@@ -166,8 +196,15 @@
 				return;
 			}
 
+			// Clear any existing connection timeout
+			if (connectionManager.connectionTimeout) {
+				clearTimeout(connectionManager.connectionTimeout);
+				connectionManager.connectionTimeout = null;
+			}
+
 			if (connectionManager.shouldRetry()) {
-                connectionManager.resetConnectionFlags();
+				await connectionManager.cleanup(); // Ensure proper cleanup before retry
+				connectionManager.resetConnectionFlags();
 				_status = ConnectionState.RECONNECTING;
 				connectionManager.incrementRetry();
 
@@ -187,6 +224,7 @@
 					await connect();
 				}
 			} else {
+				await connectionManager.cleanup(); // Ensure cleanup when max retries reached
 				toastManager(TOAST_TYPE_ERROR, 'Connection lost. Please refresh the page.');
 				_status = ConnectionState.DISCONNECTED;
 			}
@@ -197,20 +235,13 @@
 
 			if (document.hidden) {
 				console.log('Tab hidden, closing connection...');
-				connectionManager.cleanupSync(); // Use sync cleanup for immediate effect
+				await connectionManager.cleanup(); // Use full cleanup for visibility change
 				_status = ConnectionState.DISCONNECTED;
-			} else if (!connectionManager.eventSource && !connectionManager.isDestroyed) {
+			} else if (!connectionManager.eventSource && !connectionManager.isDestroyed && !connectionManager.hasReachedMaxRetries) {
 				console.log('Tab visible, establishing new connection...');
 				connectionManager.resetRetry();
 				await connect();
 			}
-		}
-
-		// Synchronous cleanup handler for page unload
-		function handleUnload() {
-			connectionManager.cleanupSync();
-			_status = ConnectionState.DISCONNECTED;
-			console.log('Unload event triggered, SSE connection closed.');
 		}
 
 		const store = {
@@ -242,7 +273,7 @@
 			},
 			reconnect: async () => {
 				if (browser && !connectionManager.isDestroyed) {
-					connectionManager.resetRetry();
+					connectionManager.resetRetry(); // Reset retry count and max retries flag
 					await connect();
 				}
 			},
@@ -252,29 +283,34 @@
 
 				unmounted = false;
 				connectionManager.isDestroyed = false;
+				connectionManager.hasReachedMaxRetries = false; // Reset on initialize
 
 				// Add event listeners
 				const visibilityHandler = () => handleVisibilityChange();
 				document.addEventListener('visibilitychange', visibilityHandler);
 
-				// Use synchronous cleanup for unload events
-				const handleImmediateUnload = () => connectionManager.cleanupSync();
+				// Use cleanup for unload events
+				const handleImmediateUnload = () => {
+					connectionManager.cleanupSync();
+					_status = ConnectionState.DISCONNECTED;
+				};
+				
 				window.addEventListener('beforeunload', handleImmediateUnload);
 				window.addEventListener('unload', handleImmediateUnload);
 
 				connect();
 
 				return () => {
-					window.removeEventListener('beforeunload', handleUnload);
-					window.removeEventListener('unload', handleUnload);
+					window.removeEventListener('beforeunload', handleImmediateUnload);
+					window.removeEventListener('unload', handleImmediateUnload);
 					document.removeEventListener('visibilitychange', visibilityHandler);
-					handleImmediateUnload(); // Ensure cleanup on function call
+					handleImmediateUnload();
 				};
 			},
 			destroy: () => {
 				unmounted = true;
 				connectionManager.isDestroyed = true;
-				connectionManager.cleanupSync(); // Immediate cleanup on destroy
+				connectionManager.cleanupSync();
 				_status = ConnectionState.DISCONNECTED;
 			}
 		};
@@ -289,22 +325,19 @@
 	onMount(() => {
 		const cleanup = sseStore.initialize();
 		return () => {
-			// Ensure both beforeunload and unload events trigger cleanup
-			window.addEventListener('beforeunload', handleUnload);
-			window.addEventListener('unload', handleUnload);
-			// Cleanup connections when the component is destroyed
 			if (cleanup) cleanup();
+			sseStore.destroy();
 		};
 	});
 
 	onDestroy(() => {
 		sseStore.destroy();
-		console.log('Component destroyed, calling cleanupSync again for safety.');
+		console.log('Component destroyed, connections cleaned up.');
 	});
 
 	setContext('sseMessages', sseStore);
 	$inspect(sseStore);
-</script>
+</script>;
 
-<Dashboardsidenav userInfo={data.userInformation} />
+<Dashboardsidenav userInfo={data.userInformation} />;
 {@render children()}

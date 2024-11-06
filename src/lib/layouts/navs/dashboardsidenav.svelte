@@ -69,7 +69,7 @@
 			name: 'Groups',
 			shortLabel: 'Groups',
 			items: [
-				{ name: 'Group Manager', icon: UserPlus, url: '#1' },
+				{ name: 'Group Manager', icon: UserPlus, url: '/dashboard/groups' },
 				{ name: 'Groups', icon: Users, url: '#1' }
 			]
 		},
