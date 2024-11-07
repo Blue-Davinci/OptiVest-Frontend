@@ -62,7 +62,7 @@
                   duration-300
                   ease-in-out
                   hover:translate-y-[-4px]
-                  hover:border-purple-200
+                  hover:border-gray-500
                   hover:shadow-[0_8px_30px_rgba(147,51,234,0.1)]
                   dark:border-gray-700 dark:bg-gray-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.3)]
                   dark:hover:border-purple-500 dark:hover:bg-gray-800/95
