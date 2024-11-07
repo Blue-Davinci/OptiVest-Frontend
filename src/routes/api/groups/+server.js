@@ -1,15 +1,18 @@
-import {VITE_API_BASE_GROUPS} from '$env/static/private';
+import {VITE_API_BASE_GROUPS_CREATED, VITE_API_BASE_GROUPS} from '$env/static/private';
 import { checkAuthentication } from '$lib/helpers/auths';
 import { json, redirect } from '@sveltejs/kit';
 
-export const GET = async({ cookies }) => {
+export const GET = async({ cookies, url }) => {
     let auth = checkAuthentication(cookies).user;
     if (!auth){
         console.log('GGEP Server: User is not authenticated, REDIRECTING..');
         return redirect(303, `/login?redirectTo=/dashboard/groups`);
     }
+    // get is_created query
+    let is_created = url.searchParams.get('is_created');
+    let finalEndpoint = is_created === "true" ? VITE_API_BASE_GROUPS_CREATED : VITE_API_BASE_GROUPS;
     try{
-        const response = await fetch(VITE_API_BASE_GROUPS, {
+        const response = await fetch(finalEndpoint, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

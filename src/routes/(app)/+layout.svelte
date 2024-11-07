@@ -46,7 +46,7 @@
 			}
 			status = 'error';
 			closeConnection();
-
+			let setInitialDelay = retryCount === 0 ? initialRetryDelay : 0;
 			// Check if the component is still mounted and attempt retry with delay
 			if (isMounted && !retrying) {
 				console.log('Scheduling initial retry...');
@@ -54,7 +54,7 @@
 				setTimeout(() => {
 					retrying = false;
 					retryConnection();
-				}, initialRetryDelay); // Initial delay before first retry
+				}, setInitialDelay); // Initial delay before first retry
 			}
 		};
 

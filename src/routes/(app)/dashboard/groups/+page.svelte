@@ -1,8 +1,9 @@
 <script>
 	import { Settings, Users, CreditCard, Goal, Crown, Shield, Coins } from 'lucide-svelte';
 	let { data } = $props();
-	let createdGroups = data?.createdGroups?.data?.groups ?? [];
-
+	let createdGroups = $derived(data?.createdGroups?.data?.groups ?? []);
+	let membershipGroups = $derived(data?.memberGroups?.data?.groups ?? []);
+	$inspect(membershipGroups);
 	function formatDate(dateString) {
 		return new Date(dateString).toLocaleDateString('en-US', {
 			year: 'numeric',
@@ -56,18 +57,18 @@
 
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
 			{#each createdGroups as group}
-            <div
-            class="group min-h-[36rem] max-h-[42rem] overflow-hidden rounded-lg border border-gray-100
-                  bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all
-                  duration-300
-                  ease-in-out
-                  hover:translate-y-[-4px]
-                  hover:border-gray-500
-                  hover:shadow-[0_8px_30px_rgba(147,51,234,0.1)]
-                  dark:border-gray-700 dark:bg-gray-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.3)]
-                  dark:hover:border-purple-500 dark:hover:bg-gray-800/95
-                  dark:hover:shadow-[0_8px_30px_rgba(147,51,234,0.2)]"
-        >
+			<div
+			class="group min-h-[36rem] max-h-[42rem] overflow-hidden rounded-lg border border-gray-100
+				  bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all
+				  duration-300
+				  ease-in-out
+				  hover:translate-y-[-4px]
+				  hover:border-gray-500
+				  hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)]
+				  dark:border-gray-700 dark:bg-gray-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.3)]
+				  dark:hover:border-gray-500 dark:hover:bg-gray-800/95
+				  dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.2)]"
+		>
 					<!-- Group Header - Clickable Image Section -->
 					<div class="group/image relative h-48">
 						<a
@@ -87,9 +88,9 @@
 						<div class="absolute right-4 top-4 z-10">
 							<button
 								class="rounded-full bg-white/90 p-2 shadow-lg
-                         transition-colors hover:bg-purple-50
-                         hover:shadow-purple-200/50 dark:bg-gray-800/90
-                         dark:hover:bg-purple-900/50 dark:hover:shadow-purple-500/30"
+								 transition-colors hover:bg-purple-50
+								 hover:shadow-purple-200/50 dark:bg-gray-800/90
+								 dark:hover:bg-purple-900/50 dark:hover:shadow-purple-500/30"
 								title="Update Group"
 								onClick={(e) => e.preventDefault()}
 							>
@@ -103,7 +104,7 @@
 						<!-- Group Name and Privacy -->
 						<div class="mb-4 flex items-start justify-between">
 							<h3
-								class="text-xl font-semibold text-gray-900 transition-colors group-hover:text-purple-600 dark:text-gray-100 dark:group-hover:text-purple-400"
+								class="text-xl font-semibold text-gray-900 transition-colors group-hover:text-gray-700 dark:text-gray-100 dark:group-hover:text-white"
 							>
 								{group.group.name}
 							</h3>
@@ -113,6 +114,7 @@
 								{group.group.is_private ? 'Private' : 'Public'}
 							</span>
 						</div>
+			
 
 						<!-- Description -->
 						<p
@@ -127,7 +129,7 @@
 						<div class="mb-4 flex flex-wrap items-center gap-4">
 							<div class="flex flex-shrink-0 -space-x-2">
 								{#each group.group_members.slice(0, 5) as member}
-									<div class="group/tooltip relative mr-2">
+									<div class="group/tooltip relative mr-3">
 										<img
 											src={member.profile_avatar_url}
 											alt={member.first_name}
@@ -271,8 +273,8 @@
 	@media (prefers-color-scheme: dark) {
 		.group:hover {
 			box-shadow:
-				0 8px 30px rgba(147, 51, 234, 0.2),
-				0 0 0 1px rgba(147, 51, 234, 0.3);
+				0 8px 30px #37026933,
+				0 0 0 1px #38026c4d;
 		}
 	}
 </style>

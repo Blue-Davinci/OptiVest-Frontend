@@ -1,7 +1,15 @@
 
-const getCreatedGroups = async({fetch: customFetch} = {})=>{
+// getGroups() function is used to fetch groups data from the server
+// we pass in a custom fetch from the loader function in the page file
+// we also pass a flag, isCreated, to determine if we want to fetch created groups or member groups
+const getGroups = async({fetch: customFetch, isCreated = true} = {})=>{
     let fetchFunc = customFetch || fetch;
-    let endpoint = '/api/groups';
+    let endpoint;
+    if (isCreated){
+        endpoint = '/api/groups?is_created=true';
+    }else{
+        endpoint = '/api/groups?is_created=false';
+    }
     try{
         const response = await fetchFunc(endpoint, {
             method: 'GET',
@@ -33,6 +41,7 @@ const getCreatedGroups = async({fetch: customFetch} = {})=>{
     }
 }
 
+
 export{
-    getCreatedGroups
+    getGroups
 }

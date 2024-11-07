@@ -1,10 +1,12 @@
-import {getCreatedGroups} from '$lib/dataservice/groups/groupsDataService.js';
+import {getGroups} from '$lib/dataservice/groups/groupsDataService.js';
 
 export const load = async ({ fetch }) => {
     try{
-        let createdGroupsResponse = await getCreatedGroups({fetch});
+        let createdGroupsResponse = await getGroups({fetch}); // isCreated is true by default
+        let memberGroupsResponse = await getGroups({fetch, isCreated: false}); // isCreated is false
         return {
-            createdGroups: createdGroupsResponse
+            createdGroups: createdGroupsResponse,
+            memberGroups: memberGroupsResponse
         }
     }catch(err){
         console.log('[gmLD] ERROR: ', err.message);
