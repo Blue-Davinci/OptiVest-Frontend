@@ -31,13 +31,19 @@
 		};
 
 		eventSource.onmessage = (event) => {
-			try {
-				const data = JSON.parse(event.data);
-				messages = Array.isArray(data) ? [...data, ...messages] : [data, ...messages];
-			} catch (error) {
-				console.error('Error parsing SSE message:', error);
-			}
-		};
+    // Check if the event type is 'heartbeat' and skip if true
+    if (event.type === 'heartbeat') {
+		console.log('Heartbeat received. Skipping message processing.');
+		return;
+	};
+
+    try {
+        const data = JSON.parse(event.data);
+        messages = Array.isArray(data) ? [...data, ...messages] : [data, ...messages];
+    } catch (error) {
+        console.error('Error parsing SSE message:', error);
+    }
+};
 
 		eventSource.onerror = (event) => {
 			console.error('Error connecting to SSE endpoint:', event);
@@ -139,5 +145,5 @@
 	setContext('sseMessages', sseContext);
 </script>
 
-<Dashboardsidenav userInfo={data.userInformation} />;
+<Dashboardsidenav userInfo={data.userInformation} />
 {@render children()}

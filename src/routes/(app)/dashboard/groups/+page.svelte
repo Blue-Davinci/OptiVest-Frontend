@@ -1,280 +1,149 @@
 <script>
-	import { Settings, Users, CreditCard, Goal, Crown, Shield, Coins } from 'lucide-svelte';
+	import { Users, UserPlus, Search } from 'lucide-svelte';
+	import GroupCard from '$lib/layouts/groups/groupcard.svelte'
+	import EmptyState from '$lib/layouts/groups/notfound/emptystate.svelte';
+	import GroupTiles from '$lib/layouts/groups/tiles/grouptiles.svelte';
+	
 	let { data } = $props();
-	let createdGroups = $derived(data?.createdGroups?.data?.groups ?? []);
-	let membershipGroups = $derived(data?.memberGroups?.data?.groups ?? []);
-	$inspect(membershipGroups);
-	function formatDate(dateString) {
-		return new Date(dateString).toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric'
-		});
-	}
+  let createdGroups = $derived(data?.createdGroups?.data?.groups ?? []);
+  let membershipGroups = $derived(data?.memberGroups?.data?.groups ?? []);
+	$inspect(createdGroups, 'createdGroups');
+  // Search functionality
+  let createdGroupsSearch = $state('');
+  let membershipGroupsSearch = $state('');
 
-	function calculateProgress(current, target) {
-		return (current / target) * 100;
-	}
+  // Filtered groups based on search
+  let filteredCreatedGroups = $derived(
+    createdGroups.filter(group => 
+      group.group.name.toLowerCase().includes(createdGroupsSearch.toLowerCase())
+    )
+  );
 
-	function formatAmount(amount) {
-		return parseFloat(amount).toLocaleString('en-US', {
-			style: 'currency',
-			currency: 'USD'
-		});
-	}
-
-	function getRoleBadge(role) {
-		switch (role) {
-			case 'admin':
-				return {
-					icon: Crown,
-					color: 'text-yellow-600 dark:text-yellow-400',
-					bg: 'bg-yellow-100 dark:bg-yellow-900/50',
-					label: 'Admin'
-				};
-			case 'moderator':
-				return {
-					icon: Shield,
-					color: 'text-blue-600 dark:text-blue-400',
-					bg: 'bg-blue-100 dark:bg-blue-900/50',
-					label: 'Moderator'
-				};
-			default:
-				return {
-					icon: Users,
-					color: 'text-gray-600 dark:text-gray-400',
-					bg: 'bg-gray-100 dark:bg-gray-800',
-					label: 'Member'
-				};
-		}
-	}
+  let filteredMembershipGroups = $derived(
+    membershipGroups.filter(group => 
+      group.group.name.toLowerCase().includes(membershipGroupsSearch.toLowerCase())
+    )
+  );
 </script>
 
-<div class="w-full space-y-6 p-4">
+<div class="w-full space-y-8 p-4">
+	<!-- Overall Statistics -->
+	<div class="rounded-xl bg-gray-50 p-6 dark:bg-gray-800/50">
+	  <h2 class="mb-4 text-xl font-bold text-gray-900 dark:text-gray-100">Group Overview</h2>
+	  <GroupTiles groups={[...createdGroups, ...membershipGroups]} />
+	</div>
+  
 	<!-- Created Groups Section -->
-	<div class="space-y-4">
-		<h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Groups You Created</h2>
-
+	<div class="space-y-4 rounded-xl bg-gray-50 p-6 dark:bg-gray-800/50">
+	  <div class="flex flex-col space-y-4">
+		<div class="flex items-center space-x-3">
+		  <UserPlus class="h-8 w-8 text-purple-600 dark:text-purple-400" />
+		  <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+			Groups You Created
+		  </h2>
+		</div>
+		<p class="text-sm text-gray-600 dark:text-gray-400">
+		  Manage and oversee the groups you've created
+		</p>
+		
+		<!-- Search input for created groups -->
+		<div class="relative">
+		  <Search class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+		  <input
+			type="text"
+			bind:value={createdGroupsSearch}
+			placeholder="Search your created groups..."
+			class="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-gray-900 placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
+		  />
+		</div>
+	  </div>
+  
+	  {#if createdGroups.length > 0}
 		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-			{#each createdGroups as group}
-			<div
-			class="group min-h-[36rem] max-h-[42rem] overflow-hidden rounded-lg border border-gray-100
-				  bg-white shadow-[0_4px_12px_rgba(0,0,0,0.05)] transition-all
-				  duration-300
-				  ease-in-out
-				  hover:translate-y-[-4px]
-				  hover:border-gray-500
-				  hover:shadow-[0_8px_30px_rgba(0,0,0,0.1)]
-				  dark:border-gray-700 dark:bg-gray-800 dark:shadow-[0_4px_12px_rgba(0,0,0,0.3)]
-				  dark:hover:border-gray-500 dark:hover:bg-gray-800/95
-				  dark:hover:shadow-[0_8px_30px_rgba(0,0,0,0.2)]"
-		>
-					<!-- Group Header - Clickable Image Section -->
-					<div class="group/image relative h-48">
-						<a
-							href={`#${group.group.id}`}
-							class="block h-full w-full transition-transform duration-300 group-hover/image:scale-[1.02]"
-						>
-							<img
-								src={group.group.group_image_url}
-								alt={group.group.name}
-								class="h-full w-full object-cover"
-							/>
-							<!-- Overlay effect on hover -->
-							<div
-								class="absolute inset-0 bg-black opacity-0 transition-opacity duration-300 group-hover/image:opacity-20"
-							></div>
-						</a>
-						<div class="absolute right-4 top-4 z-10">
-							<button
-								class="rounded-full bg-white/90 p-2 shadow-lg
-								 transition-colors hover:bg-purple-50
-								 hover:shadow-purple-200/50 dark:bg-gray-800/90
-								 dark:hover:bg-purple-900/50 dark:hover:shadow-purple-500/30"
-								title="Update Group"
-								onClick={(e) => e.preventDefault()}
-							>
-								<Settings class="h-5 w-5 text-purple-600 dark:text-purple-400" />
-							</button>
-						</div>
-					</div>
-
-					<!-- Group Content -->
-					<div class="flex h-[calc(100%-12rem)] flex-col p-6">
-						<!-- Group Name and Privacy -->
-						<div class="mb-4 flex items-start justify-between">
-							<h3
-								class="text-xl font-semibold text-gray-900 transition-colors group-hover:text-gray-700 dark:text-gray-100 dark:group-hover:text-white"
-							>
-								{group.group.name}
-							</h3>
-							<span
-								class="rounded-full bg-purple-100 px-2 py-1 text-sm text-purple-600 dark:bg-purple-900/50 dark:text-purple-300"
-							>
-								{group.group.is_private ? 'Private' : 'Public'}
-							</span>
-						</div>
-			
-
-						<!-- Description -->
-						<p
-							class="mb-4 line-clamp-2 min-h-[2.5rem] overflow-hidden overflow-ellipsis
-              break-words text-sm text-gray-600 [-webkit-box-orient:vertical]
-              [-webkit-line-clamp:2] [display:-webkit-box] dark:text-gray-300"
-						>
-							{group.group.description}
-						</p>
-
-						<!-- Members -->
-						<div class="mb-4 flex flex-wrap items-center gap-4">
-							<div class="flex flex-shrink-0 -space-x-2">
-								{#each group.group_members.slice(0, 5) as member}
-									<div class="group/tooltip relative mr-3">
-										<img
-											src={member.profile_avatar_url}
-											alt={member.first_name}
-											class="h-8 w-8 rounded-full border-2 border-white ring-2 ring-transparent transition-all
-                               hover:ring-purple-400 dark:border-gray-800 dark:hover:ring-purple-500 sm:h-8 sm:w-8"
-										/>
-										<!-- Role Badge -->
-										<div class="absolute -bottom-1 -right-1">
-											{#if member.role !== 'regular'}
-												<div
-													class={`flex h-4 w-4 items-center justify-center rounded-full ${getRoleBadge(member.role).bg}`}
-												>
-													{#if member.role === 'admin'}
-														<Crown class={`h-3 w-3 ${getRoleBadge(member.role).color}`} />
-													{:else if member.role === 'moderator'}
-														<Shield class={`h-3 w-3 ${getRoleBadge(member.role).color}`} />
-													{:else}
-														<Users class={`h-3 w-3 ${getRoleBadge(member.role).color}`} />
-													{/if}
-												</div>
-											{/if}
-										</div>
-										<!-- Tooltip -->
-										<div
-											class="pointer-events-none absolute -top-12 left-1/2 z-20
-                                  -translate-x-1/2 transform whitespace-nowrap
-                                  rounded bg-gray-900 px-2 py-1 text-xs text-white opacity-0
-                                  transition-opacity group-hover/tooltip:opacity-100 dark:bg-gray-700"
-										>
-											{member.first_name} • {getRoleBadge(member.role).label}
-										</div>
-									</div>
-								{/each}
-							</div>
-							<span class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-								<Users class="mr-1 h-4 w-4" />
-								{group.total_members} members
-							</span>
-						</div>
-
-						<!-- Goals Section -->
-						<div class="mb-4 flex-grow overflow-hidden">
-							<h4 class="mb-2 text-sm font-semibold text-gray-700 dark:text-gray-300">
-								Group Goals
-							</h4>
-							{#if group.group_goals.length > 0}
-								<div
-									class="scrollbar-thin scrollbar-thumb-purple-200 dark:scrollbar-thumb-purple-900 h-[120px] space-y-3 overflow-y-auto pr-2"
-								>
-									{#each group.group_goals as goal}
-										<div class="space-y-2">
-											<div class="flex items-center justify-between">
-												<span
-													class="flex items-center text-sm font-medium text-gray-700 dark:text-gray-300"
-												>
-													<Goal class="mr-1 h-4 w-4" />
-													{goal.goal_name}
-												</span>
-												<span class="text-sm text-gray-600 dark:text-gray-400">
-													{formatAmount(goal.current_amount)} / {formatAmount(goal.target_amount)}
-												</span>
-											</div>
-											<div class="h-2 w-full rounded-full bg-gray-200 dark:bg-gray-700">
-												<div
-													class="h-2 rounded-full bg-purple-600 transition-all duration-300 dark:bg-purple-400"
-													style="width: {calculateProgress(
-														goal.current_amount,
-														goal.target_amount
-													)}%"
-												></div>
-											</div>
-										</div>
-									{/each}
-								</div>
-							{:else}
-								<div
-									class="flex h-[120px] items-center justify-center rounded-lg bg-gray-50 dark:bg-gray-800/50"
-								>
-									<p class="text-sm text-gray-500 dark:text-gray-400">
-										No goals set for this group
-									</p>
-								</div>
-							{/if}
-						</div>
-
-						<!-- Stats -->
-						<div class="space-y-2 border-t border-gray-200 pt-4 dark:border-gray-700">
-							<div class="flex items-center justify-between">
-								<div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
-									<CreditCard class="mr-1 h-4 w-4" />
-									{group.total_group_transactions} transactions
-								</div>
-								<div class="text-sm text-gray-600 dark:text-gray-400">
-									Last active: {formatDate(group.group.last_activity_at)}
-								</div>
-							</div>
-							{#if parseFloat(group.latest_transaction_amount) > 0}
-								<div class="flex items-center text-sm text-green-600 dark:text-green-400">
-									<Coins class="mr-1 h-4 w-4" />
-									Latest contribution: {formatAmount(group.latest_transaction_amount)}
-								</div>
-							{/if}
-						</div>
-					</div>
-				</div>
-			{/each}
+		  {#each filteredCreatedGroups as group}
+			<GroupCard {group} />
+		  {/each}
 		</div>
+		{#if filteredCreatedGroups.length === 0}
+		  <div class="mt-4 text-center text-gray-600 dark:text-gray-400">
+			No groups match your search
+		  </div>
+		{/if}
+	  {:else}
+		<EmptyState
+		  icon={UserPlus}
+		  title="Create Your First Group"
+		  description="Start by creating a group to collaborate and manage finances together with others."
+		/>
+	  {/if}
 	</div>
-
-	<!-- Membership Groups Section (Placeholder) -->
-	<div class="space-y-4">
-		<h2 class="text-2xl font-semibold text-gray-900 dark:text-gray-100">Groups You're In</h2>
-		<div class="rounded-lg bg-white p-8 text-center shadow-md dark:bg-gray-800">
-			<div class="mx-auto max-w-md">
-				<Users class="mx-auto mb-4 h-16 w-16 text-purple-600 dark:text-purple-400" />
-				<h3 class="mb-2 text-xl font-medium text-gray-900 dark:text-gray-100">Coming Soon</h3>
-				<p class="text-gray-600 dark:text-gray-300">
-					We're working on bringing you a beautiful view of all the groups you're a member of. Stay
-					tuned!
-				</p>
-			</div>
+  
+	<!-- Membership Groups Section -->
+	<div class="space-y-4 rounded-xl bg-gray-50 p-6 dark:bg-gray-800/50">
+	  <div class="flex flex-col space-y-4">
+		<div class="flex items-center space-x-3">
+		  <Users class="h-8 w-8 text-purple-600 dark:text-purple-400" />
+		  <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+			Groups You're In
+		  </h2>
 		</div>
+		<p class="text-sm text-gray-600 dark:text-gray-400">
+		  Groups where you're a member
+		</p>
+  
+		<!-- Search input for membership groups -->
+		<div class="relative">
+		  <Search class="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400" />
+		  <input
+			type="text"
+			bind:value={membershipGroupsSearch}
+			placeholder="Search groups you're in..."
+			class="w-full rounded-lg border border-gray-300 bg-white py-2 pl-10 pr-4 text-gray-900 placeholder-gray-500 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 dark:placeholder-gray-400"
+		  />
+		</div>
+	  </div>
+  
+	  {#if membershipGroups.length > 0}
+		<div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+		  {#each filteredMembershipGroups as group}
+			<GroupCard {group} showSettings={false} />
+		  {/each}
+		</div>
+		{#if filteredMembershipGroups.length === 0}
+		  <div class="mt-4 text-center text-gray-600 dark:text-gray-400">
+			No groups match your search
+		  </div>
+		{/if}
+	  {:else}
+		<EmptyState
+		  icon={Users}
+		  title="No Group Memberships Yet"
+		  description="Join other groups to collaborate and participate in shared financial goals."
+		/>
+	  {/if}
 	</div>
-</div>
-
-<style>
+  </div>
+  
+  <style>
 	/* Custom scrollbar styles */
-	.scrollbar-thin::-webkit-scrollbar {
-		width: 4px;
+	:global(.scrollbar-thin::-webkit-scrollbar) {
+	  width: 4px;
 	}
-
-	.scrollbar-thin::-webkit-scrollbar-track {
-		background: transparent;
+  
+	:global(.scrollbar-thin::-webkit-scrollbar-track) {
+	  background: transparent;
 	}
-
-	.scrollbar-thin::-webkit-scrollbar-thumb {
-		border-radius: 2px;
+  
+	:global(.scrollbar-thin::-webkit-scrollbar-thumb) {
+	  border-radius: 2px;
 	}
-
+  
 	/* Enhanced hover effect for dark mode */
 	@media (prefers-color-scheme: dark) {
-		.group:hover {
-			box-shadow:
-				0 8px 30px #37026933,
-				0 0 0 1px #38026c4d;
-		}
+	  :global(.group:hover) {
+		box-shadow:
+		  0 8px 30px rgba(84, 4, 159, 0.2),
+		  0 0 0 1px hsla(271, 94%, 35%, 0.302);
+	  }
 	}
-</style>
+  </style>
