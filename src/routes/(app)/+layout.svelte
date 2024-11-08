@@ -31,19 +31,13 @@
 		};
 
 		eventSource.onmessage = (event) => {
-    // Check if the event type is 'heartbeat' and skip if true
-    if (event.type === 'heartbeat') {
-		console.log('Heartbeat received. Skipping message processing.');
-		return;
-	};
-
-    try {
-        const data = JSON.parse(event.data);
-        messages = Array.isArray(data) ? [...data, ...messages] : [data, ...messages];
-    } catch (error) {
-        console.error('Error parsing SSE message:', error);
-    }
-};
+			try {
+				const data = JSON.parse(event.data);
+				messages = Array.isArray(data) ? [...data, ...messages] : [data, ...messages];
+			} catch (error) {
+				console.error('Error parsing SSE message:', error);
+			}
+		};
 
 		eventSource.onerror = (event) => {
 			console.error('Error connecting to SSE endpoint:', event);
@@ -63,7 +57,6 @@
 				}, setInitialDelay); // Initial delay before first retry
 			}
 		};
-
 	}
 
 	function retryConnection() {
@@ -75,7 +68,11 @@
 			status = 'disconnected';
 			return;
 		}
-		console.log("[Retry Connection] Current ismounted and retrying values are: ", isMounted, retrying);
+		console.log(
+			'[Retry Connection] Current ismounted and retrying values are: ',
+			isMounted,
+			retrying
+		);
 		if (!retrying) {
 			retrying = true;
 			setTimeout(() => {
@@ -117,7 +114,7 @@
 		console.log('Unmounting SSE component in ondestroy...');
 		isMounted = false;
 		retrying = false; // Prevent any retries on unmount
-		console.log("[OnDestroy] isMounted and retrying values are: ", isMounted, retrying);
+		console.log('[OnDestroy] isMounted and retrying values are: ', isMounted, retrying);
 		closeConnection();
 	});
 

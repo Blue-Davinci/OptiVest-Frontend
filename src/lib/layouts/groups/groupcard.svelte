@@ -61,7 +61,7 @@
     <!-- Group Header - Clickable Image Section -->
     <div class="group/image relative h-48">
       <a
-        href={`#${group.group.id}`}
+        href={`/dashboard/groups/${group.group.id}`}
         class="block h-full w-full transition-transform duration-300 group-hover/image:scale-[1.02]"
       >
         <img
