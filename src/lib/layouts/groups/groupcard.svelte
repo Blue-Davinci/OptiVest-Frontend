@@ -2,7 +2,7 @@
     import { Settings, Users, CreditCard, Goal, Crown, Shield, Coins, Lock } from 'lucide-svelte';
     
     let { group, showSettings = true } = $props();
-    
+    $inspect(group, 'Group Card');
     function formatDate(dateString) {
       return new Date(dateString).toLocaleDateString('en-US', {
         year: 'numeric',

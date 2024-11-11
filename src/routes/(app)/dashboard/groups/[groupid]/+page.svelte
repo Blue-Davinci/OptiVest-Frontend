@@ -3,7 +3,8 @@
     
     let {data} = $props();
     let group = $derived(data?.data?.group ?? {});
-    
+    let groupTransactions = $derived(data?.groupTransactions?.data?.transactions ?? []);
+    $inspect(data, 'group');
     const formatDate = (dateString) => {
       return new Date(dateString).toLocaleDateString('en-US', {
         year: 'numeric',

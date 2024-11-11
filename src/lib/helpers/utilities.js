@@ -41,6 +41,12 @@ function buildFeedFollowUrl(baseUrl, params) {
   if(params.is_educational){
       queryParts.push(`is_educational=${encodeURIComponent(params.is_educational)}`);
   }
+  if(params.goalID){
+      queryParts.push(`goalID=${encodeURIComponent(params.goalID)}`);
+  }
+  if(params.groupID){
+      queryParts.push(`groupID=${encodeURIComponent(params.groupID)}`);
+  }
 
   return queryParts.length > 0 ? `${baseUrl}?${queryParts.join('&')}` : baseUrl;
 }
