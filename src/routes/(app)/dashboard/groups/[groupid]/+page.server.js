@@ -1,6 +1,6 @@
 import { VITE_API_BASE_GROUPS } from '$env/static/private';
 import { checkAuthentication } from '$lib/helpers/auths';
-import { getGroupTransactions } from '$lib/dataservice/groups/groupsDataService.js';
+import { getGroupTransactions, getGroupExpenses } from '$lib/dataservice/groups/groupsDataService.js';
 import { redirect, error } from '@sveltejs/kit';
 
 export const load = async ({ fetch, params, cookies }) => {
@@ -37,11 +37,13 @@ export const load = async ({ fetch, params, cookies }) => {
 			};
 		}
 		let responseData = await response.json();
-		let groupTransactions = await getGroupTransactions({ fetch }, groupID);
+		let groupTransactionsResponse = await getGroupTransactions({ fetch }, groupID);
+		let getGroupExpensesResponse = await getGroupExpenses({ fetch }, groupID, '', 1, 10);
 		return {
 			status: 200,
 			data: responseData,
-			groupTransactions: groupTransactions.data
+			groupTransactions: groupTransactionsResponse.data,
+			groupExpenses: getGroupExpensesResponse.data
 		};
 	} catch (err) {
 		console.log('GBLEIP-SE error: ', err);

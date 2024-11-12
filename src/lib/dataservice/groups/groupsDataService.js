@@ -86,7 +86,89 @@ const getGroupTransactions = async({fetch: customFetch}, groupID, goalID, page, 
     }
 }
 
+const getGroupExpenses = async({fetch: customFetch}, groupID, categoryName, page, page_size)=>{
+    console.log('Group ID:', groupID);
+    let fetchFunc = customFetch || fetch;
+    let endpoint = '/api/groups/expenses';
+    let params = {
+        groupID: groupID,
+        name: categoryName,
+        page: page,
+        page_size: page_size
+    }
+    let groupURL = buildFeedFollowUrl(endpoint, params);
+    console.log('Group URL:', groupURL);
+    try{
+        const response = await fetchFunc(groupURL, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (!response.ok){
+            let errorData = await response.json();
+            return {
+                success: false,
+                status: response.status,
+                error: errorData.error
+            }
+        }
+        let responseData = await response.json();
+        return {
+            success: true,
+            status: response.status,
+            data: responseData
+        }
+    }catch(err){
+        console.log("[ggeDS] ERROR: ", err.message);
+        return {
+            success: false,
+            status: 500,
+            error: '[ggeDS]An error occured while fetching data'
+        }
+    }
+}
+
+const inviteMembers = async(groupID, inviteeEmail)=>{
+    let finalEndpoint = '/api/groups/invitation';
+    try{
+        const response = await fetch(finalEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                group_id: groupID,
+                invitee_user_email: inviteeEmail
+            })
+        });
+        if (!response.ok){
+            let errorData = await response.json();
+            return {
+                success: false,
+                status: response.status,
+                error: errorData.error
+            }
+        }
+        let responseData = await response.json();
+        return {
+            success: true,
+            status: response.status,
+            data: responseData
+        }
+    }catch(err){
+        console.log("[gimDS] ERROR: ", err.message);
+        return {
+            success: false,
+            status: 500,
+            error: '[gimDS]An error occured while fetching data'
+        }
+    }
+}
+
 export{
     getGroups,
-    getGroupTransactions
+    getGroupTransactions,
+    getGroupExpenses,
+    inviteMembers
 }
