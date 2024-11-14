@@ -38,16 +38,10 @@ export const actions = {
 				console.error('API Error:', errorData);
 				// check if error is due to email or due to password and
 				// set the error accordingly: { error: { email: 'must be a valid email address' } }
-				if (errorData.error.email) {
-					return setError(form, 'email', errorData.error.email);
-				} else if (errorData.error.first_name) {
-					return setError(form, 'first_name', errorData.error.first_name);
-				} else if (errorData.error.last_name) {
-					return setError(form, 'last_name', errorData.error.last_name);
-				} else if (errorData.error.phone_number) {
-					return setError(form, 'phone_number', errorData.error.phone_number);
-				} else if (errorData.error.password) {
-					return setError(form, 'password', errorData.error.password);
+				if (Array.isArray(errorData.error)){
+                    for (let field in errorData.error){
+                        setError(form, field, errorData.error[field]);
+                    }
 				} else {
 					return message(
 						form,

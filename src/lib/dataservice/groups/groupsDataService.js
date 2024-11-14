@@ -157,7 +157,7 @@ const inviteMembers = async(groupID, inviteeEmail)=>{
             data: responseData
         }
     }catch(err){
-        console.log("[gimDS] ERROR: ", err.message);
+        console.log("[imDS] ERROR: ", err.message);
         return {
             success: false,
             status: 500,
@@ -166,9 +166,47 @@ const inviteMembers = async(groupID, inviteeEmail)=>{
     }
 }
 
+const acceptInvite = async(groupID, inviteeEmail, status)=>{
+    let finalEndpoint = `/api/groups/invitation?groupID=${groupID}`;
+    try{
+        const response = await fetch(finalEndpoint, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                invitee_email: inviteeEmail,
+                status: status
+            })
+        });
+        if (!response.ok){
+            let errorData = await response.json();
+            return {
+                success: false,
+                status: response.status,
+                error: errorData.error
+            }
+        }
+        let responseData = await response.json();
+        return {
+            success: true,
+            status: response.status,
+            data: responseData
+        }
+    }catch(err){
+        console.log("[aiDS] ERROR: ", err.message);
+        return {
+            success: false,
+            status: 500,
+            error: '[gaiDS]An error occured while fetching data'
+        }
+    }
+}
+
 export{
     getGroups,
     getGroupTransactions,
     getGroupExpenses,
-    inviteMembers
+    inviteMembers,
+    acceptInvite
 }

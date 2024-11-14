@@ -1,12 +1,12 @@
 import { z } from 'zod';
 
 export const formSchema = z.object({
-  email: z.string().min(2, 'Username must be at least 2 characters').max(50, 'Username must not exceed 50 characters'),
+  email: z.string().min(2, 'Email must be at least 2 characters').max(50, 'Email must not exceed 50 characters'),
   password: z.string().min(8, 'Password must be at least 8 characters'),
 });
 
 export const emailSchema = z.object({
-  email: z.string().min(2, 'Username must be at least 2 characters').max(50, 'Username must not exceed 50 characters'),
+  email: z.string().min(5, 'Email must be at least 2 characters').max(50, 'Email must not exceed 50 characters'),
 })
 
 export const passworSchema = z.object({

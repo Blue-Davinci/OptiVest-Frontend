@@ -31,19 +31,28 @@ export const actions = {
   
         if (!response.ok) {
           const errorData = await response.json();
-          console.error('API Error:', errorData);
+          console.error('API Error:', errorData, "Response status: ", response.status);
           // check if error is due to email or due to password and
           // set the error accordingly: { error: { email: 'must be a valid email address' } }
-          if (errorData.error.email) {
-            return setError(form, 'email', errorData.error.email);
-          }else if (errorData.error.password) {
-            return setError(form, 'password', errorData.error.password);
+          if (Array.isArray(errorData.error)){
+            for (let field in errorData.error){
+                setError(form, field, errorData.error[field]);
+            }
           }else{
+            // if we get a 403 status code, we know that the user is not activated so we redirect them to the activation page
+            if (response.status === 403){
+              return message(form,{
+                message:  'activation required',
+                success: false
+              }, {
+                status: 403
+              })
+            }
             return message(form,{
               message:  errorData.error,
               success: false
             }, {
-              status: 403
+              status: 401
             })
           }
         }

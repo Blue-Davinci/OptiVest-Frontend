@@ -32,7 +32,11 @@
 					toastManager(TOAST_TYPE_SUCCESS, message);
 					console.log('Redirecting to:', redirectionPage);
 					goto(redirectionPage);
+				}else if(!form.message.success && form.message.message === 'activation required'){
+					toastManager(TOAST_TYPE_ERROR, 'Account not activated. Redirecting...');
+					goto('/activation');
 				} else {
+					console.log('Error:', form);
 					toastManager(TOAST_TYPE_ERROR, form.message.message);
 				}
 			}
