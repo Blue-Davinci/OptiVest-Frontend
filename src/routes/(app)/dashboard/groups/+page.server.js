@@ -3,7 +3,7 @@ import {getGroups} from '$lib/dataservice/groups/groupsDataService.js';
 export const load = async ({ fetch }) => {
     try{
         let createdGroupsResponse = await getGroups({fetch}); // isCreated is true by default
-        let memberGroupsResponse = await getGroups({fetch, isCreated: false}); // isCreated is false
+        let memberGroupsResponse = await getGroups({fetch}, false); // isCreated is false
         return {
             createdGroups: createdGroupsResponse,
             memberGroups: memberGroupsResponse

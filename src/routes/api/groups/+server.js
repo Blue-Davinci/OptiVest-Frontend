@@ -11,6 +11,7 @@ export const GET = async({ cookies, url }) => {
     // get is_created query
     let is_created = url.searchParams.get('is_created');
     let finalEndpoint = is_created === "true" ? VITE_API_BASE_GROUPS_CREATED : VITE_API_BASE_GROUPS;
+    console.log('GGEP Server: finalEndpoint: ', finalEndpoint);
     try{
         const response = await fetch(finalEndpoint, {
             method: 'GET',

@@ -16,11 +16,24 @@
 	let isMounted = false;
 	let eventSource = null;
 
+	function generateConnectionId() {
+			return `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+	}
+
+	function getSSEUrl() {
+			const params = new URLSearchParams({
+				user : data.userInformation.id,
+				connection_id: generateConnectionId(),
+				timestamp: Date.now().toString(),
+			});
+			return `/api/sse?${params.toString()}`;
+		}
+
 	function connectSSE() {
 		if (eventSource || !isMounted) return; // Prevent redundant connection
 		console.log('Connecting to SSE endpoint...');
 
-		eventSource = new EventSource('/api/sse');
+		eventSource = new EventSource(getSSEUrl());
 
 		eventSource.onopen = () => {
 			status = 'connected';

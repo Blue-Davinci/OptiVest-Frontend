@@ -3,11 +3,12 @@
     import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS } from '$lib/settings/constants.js';
     import { acceptInvite } from '$lib/dataservice/groups/groupsDataService';
     import { goto } from '$app/navigation';
-    import { page } from '$app/stores';
     import { Users, UserPlus, UserMinus, Shield, BookOpen, MessageSquare } from 'lucide-svelte';
 
-    let groupID = $state($page.url.searchParams.get('groupID') ?? '');
-    let inviteeEmail = $state($page.url.searchParams.get('email') ?? '');
+    let {data} = $props();
+    $inspect(data);
+    let groupID = $state(data.groupID ?? '');
+    let inviteeEmail = $state(data.email ?? '');
     let isLoading = $state(false);
 
     async function acceptOrRejectInvite(status) {
@@ -16,7 +17,7 @@
             let responseData = await acceptInvite(groupID, inviteeEmail, status);
             if(responseData.success) {
                 toastManager(TOAST_TYPE_SUCCESS, responseData.data.message);
-                goto('/dashboard/groups');
+                goto(status === 'accepted' ? `/dashboard/groups/${groupID}`: '/dashboard/groups');
             } else {
                 console.log(responseData.data);
                 toastManager(TOAST_TYPE_ERROR, "An error occurred while processing your request");

@@ -8,4 +8,8 @@ export const load = async({ url }) => {
     if (email === '' || groupID === ''){
         return redirect('/dashboard');
     }
+    return{
+        email: email,
+        groupID: groupID
+    }
 }

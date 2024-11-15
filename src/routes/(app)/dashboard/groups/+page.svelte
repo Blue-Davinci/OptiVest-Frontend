@@ -7,7 +7,7 @@
 	let { data } = $props();
 	let createdGroups = $derived(data?.createdGroups?.data?.groups ?? []);
 	let membershipGroups = $derived(data?.memberGroups?.data?.groups ?? []);
-	$inspect(createdGroups, 'createdGroups');
+	$inspect(createdGroups, 'createdGroups', membershipGroups, 'membershipGroups');
 	// Search functionality
 	let createdGroupsSearch = $state('');
 	let membershipGroupsSearch = $state('');

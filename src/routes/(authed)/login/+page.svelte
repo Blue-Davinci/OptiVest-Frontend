@@ -5,7 +5,7 @@
 	import {
 		TOAST_TYPE_ERROR,
 		TOAST_TYPE_SUCCESS,
-		TOAST_TYPE_LOADING,
+		TOAST_TYPE_LOADING
 	} from '$lib/settings/constants.js';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
@@ -16,7 +16,7 @@
 
 	let { data } = $props();
 	let redirectionPage = $page.url.searchParams.get('redirectTo') ?? '/dashboard';
-	$inspect({"Redirect Page: ": redirectionPage});
+	$inspect({ 'Redirect Page: ': redirectionPage });
 	const form = superForm(data.form, {
 		validators: zodClient(formSchema),
 		dataType: 'json',
@@ -32,9 +32,10 @@
 					toastManager(TOAST_TYPE_SUCCESS, message);
 					console.log('Redirecting to:', redirectionPage);
 					goto(redirectionPage);
-				}else if(!form.message.success && form.message.message === 'activation required'){
-					toastManager(TOAST_TYPE_ERROR, 'Account not activated. Redirecting...');
-					goto('/activation');
+				} else if (!form.message.success && form.message.message === 'activation required') {
+					const message =
+						'Oops! Looks like your account needs a little magic to get started. Activate it now to unlock all the awesomeness!';
+					goto(`/activation?message=${encodeURIComponent(message)}`);
 				} else {
 					console.log('Error:', form);
 					toastManager(TOAST_TYPE_ERROR, form.message.message);
@@ -137,7 +138,9 @@
 							>
 						</div>
 						<div class="text-sm">
-							<a href="/passwordreset" class="font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400"
+							<a
+								href="/passwordreset"
+								class="font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400"
 								>Forgot Password?</a
 							>
 						</div>

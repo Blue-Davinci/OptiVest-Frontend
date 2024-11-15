@@ -105,23 +105,27 @@
     console.log('Add new member');
   }
 
-	let stats = $derived([
-		{
-			icon: Users,
-			label: 'Members',
-			value: `${group.GroupMembers?.length ?? 0}/${group.Group?.max_member_count ?? 0}`
-		},
-		{
-			icon: DollarSign,
-			label: 'Total Transactions',
-			value: group.TotalGroupTransactions ?? 0
-		},
-		{
-			icon: Activity,
-			label: 'Activities',
-			value: group.Group?.activity_count ?? 0
-		}
-	]);
+  let stats = $derived(() => {
+  const groupData = group ?? {};
+  return [
+    {
+      icon: Users,
+      label: 'Members',
+      value: `${groupData.GroupMembers?.length ?? 0}/${groupData.Group?.max_member_count ?? 0}`
+    },
+    {
+      icon: DollarSign,
+      label: 'Total Transactions',
+      value: groupData.TotalGroupTransactions ?? 0
+    },
+    {
+      icon: Activity,
+      label: 'Activities',
+      value: groupData.Group?.activity_count ?? 0
+    }
+  ];
+});
+
 
   
 	async function inviteNewMembers(groupID, inviteeEmail) {
