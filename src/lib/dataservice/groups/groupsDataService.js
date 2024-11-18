@@ -254,11 +254,63 @@ const deleteGroupMember = async(groupID, userID, is_admin)=>{
     }
 }
 
+const updateUserRole = async(groupID, userID, role)=>{ 
+    // check if items are provided
+    if (!groupID || !userID || !role){
+        return {
+            success: false,
+            status: 400,
+            error: "Invalid data provided"
+        }
+    }
+    // build a singiluar param:groupID
+    let params = {
+        groupID: groupID
+    }
+    let finalEndpoint = buildFeedFollowUrl('/api/groups/member', params);
+    try{
+        const response = await fetch(finalEndpoint, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                user_id: userID,
+                role: role
+            })
+        });
+        if (!response.ok){
+            let errorData = await response.json();
+            return {
+                success: false,
+                status: response.status,
+                error: errorData.error
+            }
+        }
+        let responseData = await response.json();
+        return {
+            success: true,
+            status: response.status,
+            data: responseData
+        }
+    }catch(err){
+        console.log("[uURDS] ERROR: ", err.message);
+        return {
+            success: false,
+            status: 500,
+            error: '[uURDS]An error occured while fetching data'
+        }
+    }
+
+
+}
+
 export{
     getGroups,
     getGroupTransactions,
     getGroupExpenses,
     inviteMembers,
     acceptInvite,
-    deleteGroupMember
+    deleteGroupMember,
+    updateUserRole
 }

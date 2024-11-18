@@ -7,7 +7,11 @@
 	import Chat from '$lib/layouts/groups/detailed/chat.svelte';
 	import PendingInvites from '$lib/layouts/groups/detailed/pendinginvites.svelte';
 	import GroupTransactions from '$lib/layouts/groups/detailed/grouptransactions.svelte';
-	import { inviteMembers, deleteGroupMember } from '$lib/dataservice/groups/groupsDataService.js';
+	import {
+		inviteMembers,
+		deleteGroupMember,
+		updateUserRole
+	} from '$lib/dataservice/groups/groupsDataService.js';
 
 	let { data } = $props();
 	let group = $derived(data?.data?.group ?? {});
@@ -40,19 +44,61 @@
 		return Math.round((parseFloat(current) / parseFloat(target)) * 100);
 	};
 
-	function handleDemoteUser(userId) {
-		console.log(`Demote user with ID: ${userId}`);
-	}
+	async function handleUserRole(userId, position) {
+		// use updateUserRole to promote the user to a moderator
+		// we send the groupID, userID, role='moderator' to the updateUserRole function
+		try {
+			let responseData = await updateUserRole(group.Group.id, userId, position);
+			if (responseData.success) {
+				console.log('Response Data: ', responseData.data);
+				data = {
+					...data,
+					data: {
+						...data.data,
+						group: {
+							...data.data.group,
+							GroupMembers: data.data.group.GroupMembers.map((member) => {
+								if (member.user_id === userId) {
+									return {
+										...member,
+										role: position
+									};
+								}
+								return member;
+							})
+						}
+					}
+				};
+				return {
+					success: true,
+					value: 'user promoted to moderator successfully'
+				};
+			} else {
+				if (typeof responseData.error === 'object') {
+					for (const [_, value] of Object.entries(responseData.error)) {
+						return {
+							success: false,
+							value: value
+						};
+					}
+				} else {
+					return {
+						success: false,
+						value: responseData.error
+					};
+				}
+			}
+		} catch (err) {
+			console.log(err);
+		}
 
-	function handlePromoteUser(userId) {
-		console.log(`Promote user with ID: ${userId}`);
 	}
 
 	async function handleRemoveUser(groupID, userID, is_admin) {
 		try {
 			// if is_admin = true, send a request to delete the user from the group including the groupID, userID, and true
 			// otherwise, send a request to delete the user from the group including the groupID and is_admin=false
-			let responseData
+			let responseData;
 			if (is_admin) {
 				responseData = await deleteGroupMember(groupID, userID, true);
 			} else {
@@ -158,8 +204,7 @@
 		<GroupMembers
 			{group}
 			{inviteNewMembers}
-			{handleDemoteUser}
-			{handlePromoteUser}
+			{handleUserRole}
 			{handleRemoveUser}
 			{handleAddMember}
 			{formatDate}
