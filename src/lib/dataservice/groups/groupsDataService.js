@@ -203,10 +203,62 @@ const acceptInvite = async(groupID, inviteeEmail, status)=>{
     }
 }
 
+// deletGroupMember() accepts a groupID and a userID and is_admin flag
+// if is_admin is true, means the admin has initiated the request
+// and it will delete the user from the group sending the groupID and userID as parameters
+// if is_admin is false, it means that a member has initiated the delete and only the groupID is sent
+const deleteGroupMember = async(groupID, userID, is_admin)=>{
+    let finalEndpoint;
+    if (is_admin){
+        let params = {
+            groupID: groupID,
+            userID: userID,
+            is_admin: true
+        }
+        finalEndpoint = buildFeedFollowUrl('/api/groups/member', params);
+    }else{
+        let params = {
+            groupID: groupID,
+            is_admin: false
+        };
+        finalEndpoint = buildFeedFollowUrl('/api/groups/member', params);
+    }
+    try{
+        const response = await fetch(finalEndpoint, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (!response.ok){
+            let errorData = await response.json();
+            return {
+                success: false,
+                status: response.status,
+                error: errorData.error
+            }
+        }
+        let responseData = await response.json();
+        return {
+            success: true,
+            status: response.status,
+            data: responseData
+        }
+    }catch(err){
+        console.log("[dgmDS] ERROR: ", err.message);
+        return {
+            success: false,
+            status: 500,
+            error: '[dgmDS]An error occured while fetching data'
+        }
+    }
+}
+
 export{
     getGroups,
     getGroupTransactions,
     getGroupExpenses,
     inviteMembers,
-    acceptInvite
+    acceptInvite,
+    deleteGroupMember
 }

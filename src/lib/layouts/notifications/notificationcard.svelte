@@ -94,7 +94,6 @@
         {#if notification.meta?.url}
             <a 
                 href={notification.meta.url}
-                target="_blank"
                 rel="noopener noreferrer"
                 class="inline-flex items-center gap-2 text-purple-600 transition-all duration-200 hover:text-purple-700 hover:underline dark:text-purple-400 dark:hover:text-purple-300"
             >

@@ -1,13 +1,12 @@
 <script>
 	import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS } from '$lib/settings/constants.js';
-
 	import * as Dialog from '$lib/components/ui/dialog';
 	import { Input } from '$lib/components/ui/input';
 	import { toastManager } from '$lib/helpers/utilities.js';
 	import { UserPlus } from 'lucide-svelte';
 
-	let { groupID, inviteNewMembers } = $props();
-	$inspect(groupID);
+	let { groupID=0, inviteNewMembers } = $props();
+	//$inspect(groupID);
 	let isDrawerOpen = $state(false);
 	let isLoading = $state(false);
 	let inviteeEmail = $state('');

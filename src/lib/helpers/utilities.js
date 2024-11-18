@@ -47,6 +47,12 @@ function buildFeedFollowUrl(baseUrl, params) {
   if(params.groupID){
       queryParts.push(`groupID=${encodeURIComponent(params.groupID)}`);
   }
+  if(params.userID){
+      queryParts.push(`userID=${encodeURIComponent(params.userID)}`);
+  }
+  if(params.is_admin){
+      queryParts.push(`is_admin=${encodeURIComponent(params.is_admin)}`);
+  }
 
   return queryParts.length > 0 ? `${baseUrl}?${queryParts.join('&')}` : baseUrl;
 }
