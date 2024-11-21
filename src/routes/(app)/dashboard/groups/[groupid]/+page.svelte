@@ -26,7 +26,7 @@
 		let matchedMember = group.GroupMembers.find(
 			(member) => member.user_id === parseInt(userInformation.id)
 		);
-		return matchedMember ? matchedMember.role : 'regular';
+		return matchedMember ? matchedMember.role : 'member';
 	});
 
 	$inspect(data, 'data');
@@ -221,6 +221,6 @@
 	</div>
 </div>
 
-<Chat />
+<Chat groupID={group.Group.id} {userInformation} {currentUser}/>
 
 <style></style>

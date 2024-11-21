@@ -2,7 +2,7 @@ import {buildFeedFollowUrl} from '$lib/helpers/utilities.js';
 // getGroups() function is used to fetch groups data from the server
 // we pass in a custom fetch from the loader function in the page file
 // we also pass a flag, isCreated, to determine if we want to fetch created groups or member groups
-const getGroups = async({fetch: customFetch}, isCreated = true)=>{
+const getGroups = async({fetch: customFetch}={}, isCreated = true)=>{
     let fetchFunc = customFetch || fetch;
     let endpoint;
     if (isCreated){
@@ -43,7 +43,7 @@ const getGroups = async({fetch: customFetch}, isCreated = true)=>{
 
 // getGroupTransactions() function is used to fetch group transactions data from the server
 // we pass in a custom fetch from the loader function in the page file
-const getGroupTransactions = async({fetch: customFetch}, groupID, goalID, page, page_size)=>{
+const getGroupTransactions = async({fetch: customFetch}={}, groupID, goalID, page, page_size)=>{
     console.log('Group ID:', groupID);
     let fetchFunc = customFetch || fetch;
     let endpoint = '/api/groups/transactions';
@@ -86,7 +86,7 @@ const getGroupTransactions = async({fetch: customFetch}, groupID, goalID, page, 
     }
 }
 
-const getGroupExpenses = async({fetch: customFetch}, groupID, categoryName, page, page_size)=>{
+const getGroupExpenses = async({fetch: customFetch}={}, groupID, categoryName, page, page_size)=>{
     console.log('Group ID:', groupID);
     let fetchFunc = customFetch || fetch;
     let endpoint = '/api/groups/expenses';

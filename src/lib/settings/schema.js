@@ -189,3 +189,18 @@ export const tokenSchema = z
 	.max(32, { message: 'The Token is Invalid' })
 	.refine((value) => value.trim().length > 0, { message: 'Token cannot be only whitespace' });
 
+
+export const commentSchema = z.object({
+    associated_type: z
+      .string({ required_error: 'associated type is required' })
+      .min(1, { message: 'associated type is required' })
+      .trim(),
+    associated_id: z
+      .number({ required_error: 'associated ID is required' })
+      .min(1, { message: 'associated ID is required' }),
+    content: z
+      .string({ required_error: 'Comment is required' })
+      .min(3, { message: 'Comment is too short' })
+      .max(500, { message: 'Comment must be less than 500 characters' })
+      .trim()
+  });

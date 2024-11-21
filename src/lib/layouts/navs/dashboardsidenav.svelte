@@ -124,7 +124,7 @@
 	<img src="/optivest-cropped.png" alt="OptiVest Logo" class="h-10 w-10 rounded-full" />
 	<button
 		onclick={toggleHamburgerMenu}
-		class="text-gray-500 hover:text-gray-700 dark:text-gray-300"
+		class="text-gray-500 hover:text-gray-700 dark:text-gray-300 z-10"
 	>
 		{#if showHamburgerMenu}
 			<ChevronsLeft class="h-5 w-5" />
@@ -159,7 +159,7 @@
 		</button>
 	</div>
 
-	<!-- Sidebar content remains unchanged -->
+	<!-- Sidebar content -->
 	<div class="flex-grow overflow-y-auto">
 		<div class="mt-2 space-y-1">
 			{#each navSections as section}

@@ -53,6 +53,18 @@ function buildFeedFollowUrl(baseUrl, params) {
   if(params.is_admin){
       queryParts.push(`is_admin=${encodeURIComponent(params.is_admin)}`);
   }
+  // associated_id
+  if(params.associated_id){
+      queryParts.push(`associated_id=${encodeURIComponent(params.associated_id)}`);
+  }
+  // associated_type
+  if(params.associated_type){
+      queryParts.push(`associated_type=${encodeURIComponent(params.associated_type)}`);
+  }
+  // commentID
+  if(params.commentID){
+      queryParts.push(`commentID=${encodeURIComponent(params.commentID)}`);
+  }
 
   return queryParts.length > 0 ? `${baseUrl}?${queryParts.join('&')}` : baseUrl;
 }
