@@ -57,6 +57,7 @@
 			} else if (form.message && !form.message.success) {
 				toastManager(TOAST_TYPE_ERROR, form.message.message);
 			}
+			
 		}
 	});
 	const { form: formData, enhance, message, delayed } = form;

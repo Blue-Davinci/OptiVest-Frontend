@@ -57,10 +57,10 @@ export const actions = {
             });
         }catch(err){
             console.log("CNU-SE error: ", err);
-            return {
-                status: 500,
-                error: "An error occured while sending your message"
-            };
+            return message(form, {
+                message: 'An error occured while sending your message',
+                success: false
+            });
         }
     }
 }

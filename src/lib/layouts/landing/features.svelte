@@ -137,11 +137,11 @@
 	}
   
 	.feature-gradient {
-	  @apply absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:from-blue-900/20;
+	  @apply absolute inset-0 bg-gradient-to-br from-purple-50 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 dark:from-purple-900/20;
 	}
   
 	.feature-icon-wrapper {
-	  @apply relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-blue-700 text-yellow-400 transition-transform duration-300 group-hover:scale-110;
+	  @apply relative flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-purple-600 to-purple-700 text-green-400 transition-transform duration-300 group-hover:scale-110;
 	}
   </style>
   

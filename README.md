@@ -122,6 +122,31 @@ node encryption.js
 ```bash
 npm run dev
 ```
+## Using Reverse Proxies
+This section is for the cases where you want to run the build and start when built and under a reverse proxy. We will use `cloudflarered` as an example.
+
+1. Make sure to download and install `cloudflarered` from [here](https://github.com/cloudflare/cloudflared) 
+
+2. After a full installation, proceed and start the cloudflare free tunnel using th efollowing:
+```bash
+cloudflared tunnel --url http://localhost:3000/ 
+```
+- Please remember to replace the exposed url+port with your own for the prod deployment.
+- A free tunnel link will be provided, copy this.
+
+3. Proceed to set the ORIGIN via `env` variables. If on windows you can do this via powershell
+```bash
+$env:ORIGIN = "https://mountain-charm-buyer-greene.trycloudflare.com"
+```
+- The above also prevents cross post errors when performing post request on the prod
+
+4. Proceed to run the build:
+```bash
+node build
+```
+
+- And that's it, you can proceed and access the app via your cloudflared tunnel.
+
 
 <b>The Optivests's Frontend</b> should now be running on your local machine. You can access it by opening your web browser and navigating to `http://localhost:5173` (or the port number displayed in your terminal).
 
