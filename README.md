@@ -136,7 +136,7 @@ cloudflared tunnel --url http://localhost:3000/
 
 3. Proceed to set the ORIGIN via `env` variables. If on windows you can do this via powershell
 ```bash
-$env:ORIGIN = "https://mountain-charm-buyer-greene.trycloudflare.com"
+$env:ORIGIN = "copied-tunnel-link"
 ```
 - The above also prevents cross post errors when performing post request on the prod
 
