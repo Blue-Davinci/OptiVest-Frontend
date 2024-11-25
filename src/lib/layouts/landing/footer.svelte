@@ -4,7 +4,7 @@
 			<div>
 				<h3 class="mb-4 text-lg font-semibold">Company</h3>
 				<ul class="space-y-2">
-					<li><a href="#1" class="hover:text-optivest-blue">About Us</a></li>
+					<li><a href="/about" class="hover:text-optivest-blue">About Us</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">Careers</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">Press</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">Blog</a></li>
@@ -13,8 +13,8 @@
 			<div>
 				<h3 class="mb-4 text-lg font-semibold">Product</h3>
 				<ul class="space-y-2">
-					<li><a href="#1" class="hover:text-optivest-blue">Features</a></li>
-					<li><a href="#1" class="hover:text-optivest-blue">Pricing</a></li>
+					<li><a href="#advanced-features" class="hover:text-optivest-blue">Features</a></li>
+					<li><a href="#plans" class="hover:text-optivest-blue">Pricing</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">Security</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">Integrations</a></li>
 				</ul>
@@ -22,7 +22,7 @@
 			<div>
 				<h3 class="mb-4 text-lg font-semibold">Resources</h3>
 				<ul class="space-y-2">
-					<li><a href="#1" class="hover:text-optivest-blue">Documentation</a></li>
+					<li><a href="https://github.com/Blue-Davinci/OptiVest-Frontend" class="hover:text-optivest-blue">Documentation</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">API Reference</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">Guides</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">Support</a></li>
@@ -31,8 +31,8 @@
 			<div>
 				<h3 class="mb-4 text-lg font-semibold">Legal</h3>
 				<ul class="space-y-2">
-					<li><a href="#1" class="hover:text-optivest-blue">Privacy Policy</a></li>
-					<li><a href="#1" class="hover:text-optivest-blue">Terms of Service</a></li>
+					<li><a href="/privacy" class="hover:text-optivest-blue">Privacy Policy</a></li>
+					<li><a href="/terms" class="hover:text-optivest-blue">Terms of Service</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">Cookie Policy</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">GDPR</a></li>
 				</ul>

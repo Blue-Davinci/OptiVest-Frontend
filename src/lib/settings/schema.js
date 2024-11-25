@@ -204,3 +204,22 @@ export const commentSchema = z.object({
       .max(500, { message: 'Comment must be less than 500 characters' })
       .trim()
   });
+
+export const contactSchema = z.object({
+  name: z
+  .string()
+  .min(1, { message: 'Name is too short' })
+  .max(64, { message: 'Name must be less than 64 characters' }),
+  email: z
+  .string()
+  .min(1, { message: 'Email is required' })
+  .max(64, { message: 'Email must be less than 64 characters' }),
+  subject: z
+  .string()
+  .min(5, { message: 'Subject is too short' })
+  .max(64, { message: 'Subject must be less than 64 characters' }),
+  message: z
+  .string()
+  .min(10, { message: 'Message is too short' })
+  .max(500, { message: 'Message must be less than 500 characters' }),
+});
