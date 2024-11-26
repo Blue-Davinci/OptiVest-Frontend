@@ -11,7 +11,7 @@
 	let { data } = $props();
 	let incomeData = $derived(data?.incomeData?.data?.incomes ?? []);
     let currencies = $derived(data?.currencies?.data?.currencies?.conversion_rates ?? {});
-	let defaultCurrency = $state(data.userInformation.currency_code);
+	let defaultCurrency = $state(data.userInformation?.currency_code === '' ? 'USD' : data.userInformation?.currency_code);
 	let searchQuery = $state('');
 	$inspect(data);
 

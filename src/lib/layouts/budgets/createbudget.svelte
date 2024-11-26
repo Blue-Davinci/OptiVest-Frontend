@@ -14,12 +14,13 @@
 
 	let isDrawerOpen = $state(false);
 	let { data, defaultCurrency, currencies, budgetCategories } = $props();
-
+	$inspect(defaultCurrency, "defaultCurrency");
 	const form = superForm(data.form, {
 		validators: zodClient(budgetSchema),
 		dataType: 'json',
         invalidateAll: true,
 		onUpdated({ form }) {
+			console.log('Form updated:', form);
 			if (form.message && form.message.success) {
 				toastManager(TOAST_TYPE_SUCCESS, form.message.message);
 				console.log('Budget created:', form.message.data);
@@ -27,7 +28,10 @@
 				// close the dialog
 				isDrawerOpen = false;
 			} else if (form.message && !form.message.success) {
-				toastManager(TOAST_TYPE_ERROR, form.message.message);
+				//loop throught the form.message.message object, displaying the error
+				Object.keys(form.message.message).forEach((key) => {
+					toastManager(TOAST_TYPE_ERROR, form.message.message[key]);
+				});
 			}
 		}
 	});

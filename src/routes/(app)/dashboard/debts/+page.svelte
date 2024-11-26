@@ -7,7 +7,7 @@
 
 
     let { data } = $props();
-    let defaultCurrency = data.userInformation.currency_code;
+    let defaultCurrency = $state(data.userInformation?.currency_code === '' ? 'USD' : data.userInformation?.currency_code);
     let debts = $derived(data?.debtsResponse?.data?.debts ?? []);
     let searchQuery = $state('');
     let expandedDebt = $state(null);

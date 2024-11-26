@@ -18,7 +18,8 @@
 	let budgetCategories = $derived(data?.budgetCategories?.data?.budget_categories ?? []);
 	let userInfo = $derived(data.userInformation);
 
-	let defaultCurrency = $state(data.userInformation.currency_code);
+	let defaultCurrency = $state(data.userInformation?.currency_code === '' ? 'USD' : data.userInformation?.currency_code);
+	console.log('Default Currency:', defaultCurrency);
 	let searchQuery = $state('');
 	let isSearching = $state(false);
 	const { debounce } = lodash;

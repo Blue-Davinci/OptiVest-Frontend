@@ -30,19 +30,28 @@ function formatNumber(value) {
 
 
   // Fetching current and previous month data
-  let currentMonth = expenseIncomeSummary[2]; // October
-  let previousMonth = expenseIncomeSummary[1]; // September
+  let currentMonth = 0
+  let previousMonth = 0
+  // if expenseIncomeSummary is not empty, set currentMonth and previousMonth
+  if (expenseIncomeSummary.length > 0) {
+     currentMonth = expenseIncomeSummary[2]; // October
+    previousMonth = expenseIncomeSummary[1]; // September
+  }
 
-  // Calculate income, expenses, and balance
-  let income = parseFloat(currentMonth.total_income);
-  let expenses = parseFloat(currentMonth.total_expenses);
-  let budget = parseFloat(currentMonth.total_budget);
-  let balance = calculateBalance(income, budget, expenses);
-  $inspect(balance);
-  // Previous month's values
-  let prevIncome = parseFloat(previousMonth.total_income);
-  let prevExpenses = parseFloat(previousMonth.total_expenses);
-  let prevBudget = parseFloat(previousMonth.total_budget);
+// Safely parse values, defaulting to 0 if invalid or not available
+let income = isNaN(parseFloat(currentMonth?.total_income)) ? 0 : parseFloat(currentMonth?.total_income);
+let expenses = isNaN(parseFloat(currentMonth?.total_expenses)) ? 0 : parseFloat(currentMonth?.total_expenses);
+let budget = isNaN(parseFloat(currentMonth?.total_budget)) ? 0 : parseFloat(currentMonth?.total_budget);
+
+// Calculate balance
+let balance = calculateBalance(income, budget, expenses);
+$inspect(balance);
+
+// Safely handle previous month's values
+let prevIncome = isNaN(parseFloat(previousMonth?.total_income)) ? 0 : parseFloat(previousMonth?.total_income);
+let prevExpenses = isNaN(parseFloat(previousMonth?.total_expenses)) ? 0 : parseFloat(previousMonth?.total_expenses);
+let prevBudget = isNaN(parseFloat(previousMonth?.total_budget)) ? 0 : parseFloat(previousMonth?.total_budget);
+
 
   // Calculate percentage changes
   let incomePercentageChange = calculatePercentageChange(income, prevIncome);

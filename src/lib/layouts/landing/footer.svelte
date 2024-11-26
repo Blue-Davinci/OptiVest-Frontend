@@ -31,8 +31,8 @@
 			<div>
 				<h3 class="mb-4 text-lg font-semibold">Legal</h3>
 				<ul class="space-y-2">
-					<li><a href="/privacy" class="hover:text-optivest-blue">Privacy Policy</a></li>
-					<li><a href="/terms" class="hover:text-optivest-blue">Terms of Service</a></li>
+					<li><a href="/sitedocs/privacy" class="hover:text-optivest-blue">Privacy Policy</a></li>
+					<li><a href="/sitedocs/terms" class="hover:text-optivest-blue">Terms of Service</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">Cookie Policy</a></li>
 					<li><a href="#1" class="hover:text-optivest-blue">GDPR</a></li>
 				</ul>

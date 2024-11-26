@@ -51,6 +51,7 @@ export const actions = {
             });
             if (!response.ok){
                 let errorData = await response.json();
+                console.log('GBLEIP Error Server: API Response:', errorData);
                 // if it's an array, iterate over it and set the error for each field
                 if (Array.isArray(errorData.error)){
                     for (let field in errorData.error){

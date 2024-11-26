@@ -36,13 +36,24 @@ export const actions = {
 			if (!response.ok) {
 				const errorData = await response.json();
 				console.error('API Error:', errorData);
-				// check if error is due to email or due to password and
-				// set the error accordingly: { error: { email: 'must be a valid email address' } }
-				if (Array.isArray(errorData.error)){
-                    for (let field in errorData.error){
-                        setError(form, field, errorData.error[field]);
-                    }
-				} else {
+			
+				// Check if errorData.error is an array of errors
+				if (Array.isArray(errorData.error)) {
+					// Loop through the array and set errors for each field
+					errorData.error.forEach(error => {
+						for (let field in error) {
+							setError(form, field, error[field]);
+						}
+					});
+				} 
+				// Check if errorData.error is an object (key-value pairs)
+				else if (typeof errorData.error === 'object' && errorData.error !== null) {
+					for (let field in errorData.error) {
+						setError(form, field, errorData.error[field]);
+					}
+				} 
+				// Handle cases where errorData.error is a string or another unexpected format
+				else if (typeof errorData.error === 'string') {
 					return message(
 						form,
 						{
@@ -53,8 +64,23 @@ export const actions = {
 							status: 403
 						}
 					);
+				} 
+				// Fallback for unknown error format
+				else {
+					console.error('Unexpected error format:', errorData.error);
+					return message(
+						form,
+						{
+							message: 'An unexpected error occurred. Please try again.',
+							status: 'failure'
+						},
+						{
+							status: 500
+						}
+					);
 				}
 			}
+			
 
 			const responseData = await response.json();
 			console.log('API Response:', responseData);

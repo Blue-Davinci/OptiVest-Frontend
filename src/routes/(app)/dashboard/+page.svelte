@@ -21,6 +21,7 @@
 	let goalsData = $derived(data?.goalData?.data?.goals ?? []);
 	let expenseTransactions = $derived(data?.expenses?.data && !data.expenses.data.error ? data.expenses.data : {});
 	let expenseIncomeSummary = $derived(data.expenseIncomeSummary?.data?.expense_income_summary_report ?? []);
+	$inspect({"Expense Income Summary: ": expenseIncomeSummary});
 	let investmentAnalysisSummary = $derived(data.personalFinanceSummary?.data?.investment_analysis ?? []);
 	$inspect({"Expense Transactions: ": expenseTransactions});
 

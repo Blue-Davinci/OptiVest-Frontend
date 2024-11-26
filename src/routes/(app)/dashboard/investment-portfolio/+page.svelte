@@ -12,7 +12,7 @@
 
 
 	let { data } = $props();
-	let defaultCurrency = $state(data.userInformation.currency_code);
+	let defaultCurrency = $state(data.userInformation?.currency_code === '' ? 'USD' : data.userInformation?.currency_code);
 	let alternativeInvestments = $derived(data?.alternativeData?.data?.alternative ?? []);
 	let bondInvestments = $derived(data?.bondData?.data?.bond ?? []);
 	let stockInvestments = $derived(data?.stockData?.data?.stock ?? []);
