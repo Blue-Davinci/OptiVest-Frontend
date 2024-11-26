@@ -55,11 +55,6 @@ Prior to running the <b>OptiVest</b> project, you need to make sure that you hav
 
 - **Golang and The OptiVest Back-end:** This can be found [here](https://github.com/Blue-Davinci/OptiVest)
 
-
-```
-Give examples
-```
-
 ### Installing
 
 Start with the gears hot by jumping in your terminal and:
