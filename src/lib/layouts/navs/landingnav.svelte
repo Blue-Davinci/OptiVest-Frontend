@@ -27,7 +27,7 @@
                     Dashboard
                 </a>
             {/if}
-            <a href="#about" class="text-white/90 transition duration-300 hover:text-white dark:text-gray-300 dark:hover:text-white">
+            <a href="/about" class="text-white/90 transition duration-300 hover:text-white dark:text-gray-300 dark:hover:text-white">
                 About Us
             </a>
             <a href="#services" class="text-white/90 transition duration-300 hover:text-white dark:text-gray-300 dark:hover:text-white">

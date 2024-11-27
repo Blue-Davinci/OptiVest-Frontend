@@ -9,7 +9,7 @@
 	let status = $state('disconnected');
 	let retryInterval = 1000; // Initial retry delay (1 second)
 	const maxRetries = 6; // Maximum number of retries
-	const initialRetryDelay = 50000; // Initial delay before the first retry (5 seconds)
+	const initialRetryDelay = 20000; // Initial delay before the first retry (5 seconds)
 	let retryCount = 0;
 	let retrying = false;
 	let messages = $state([]);
