@@ -301,8 +301,83 @@ const updateUserRole = async(groupID, userID, role)=>{
             error: '[uURDS]An error occured while fetching data'
         }
     }
+}
 
+const getPublicGroups = async({fetch: customFetch}={},page=0, page_size=0, name='')=>{
+    let fetchFunc = customFetch || fetch;
+    let endpoint = '/api/groups/public';
+    let params = {
+        name: name,
+        page: page,
+        page_size: page_size
+    }
+    let groupURL = buildFeedFollowUrl(endpoint, params);
+    console.log('Group URL:', groupURL);
+    try{
+        const response = await fetchFunc(groupURL, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        if (!response.ok){
+            let errorData = await response.json();
+            return {
+                success: false,
+                status: response.status,
+                error: errorData.error
+            }
+        }
+        let responseData = await response.json();
+        return {
+            success: true,
+            status: response.status,
+            data: responseData
+        }
+    }catch(err){
+        console.log("[gpgDS] ERROR: ", err.message);
+        return {
+            success: false,
+            status: 500,
+            error: '[gpgDS]An error occured while fetching data'
+        }
+    }
+}
 
+const joinPublicGroup = async(groupID)=>{
+    let finalEndpoint = '/api/groups/public';
+    try{
+        const response = await fetch(finalEndpoint, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                group_id: groupID
+            })
+        });
+        if (!response.ok){
+            let errorData = await response.json();
+            return {
+                success: false,
+                status: response.status,
+                error: errorData.error
+            }
+        }
+        let responseData = await response.json();
+        return {
+            success: true,
+            status: response.status,
+            data: responseData
+        }
+    }catch(err){
+        console.log("[jpgDS] ERROR: ", err.message);
+        return {
+            success: false,
+            status: 500,
+            error: '[jpgDS]An error occured while fetching data'
+        }
+    }
 }
 
 export{
@@ -312,5 +387,7 @@ export{
     inviteMembers,
     acceptInvite,
     deleteGroupMember,
-    updateUserRole
+    updateUserRole,
+    getPublicGroups,
+    joinPublicGroup
 }
