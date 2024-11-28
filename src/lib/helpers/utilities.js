@@ -69,7 +69,17 @@ function buildFeedFollowUrl(baseUrl, params) {
   return queryParts.length > 0 ? `${baseUrl}?${queryParts.join('&')}` : baseUrl;
 }
 
+function generateRobohashUrls(seed) {
+  return [
+      `https://robohash.org/${seed}?set=set1`,
+      `https://robohash.org/${seed}?set=set2`,
+      `https://robohash.org/${seed}?set=set3`,
+      `https://robohash.org/${seed}?set=set4`
+  ];
+}
+
 export { 
   toastManager, 
-  buildFeedFollowUrl 
+  buildFeedFollowUrl ,
+  generateRobohashUrls
 };

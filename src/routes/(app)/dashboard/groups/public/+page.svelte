@@ -1,13 +1,10 @@
 <script>
-	import {
-		TOAST_TYPE_ERROR,
-		TOAST_TYPE_SUCCESS
-	} from '$lib/settings/constants.js';
+	import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS } from '$lib/settings/constants.js';
 	import { toastManager } from '$lib/helpers/utilities.js';
 	import { formatDistanceToNow } from 'date-fns';
 	import Pagination from '$lib/layouts/common/pagination.svelte';
 	import { goto } from '$app/navigation';
-    import * as AlertDialog from '$lib/components/ui/alert-dialog';
+	import * as AlertDialog from '$lib/components/ui/alert-dialog';
 	import { getPublicGroups, joinPublicGroup } from '$lib/dataservice/groups/groupsDataService';
 	import {
 		Search,
@@ -59,7 +56,7 @@
 		}
 		console.log('Join Group Response:', response);
 		// Redirect to the group page
-		//goto(`/app/groups/${groupId}`);
+		goto(`/dashboard/groups/${groupId}`);
 	}
 
 	async function fetchData(page, query = '') {
@@ -150,12 +147,22 @@
 		</div>
 	</div>
 
+	<!-- Empty State -->
+	{#if filteredGroups.length === 0}
+		<div class="mx-auto max-w-md rounded-xl bg-white py-12 text-center shadow-lg dark:bg-gray-800">
+			<Users class="mx-auto h-12 w-12 text-purple-400" />
+			<h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">No groups found</h3>
+			<p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
+				Try adjusting your search or check back later for new groups.
+			</p>
+		</div>
+	{/if}
 	<!-- Main content wrapper with flex column -->
 	<div class="mx-auto flex min-h-[calc(100vh-200px)] max-w-7xl flex-col">
 		<!-- Groups Grid -->
 		<div class="flex-grow">
 			<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                {#each filteredGroups as { is_user_a_member, enriched_group: { group, group_members, group_goals, total_members, total_group_transactions } } (group.id)}
+				{#each filteredGroups as { is_user_a_member, enriched_group: { group, group_members, group_goals, total_members, total_group_transactions } } (group.id)}
 					<div
 						class="overflow-hidden rounded-xl bg-white shadow-md transition-all
                     duration-300 hover:scale-[1.02] hover:shadow-xl dark:bg-gray-800"
@@ -261,49 +268,51 @@
 							{/if}
 
 							<!-- Join Button -->
-                            {#if !is_user_a_member}
-                            <div class="w-full">
-                                <AlertDialog.Root>
-                                  <AlertDialog.Trigger class="w-full">
-                                    <button
-                                      class="w-full flex transform items-center justify-center gap-2
+							{#if !is_user_a_member}
+								<div class="w-full">
+									<AlertDialog.Root>
+										<AlertDialog.Trigger class="w-full">
+											<button
+												class="flex w-full transform items-center justify-center gap-2
                                         rounded-lg bg-gradient-to-r from-purple-600 to-purple-700 px-4
                                         py-3 font-medium text-white shadow-lg
                                         transition-all duration-300
                                         hover:translate-y-[-2px] hover:from-purple-700 hover:to-purple-800 hover:shadow-purple-500/25"
-                                    >
-                                      <PlusCircle class="h-5 w-5" />
-                                      Join Group
-                                    </button>
-                                  </AlertDialog.Trigger>
-                                  <AlertDialog.Content class="sm:max-w-[425px]">
-                                    <AlertDialog.Header>
-                                      <AlertDialog.Title class="text-xl font-semibold leading-none tracking-tight">
-                                        Join Group
-                                      </AlertDialog.Title>
-                                      <AlertDialog.Description
-                                        class="mt-3 text-[15px] leading-normal text-muted-foreground"
-                                      >
-                                        Are you sure you want to join this group?
-                                      </AlertDialog.Description>
-                                    </AlertDialog.Header>
-                                    <AlertDialog.Footer class="mt-6 flex gap-3">
-                                      <AlertDialog.Cancel
-                                        class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
-                                      >
-                                        Cancel
-                                      </AlertDialog.Cancel>
-                                      <AlertDialog.Action
-                                        on:click={() => handleJoinGroup(group.id)}
-                                        class="inline-flex h-9 items-center justify-center rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:bg-purple-700 dark:hover:bg-purple-800"
-                                      >
-                                        Join Group
-                                      </AlertDialog.Action>
-                                    </AlertDialog.Footer>
-                                  </AlertDialog.Content>
-                                </AlertDialog.Root>
-                              </div>
-                            {/if}
+											>
+												<PlusCircle class="h-5 w-5" />
+												Join Group
+											</button>
+										</AlertDialog.Trigger>
+										<AlertDialog.Content class="sm:max-w-[425px]">
+											<AlertDialog.Header>
+												<AlertDialog.Title
+													class="text-xl font-semibold leading-none tracking-tight"
+												>
+													Join Group
+												</AlertDialog.Title>
+												<AlertDialog.Description
+													class="mt-3 text-[15px] leading-normal text-muted-foreground"
+												>
+													Are you sure you want to join this group?
+												</AlertDialog.Description>
+											</AlertDialog.Header>
+											<AlertDialog.Footer class="mt-6 flex gap-3">
+												<AlertDialog.Cancel
+													class="inline-flex h-9 items-center justify-center rounded-md border border-input bg-background px-4 py-2 text-sm font-medium ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+												>
+													Cancel
+												</AlertDialog.Cancel>
+												<AlertDialog.Action
+													on:click={() => handleJoinGroup(group.id)}
+													class="inline-flex h-9 items-center justify-center rounded-md bg-purple-600 px-4 py-2 text-sm font-medium text-white ring-offset-background transition-colors hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 dark:bg-purple-700 dark:hover:bg-purple-800"
+												>
+													Join Group
+												</AlertDialog.Action>
+											</AlertDialog.Footer>
+										</AlertDialog.Content>
+									</AlertDialog.Root>
+								</div>
+							{/if}
 						</div>
 					</div>
 				{/each}
@@ -313,17 +322,6 @@
 		<!-- Pagination -->
 		<Pagination {totalPages} {pageSize} {totalRecords} {handlePageChange} />
 	</div>
-
-	<!-- Empty State -->
-	{#if filteredGroups.length === 0}
-		<div class="mx-auto max-w-md rounded-xl bg-white py-12 text-center shadow-lg dark:bg-gray-800">
-			<Users class="mx-auto h-12 w-12 text-purple-400" />
-			<h3 class="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">No groups found</h3>
-			<p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-				Try adjusting your search or check back later for new groups.
-			</p>
-		</div>
-	{/if}
 </div>
 
 <style>

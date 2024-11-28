@@ -70,7 +70,7 @@
 			shortLabel: 'Groups',
 			items: [
 				{ name: 'Group Manager', icon: FolderKanban, url: '/dashboard/groups' },
-				{ name: 'Groups', icon: UsersRound, url: '#1' }
+				{ name: 'Explore Groups', icon: UsersRound, url: '/dashboard/groups/public' }
 			]
 		},
 		{
@@ -85,7 +85,7 @@
 
 	const bottomItems = $derived([
     { name: 'Notifications', icon: Bell, badge: notificationCount, url: '/dashboard/notifications' },
-    { name: 'Settings', icon: Settings, url: '#1' },
+    { name: 'Settings', icon: Settings, url: '/dashboard/account' },
     { name: 'Support', icon: HelpCircle, url: '#1' }
 ]);
 
