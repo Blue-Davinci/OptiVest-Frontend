@@ -223,3 +223,16 @@ export const contactSchema = z.object({
   .min(10, { message: 'Message is too short' })
   .max(500, { message: 'Message must be less than 500 characters' }),
 });
+
+/*
+{
+    "email": "jdoe@gmail.com",
+    "totp_token": "LFMpsCD3UNJ9fb4glkAlHnDrxUn4TSglI18k6Nnxa3J1EQB2PXBL1Bg23S4XUgGak63ILoye",
+    "totp_code": "635122"
+}
+    */
+export const totpSchema = z.object({
+  email: z.string().min(5, { message: 'Email is required' }).max(64, { message: 'Email must be less than 64 characters' }),
+  totp_token: z.string().min(26, { message: 'A Valid Token is required' }),
+  totp_code: z.string().min(6, { message: 'A Valid Token is required' }).max(6, { message: 'The Token is Invalid' }),
+});

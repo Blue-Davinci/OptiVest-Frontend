@@ -7,7 +7,7 @@ import { checkAuthentication } from '$lib/helpers/auths';
 export const handle = async ({ event, resolve }) => {
 	// authenticated endpoints
 	const authenticatedPaths = ['/dashboard', '/logout', '/account'];
-	const safelistPaths = ['/login', '/signup'];
+	const safelistPaths = ['/login', '/signup', '/login/verify'];
 	const requestedPath = event.url.pathname;
 	let credentials = checkAuthentication(event.cookies);
 	console.log('Credentials Hook: ', credentials.user);
@@ -31,6 +31,20 @@ export const handle = async ({ event, resolve }) => {
 	const requiresAuth = authenticatedPaths.some((path) => requestedPath.includes(path));
 	console.log('Auth Path: ', requiresAuth);
 	const isSafelist = safelistPaths.some((path) => requestedPath.includes(path));
+
+	/*const url = new URL(event.url);
+	  // Check if the requested page is /login/verify
+	  if (url.pathname === '/login/verify') {
+		// Get the referer URL
+		const referer = event.request.headers.get('referer');
+		console.log('Referer:', referer);
+		// If there's no referer or it's not from page X, redirect to home
+		if (!referer || !referer.endsWith('/login')) {
+			console.log('Redirecting! User is not coming from login page');
+			return redirect(303, `/`);
+		}
+	  }
+	*/
 	// Check if user is authenticated for every request and accessing specified paths
 	if (!credentials.status && !credentials.user && requiresAuth) {
 		console.log('Redirecting! User is not authenticated');
