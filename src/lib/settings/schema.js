@@ -62,7 +62,10 @@ export const signUpFormSchema =  z
     .string({ required_error: 'Confirmation Passord is required' })
     .min(8, { message: 'Confirmation Password must be at least 8 characters' })
     .max(32, { message: 'Confirmation Password must be less than 32 characters' })
-    .trim()
+    .trim(),
+  terms_accepted: z
+    .boolean({ required_error: 'You must accept the terms and conditions' })
+    .refine(value => value === true, { message: 'You must accept the terms and conditions' })
 })
 .superRefine(({ confirm_password, password }, ctx) => {
   if (confirm_password !== password) {
@@ -232,7 +235,15 @@ export const contactSchema = z.object({
 }
     */
 export const totpSchema = z.object({
-  email: z.string().min(5, { message: 'Email is required' }).max(64, { message: 'Email must be less than 64 characters' }),
-  totp_token: z.string().min(26, { message: 'A Valid Token is required' }),
   totp_code: z.string().min(6, { message: 'A Valid Token is required' }).max(6, { message: 'The Token is Invalid' }),
 });
+
+export const totpSecondarySchema = z.object({
+  email: z
+  .string()
+  .min(1, { message: 'Email is required' })
+  .max(64, { message: 'Email must be less than 64 characters' }),
+  totp_token: z
+  .string()
+  .min(1, { message: 'Totp is required' })
+})

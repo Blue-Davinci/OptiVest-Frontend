@@ -5,6 +5,8 @@ node_modules
 .vercel
 /.svelte-kit
 /build
+/static/docs/privacy.html
+/static/docs/tos.html
 
 # OS
 .DS_Store

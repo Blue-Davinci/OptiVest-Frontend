@@ -39,12 +39,27 @@ export const actions = {
 						setError(form, field, errorData.error[field]);
 					}
 				} else {
-					// if we get a 403 status code, we know that the user is not activated so we redirect them to the activation page
+					// if we get a 423 status code, we know that the user is not activated so we redirect them to the activation page
+					if (response.status === 423) {
+						return message(
+							form,
+							{
+								message: 'activation_required',
+								success: false
+							},
+							{
+								status: 403
+							}
+						);
+					}
+					// if we get a 403 forbidden status code, we know the user is authed but requires MFA so we redirect them to the MFA page
 					if (response.status === 403) {
 						return message(
 							form,
 							{
-								message: 'activation required',
+								message: 'mfa_required',
+								token: errorData.totp_token,
+								email: errorData.email,
 								success: false
 							},
 							{

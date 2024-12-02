@@ -18,3 +18,10 @@ export function getStoredTime() {
   }
   return null;
 }
+
+// delete the stored time
+export function deleteStoredTime() {
+  if (typeof window !== 'undefined' && window.localStorage) {
+      localStorage.removeItem('2faTimer');
+  }
+}

@@ -6,13 +6,13 @@
 		TOAST_TYPE_SUCCESS,
 		TOAST_TYPE_LOADING
 	} from '$lib/settings/constants.js';
+	import { Checkbox } from '$lib/components/ui/checkbox';
 	import { superForm } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
-	import { signUpFormSchema } from '$lib/settings/schema.js'; 
+	import { signUpFormSchema } from '$lib/settings/schema.js';
 	import { goto } from '$app/navigation';
 	import { Input } from '$lib/components/ui/input';
 	import { fly, fade } from 'svelte/transition';
-
 
 	let { data } = $props();
 	const form = superForm(data.form, {
@@ -36,17 +36,22 @@
 	}
 </script>
 
-<div class="flex h-screen w-full md:flex-row flex-col" transition:fly|global={{ y: -200, duration: 300 }}>
+<div
+	class="flex min-h-screen w-full flex-col md:flex-row"
+	transition:fly|global={{ y: -200, duration: 300 }}
+>
 	<!-- Image Panel Section -->
-	<div class="relative hidden w-1/2 md:block h-full">
-		<img
-			src="https://images.unsplash.com/photo-1728044849325-47f4f5a21da3?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-			alt="Signup Preview"
-			class="h-full w-full object-cover"
-		/>
-		<div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-6 text-white">
-			<h3 class="mb-2 text-xl font-bold">Join Optivest Today</h3>
-			<p class="text-sm">Get full access to all financial management features by signing up.</p>
+	<div class="relative hidden md:block md:w-1/2">
+		<div class="absolute inset-0">
+			<img
+				src="https://images.unsplash.com/photo-1728044849325-47f4f5a21da3?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+				alt="Signup Preview"
+				class="h-full w-full object-cover"
+			/>
+			<div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 p-6 text-white">
+				<h3 class="mb-2 text-xl font-bold">Join Optivest Today</h3>
+				<p class="text-sm">Get full access to all financial management features by signing up.</p>
+			</div>
 		</div>
 	</div>
 
@@ -96,7 +101,7 @@
 							<Form.Label>First Name</Form.Label>
 							<Input {...attrs} bind:value={$formData.first_name} placeholder="John" />
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="text-red-600 dark:text-red-500 text-sm mt-1" />
 					</Form.Field>
 
 					<!-- Last Name -->
@@ -105,7 +110,7 @@
 							<Form.Label>Last Name</Form.Label>
 							<Input {...attrs} bind:value={$formData.last_name} placeholder="Doe" />
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="text-red-600 dark:text-red-500 text-sm mt-1" />
 					</Form.Field>
 
 					<!-- Email -->
@@ -114,7 +119,7 @@
 							<Form.Label>Email</Form.Label>
 							<Input {...attrs} bind:value={$formData.email} placeholder="yourname@example.com" />
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="text-red-600 dark:text-red-500 text-sm mt-1" />
 					</Form.Field>
 
 					<!-- Phone Number -->
@@ -123,7 +128,7 @@
 							<Form.Label>Phone Number</Form.Label>
 							<Input {...attrs} bind:value={$formData.phone_number} placeholder="+1234567890" />
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="text-red-600 dark:text-red-500 text-sm mt-1" />
 					</Form.Field>
 
 					<!-- Password -->
@@ -132,16 +137,34 @@
 							<Form.Label>Password</Form.Label>
 							<Input {...attrs} type="password" bind:value={$formData.password} />
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="text-red-600 dark:text-red-500 text-sm mt-1" />
 					</Form.Field>
-
+					
 					<!-- Confirm Password -->
 					<Form.Field {form} name="confirm_password">
 						<Form.Control let:attrs>
 							<Form.Label>Confirm Password</Form.Label>
 							<Input {...attrs} type="password" bind:value={$formData.confirm_password} />
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="text-red-600 dark:text-red-500 text-sm mt-1" />
+					</Form.Field>
+
+					<Form.Field
+						{form}
+						name="terms_accepted"
+						class="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 mb-2 mt-2"
+					>
+						<Form.Control let:attrs>
+							<Checkbox {...attrs} bind:checked={$formData.terms_accepted} />
+							<div class="space-y-1 leading-none">
+								<Form.Label>Accept Terms and Conditions</Form.Label>
+								<Form.Description>
+									I agree to Optivest's <a href="/sitedocs/terms" class="text-teal-500 hover:text-teal-600">Terms and Conditions</a> and 
+									<a href="/sitedocs/privacy" class="text-teal-500 hover:text-teal-600">Privacy Policy</a>
+								</Form.Description>
+							</div>
+							<input name={attrs.name} value={$formData.terms_accepted} hidden />
+						</Form.Control>
 					</Form.Field>
 
 					{#if $delayed}

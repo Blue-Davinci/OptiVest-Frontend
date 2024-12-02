@@ -32,10 +32,19 @@
 					toastManager(TOAST_TYPE_SUCCESS, message);
 					console.log('Redirecting to:', redirectionPage);
 					goto(redirectionPage);
-				} else if (!form.message.success && form.message.message === 'activation required') {
+				} else if (!form.message.success && form.message.message === 'activation_required') {
 					const message =
 						'Oops! Looks like your account needs a little magic to get started. Activate it now to unlock all the awesomeness!';
 					goto(`/activation?message=${encodeURIComponent(message)}`);
+					// if we get MFa required, redirect to the MFA page
+				} else if (!form.message.success && form.message.message === 'mfa_required') {
+					const message = 'Please complete the two-factor authentication to continue.';
+					const email = form.message?.email || ''; 
+					const token = form.message?.token || '';
+					console.log("Form Data: ", form, "|| ", email, token);
+					goto(
+						`/login/verify?token=${token}&email=${email}&redirectTo=${redirectionPage}`
+					);
 				} else {
 					console.log('Error:', form);
 					toastManager(TOAST_TYPE_ERROR, form.message.message);
@@ -114,7 +123,7 @@
 							<Form.Label>Email</Form.Label>
 							<Input {...attrs} bind:value={$formData.email} placeholder="yourname@example.com" />
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="mt-1 text-sm text-red-600 dark:text-red-500" />
 					</Form.Field>
 
 					<Form.Field {form} name="password">
@@ -122,7 +131,7 @@
 							<Form.Label>Password</Form.Label>
 							<Input {...attrs} type="password" bind:value={$formData.password} />
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="mt-1 text-sm text-red-600 dark:text-red-500" />
 					</Form.Field>
 
 					<div class="flex items-center justify-between">
