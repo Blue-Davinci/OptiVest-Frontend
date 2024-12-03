@@ -15,6 +15,9 @@
 	import { fly } from 'svelte/transition';
 
 	let { data } = $props();
+	let requireTotp = $state(false);
+	let totpCode = $state('');
+
 	const form = superForm(data.form, {
 		validators: zodClient(emailSchema),
 		dataType: 'json',
@@ -24,7 +27,16 @@
 					toastManager(TOAST_TYPE_SUCCESS, form.message.message);
 					goto('/login');
 				} else {
-					toastManager(TOAST_TYPE_ERROR, form.message.message);
+					if (form.message.message === 'mfa_enabled') {
+						if(requireTotp){
+							toastManager(TOAST_TYPE_ERROR, 'Invalid TOTP code. Please recheck the code and try again.');
+							return;
+						}
+						requireTotp = true;
+						toastManager(TOAST_TYPE_INFO, 'TOTP is either missing or invalid. Please enter the 6-digit code or recheck.');
+					} else {
+						toastManager(TOAST_TYPE_ERROR, form.message.message);
+					}
 				}
 			}
 		}
@@ -33,6 +45,12 @@
 
 	function handleBack() {
 		goto('/');
+	}
+
+	function handleTotpInput(event) {
+		const value = event.target.value.replace(/[^0-9]/g, '').slice(0, 6);
+		totpCode = value;
+		$formData.totp_code = value;
 	}
 </script>
 
@@ -44,10 +62,9 @@
 			alt="Password Recovery"
 			class="h-full w-full object-cover"
 		/>
-		<!-- Updated text section -->
-		<div class="absolute bottom-0 left-0 right-0 rounded-t-lg bg-white bg-opacity-80 p-6 shadow-lg">
-			<h3 class="text-lg font-semibold text-gray-800">Lost Your Password?</h3>
-			<p class="mt-2 text-gray-600">
+		<div class="absolute bottom-0 left-0 right-0 rounded-t-lg bg-white bg-opacity-90 p-8 shadow-lg backdrop-blur-sm">
+			<h3 class="text-xl font-semibold text-gray-800">Lost Your Password?</h3>
+			<p class="mt-3 text-gray-600 leading-relaxed">
 				Don't worry, we won't judge! We've all been there—pressing "forgot password" like it's a
 				magic button to unlock your brain. Just enter your email, and we'll send you a reset link
 				faster than you can say "Why did I ever choose that password?"
@@ -57,58 +74,134 @@
 
 	<!-- Form Section -->
 	<div class="flex w-full flex-col justify-between p-8 md:w-1/2">
-		<!-- Back button -->
 		<button
 			onclick={handleBack}
-			class="ml-auto self-start text-teal-500 hover:text-teal-600 dark:text-teal-400"
+			class="group ml-auto self-start flex items-center gap-2 text-teal-500 hover:text-teal-600 dark:text-teal-400 transition-colors"
 		>
-			Back
+			<span>Back</span>
+			<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+			</svg>
 		</button>
 
-		<!-- Reset Form Section -->
 		<div class="mx-auto flex w-full max-w-md flex-grow flex-col justify-center">
-			<div class="rounded-lg bg-white p-8 shadow-lg dark:bg-gray-800">
-				<h2 class="mb-6 text-center text-2xl font-bold text-gray-900 dark:text-gray-100">
+			<div class="rounded-2xl bg-white p-8 shadow-xl dark:bg-gray-800">
+				<h2 class="mb-6 text-center text-3xl font-bold text-gray-900 dark:text-gray-100">
 					Reset your password
 				</h2>
 
-				<!-- Form using shadcn-svelte Form components -->
-				<form method="POST" use:enhance>
+				<form method="POST" use:enhance class="space-y-6">
 					<Form.Field {form} name="email">
 						<Form.Control let:attrs>
-							<Form.Label>Email</Form.Label>
-							<Input {...attrs} bind:value={$formData.email} placeholder="yourname@example.com" />
+							<Form.Label class="text-sm font-medium text-gray-700 dark:text-gray-300">Email</Form.Label>
+							<div class="relative">
+								<Input 
+									{...attrs} 
+									bind:value={$formData.email} 
+									placeholder="yourname@example.com"
+									class="mt-1 pl-10 block w-full rounded-md shadow-sm"
+								/>
+								<div class="absolute inset-y-0 left-3 flex items-center pointer-events-none mt-1">
+									<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+									</svg>
+								</div>
+							</div>
 						</Form.Control>
-						<Form.FieldErrors />
+						<Form.FieldErrors class="text-sm text-red-500 mt-1" />
 					</Form.Field>
 
-					<Form.Button type="submit" class="w-full" disabled={$delayed}>
+					{#if requireTotp}
+						<div class="mt-6" transition:fly={{ y: 20, duration: 300 }}>
+							<Form.Field {form} name="totp_code">
+								<Form.Control let:attrs>
+									<Form.Label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+										TOTP Authentication Code
+									</Form.Label>
+									<div class="relative">
+										<Input
+											{...attrs}
+											type="text"
+											inputmode="numeric"
+											pattern="[0-9]*"
+											maxlength="6"
+											placeholder="• • • • • •"
+											class="text-center tracking-[1em] text-xl font-semibold h-14 pl-12 pr-4 block w-full rounded-lg border-2 border-gray-300 shadow-sm focus:border-teal-500 focus:ring focus:ring-teal-200 focus:ring-opacity-50 transition-all duration-200"
+											bind:value={$formData.totp_code}
+											on:input={handleTotpInput}
+										/>
+										<div class="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+											<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+											</svg>
+										</div>
+									</div>
+									<p class="mt-3 text-sm text-gray-500 text-center flex items-center justify-center gap-2">
+										<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+										</svg>
+										Enter the 6-digit code from your authenticator app
+									</p>
+									<div class="mt-4 text-center">
+										<a 
+											href="/passwordreset/recovery" 
+											class="group inline-flex items-center gap-2 px-4 py-2 text-sm text-teal-600 hover:text-teal-700 dark:text-teal-400 dark:hover:text-teal-300 transition-colors rounded-lg hover:bg-teal-50 dark:hover:bg-teal-900/20"
+										>
+											<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+											</svg>
+											<span>Lost your authentication device?</span>
+											<svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+											</svg>
+										</a>
+									</div>
+								</Form.Control>
+							</Form.Field>
+						</div>
+					{/if}
+
+					<Form.Button 
+						type="submit" 
+						class="mt-6 w-full bg-teal-500 text-white py-3 rounded-lg font-medium hover:bg-teal-600 transition-colors duration-200 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+						disabled={$delayed}
+					>
 						{#if $delayed}
 							<svg
-								width="20"
-								height="20"
-								fill="currentColor"
-								class="mr-2 animate-spin"
-								viewBox="0 0 1792 1792"
+								class="animate-spin h-5 w-5"
 								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
 							>
+								<circle
+									class="opacity-25"
+									cx="12"
+									cy="12"
+									r="10"
+									stroke="currentColor"
+									stroke-width="4"
+								></circle>
 								<path
-									d="M526 1394q0 53-37.5 90.5t-90.5 37.5q-52 0-90-38t-38-90q0-53 37.5-90.5t90.5-37.5 90.5 37.5 37.5 90.5zm498 206q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-704-704q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm1202 498q0 52-38 90t-90 38q-53 0-90.5-37.5t-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-964-996q0 66-47 113t-113 47-113-47-47-113 47-113 113-47 113 47 47 113zm1170 498q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-640-704q0 80-56 136t-136 56-136-56-56-136 56-136 136-56 136 56 56 136zm530 206q0 93-66 158.5t-158 65.5q-93 0-158.5-65.5t-65.5-158.5q0-92 65.5-158t158.5-66q92 0 158 66t66 158z"
-								>
-								</path>
+									class="opacity-75"
+									fill="currentColor"
+									d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+								></path>
 							</svg>
-							Sending reset link...
+							<span>Sending reset link...</span>
 						{:else}
-							Send Reset Link
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+							</svg>
+							<span>Send Reset Link</span>
 						{/if}
 					</Form.Button>
 				</form>
 
-				<p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-300">
-					Remembered your password? <a
-						href="/login"
-						class="font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400">Login Here</a
-					>
+				<p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-300">
+					Remembered your password? 
+					<a href="/login" class="font-medium text-teal-500 hover:text-teal-600 dark:text-teal-400 transition-colors">
+						Login Here
+					</a>
 				</p>
 			</div>
 		</div>

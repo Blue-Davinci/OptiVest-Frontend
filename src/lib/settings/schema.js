@@ -192,6 +192,14 @@ export const tokenSchema = z
 	.max(32, { message: 'The Token is Invalid' })
 	.refine((value) => value.trim().length > 0, { message: 'Token cannot be only whitespace' });
 
+export const recoverySchema = z.object({
+  token_plaintext : z
+  .string()
+  .min(1, { message: 'Token is required' })
+  .max(64, { message: 'Token must be less than 64 characters' })
+  .refine((value) => value.trim().length > 0, { message: 'Token cannot be only whitespace' }),
+})
+
 
 export const commentSchema = z.object({
     associated_type: z
@@ -227,13 +235,6 @@ export const contactSchema = z.object({
   .max(500, { message: 'Message must be less than 500 characters' }),
 });
 
-/*
-{
-    "email": "jdoe@gmail.com",
-    "totp_token": "LFMpsCD3UNJ9fb4glkAlHnDrxUn4TSglI18k6Nnxa3J1EQB2PXBL1Bg23S4XUgGak63ILoye",
-    "totp_code": "635122"
-}
-    */
 export const totpSchema = z.object({
   totp_code: z.string().min(6, { message: 'A Valid Token is required' }).max(6, { message: 'The Token is Invalid' }),
 });
@@ -247,3 +248,8 @@ export const totpSecondarySchema = z.object({
   .string()
   .min(1, { message: 'Totp is required' })
 })
+
+export const passwordResetSchema = z.object({
+  email: z.string().min(5, 'Email must be provided and valid').max(50, 'Email must not exceed 50 characters'),
+  totp_code: z.string().max(6, 'The Token is Invalid')
+});
