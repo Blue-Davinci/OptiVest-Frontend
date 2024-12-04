@@ -4,6 +4,7 @@
 </p>
 
 1. **User Management**: Allow users to manage their own profiles
+    -~~ Allow both file and suggestion avatar options~~
     - Hook up the avatar upload with cloudinary CDN
     - Hook robohash to the avatar management and allow users to select suggestions
     - Allow users to manage their investment options
