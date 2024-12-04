@@ -50,14 +50,14 @@ export const actions = {
 			}
 
 			const responseData = await response.json();
-			console.log('API Response:', responseData);
+			console.log('PREPR-API Response:', responseData);
             return message(form, {
                 message: 'if we found a matching email address, we have sent password reset instructions to it!',
                 data: responseData.user,
                 status: 'success'
             })
 		} catch (error) {
-			console.error('Fetch Error:', error);
+			console.error('PREPR-Fetch Error:', error);
 			return fail(500, { form, error: 'An unexpected error occurred' });
 		}
 	}
