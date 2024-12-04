@@ -58,14 +58,14 @@ export const actions = {
 			}
 
 			const responseData = await response.json();
-			console.log('API Response:', responseData);
+			console.log('PREP-API Response:', responseData);
 			return message(form, {
 				message: 'Password reset successful!',
 				data: responseData.message,
 				status: 'success'
 			});
 		} catch (error) {
-			console.error('Fetch Error:', error);
+			console.error('PREP-Fetch Error:', error);
 			return fail(500, { form, error: 'An unexpected error occurred' });
 		}
 	}

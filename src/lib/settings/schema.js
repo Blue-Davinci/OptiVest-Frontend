@@ -253,3 +253,9 @@ export const passwordResetSchema = z.object({
   email: z.string().min(5, 'Email must be provided and valid').max(50, 'Email must not exceed 50 characters'),
   totp_code: z.string().max(6, 'The Token is Invalid')
 });
+
+export const avatarSchema = z.object({
+  image: z
+    .instanceof(File, { message: 'Please upload a file.'})
+    .refine((f) => f.size < 200_000_000, 'Max 2 MB upload size.')
+});
