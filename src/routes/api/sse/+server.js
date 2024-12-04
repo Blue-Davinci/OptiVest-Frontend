@@ -23,7 +23,7 @@ export const GET = async ({ cookies, request }) => {
                 Connection: 'keep-alive'
             },
             signal,
-            timeout: 30000 // 30 second timeout
+            timeout: 30000 /// 30 second timeout
         });
 
         if (!response.ok) {

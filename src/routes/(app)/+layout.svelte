@@ -106,7 +106,7 @@
             eventSource.close();
             eventSource = null;
             status = 'disconnected';
-            console.log('SSE connection closed.');
+            console.log('SSE connection closed..');
         }
     }
 
