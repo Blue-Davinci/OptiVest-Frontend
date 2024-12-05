@@ -22,9 +22,9 @@
 	} from 'lucide-svelte';
 	let { userInfo } = $props();
 
-	let profile_url = userInfo.profile_url;
-	let full_name = `${userInfo.first_name} ${userInfo.last_name}`;
-	let userEmail = userInfo.user_role;
+	let profile_url = $derived(userInfo.profile_url);
+	let full_name = $derived(`${userInfo.first_name} ${userInfo.last_name}`);
+	let userEmail = $derived(userInfo.user_role);
 	let isOpen = $state(true);
 	let activeItem = $state('Dashboard');
 	let isDarkMode = $state(false);

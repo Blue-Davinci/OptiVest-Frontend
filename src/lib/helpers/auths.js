@@ -31,8 +31,9 @@ function updateAuthentication(cookies, key, value) {
 		console.log('Cookie info before Update: ', cookieInfo, 'Key: ', key, 'Value: ', value);
 		let apikey = { token: cookieInfo.user, expiry: cookieInfo.authexpiry };
 		if (Object.prototype.hasOwnProperty.call(userInfo, key)) {
-			userInfo[key] = value;
 			console.log('User Info before update: ', userInfo);
+			userInfo[key] = value;
+			console.log('User Info after update: ', userInfo);
 			// call saveAuthentication to save the updated user info
 			// NOTE: we set the last parameter to true to indicate that we are updating the profile
 			saveAuthentication(cookies, apikey, userInfo, true);

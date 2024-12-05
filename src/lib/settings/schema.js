@@ -259,3 +259,9 @@ export const avatarSchema = z.object({
     .instanceof(File, { message: 'Please upload a file.'})
     .refine((f) => f.size < 200_000_000, 'Max 2 MB upload size.')
 });
+
+export const avatarUrlSchema = z.object({
+  imageUrl: z
+  .string()
+  .min(1,{message:"image link must be provided"})
+})
