@@ -122,6 +122,7 @@ export const actions = {
                 file: imageUrl,
                 fileName: `avatar_${Date.now()}`
             });
+            console.log("Image URL: ", uploadResponse.url);
             let payload = {
                 "profile_avatar_url": uploadResponse.url
             }

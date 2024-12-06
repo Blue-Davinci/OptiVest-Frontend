@@ -23,7 +23,6 @@
 	let previewUrl = $state(user.profile_avatar_url);
 	let showSuggestions = $state(false);
 	let bgSetIndex = 0;
-	let imageUrl = $state('');
 	const bgSets = ['', 'bg1', 'bg2'];
 	let roboHashSuggestions = $state(generateRobohashUrls(user.first_name, bgSetIndex, bgSets));
 
@@ -32,10 +31,13 @@
 		roboHashSuggestions = generateRobohashUrls(user.first_name, bgSetIndex, bgSets);
 	};
 
-	function selectRoboHashImage(url) {
+	async function selectRoboHashImage(url) {
 		previewUrl = url;
-		imageUrl = url;
 		showSuggestions = false;
+		console.log('Selected URL: ', url);
+		
+		// Update the form store directly
+		$avatarUrlForm.imageUrl = url;
 		submitAvatarUrlForm();
 	}
 
@@ -44,38 +46,39 @@
 	}
 
 	const {
-    form: avatarForm,
-    enhance: avatarEnhance,
-    submit: submitAvatarForm,
-    delayed
-} = superForm(data.avatarForm, {
-    invalidateAll: true,
-    onUpdated({ form }) {
-        if (form.message?.success) {
-            showSuggestions = false;
-            toastManager(TOAST_TYPE_SUCCESS, form.message.message);
-        } else if (form.message) {
-            toastManager(TOAST_TYPE_ERROR, form.message.message);
-        }
-    }
-});
+		form: avatarForm,
+		enhance: avatarEnhance,
+		submit: submitAvatarForm,
+		delayed
+	} = superForm(data.avatarForm, {
+		invalidateAll: true,
+		onUpdated({ form }) {
+			if (form.message?.success) {
+				showSuggestions = false;
+				toastManager(TOAST_TYPE_SUCCESS, form.message.message);
+			} else if (form.message) {
+				toastManager(TOAST_TYPE_ERROR, form.message.message);
+			}
+		}
+	});
 
-const {
-    form: avatarUrlForm,
-    enhance: avatarUrlEnhance,
-    submit: submitAvatarUrlForm,
-    delayed: avatarUrlDelayed
-} = superForm(data.avatarUrlForm, {
-    invalidateAll: true,
-    onUpdated({ form }) {
-        if (form.message?.success) {
-            showSuggestions = false;
-            toastManager(TOAST_TYPE_SUCCESS, form.message.message);
-        } else {
-            console.log('Update URL form error: ', form);
-        }
-    }
-});
+	const {
+		form: avatarUrlForm,
+		enhance: avatarUrlEnhance,
+		submit: submitAvatarUrlForm,
+		delayed: avatarUrlDelayed
+	} = superForm(data.avatarUrlForm, {
+		invalidateAll: true,
+		dataType: 'json',
+		onUpdated({ form }) {
+			if (form.message?.success) {
+				showSuggestions = false;
+				toastManager(TOAST_TYPE_SUCCESS, form.message.message);
+			} else {
+				console.log('Update URL form error: ', form);
+			}
+		}
+	});
 
 	const file = fileProxy(avatarForm, 'image');
 
@@ -147,7 +150,7 @@ const {
 						action="?/uploadAvatarURL"
 						use:avatarUrlEnhance
 					>
-						<input type="text" name="imageUrl" bind:value={imageUrl} style="display: none;" />
+						<input type="hidden" name="imageUrl" bind:value={$avatarUrlForm.imageUrl} />
 					</form>
 					{#if showSuggestions}
 						<div
