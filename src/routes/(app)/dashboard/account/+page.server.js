@@ -1,8 +1,8 @@
-import {VITE_API_BASE_URL_ACCOUNT} from '$env/static/private';
+import {VITE_API_BASE_URL_ACCOUNT, VITE_API_BASE_URL_MFA_VERIFY} from '$env/static/private';
 import {updateUserInformation} from '$lib/dataservice/users/usersDataService.js'
 import { IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, IMAGEKIT_URL_ENDPOINT } from '$env/static/private';
 import ImageKit from "imagekit";
-import { avatarSchema, avatarUrlSchema } from '$lib/settings/schema.js';
+import { avatarSchema, avatarUrlSchema, totpSchema } from '$lib/settings/schema.js';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate, fail,message } from 'sveltekit-superforms';
 import { checkAuthentication, updateAuthentication } from '$lib/helpers/auths';
@@ -39,12 +39,14 @@ export const load = async ({fetch, cookies}) => {
         let responseData = await response.json();
         let avatarForm = await superValidate(zod(avatarSchema));
         let avatarUrlForm = await superValidate(zod(avatarUrlSchema));
+        let totpForm = await superValidate(zod(totpSchema));
         console.log('GBLEIP Server: API Response:', responseData);
         return {
             success: true,
             data: responseData,
             avatarForm,
-            avatarUrlForm
+            avatarUrlForm,
+            totpForm
         };
     }catch(err){
         console.log("GAIP-SE error: ", err);
@@ -137,6 +139,48 @@ export const actions = {
             });
         }catch(err){
             console.log('GBLEIP-SE error: ', err);
+            return {
+                status: 500,
+                error: "An error occured while submitting data"
+            };
+        }
+    },
+    totpverification: async({request, fetch, cookies})=>{
+        let auth = checkAuthentication(cookies).user;
+        if (!auth){
+            console.log('GEIEP Server: User is not authenticated, REDIRECTING..');
+            return redirect(303, `/login?redirectTo=/dashboard/account`);
+        }
+        const totpForm = await superValidate(request,zod(totpSchema))
+        if (!totpForm.valid) {
+            return fail(400,{totpForm});
+          }
+        try{
+            const response = await fetch(VITE_API_BASE_URL_MFA_VERIFY, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${auth}`
+                },
+                body: JSON.stringify(totpForm.data)
+            });
+            if (!response.ok){
+                let errorData = await response.json();
+                console.log('TOTPV Error Server: API Response:', errorData);
+                return message(totpForm, {
+                    message: errorData.errors,
+                    error: errorData.error
+                });
+            }
+            let responseData = await response.json();
+            console.log('TOTPV Server: API Response:', responseData);
+            return message(totpForm,{
+                success: true,
+                data: responseData,
+                message: 'MFA successfully verified! You will now be required to use MFA to log in.'
+            });
+        }catch(err){
+            console.log('TOTPV-SE error: ', err);
             return {
                 status: 500,
                 error: "An error occured while submitting data"

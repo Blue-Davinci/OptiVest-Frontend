@@ -28,10 +28,10 @@ function updateAuthentication(cookies, key, value) {
 			return false;
 		}
 		let userInfo = cookieInfo.userinfo;
-		console.log('Cookie info before Update: ', cookieInfo, 'Key: ', key, 'Value: ', value);
+		//console.log('Cookie info before Update: ', cookieInfo, 'Key: ', key, 'Value: ', value);
 		let apikey = { token: cookieInfo.user, expiry: cookieInfo.authexpiry };
 		if (Object.prototype.hasOwnProperty.call(userInfo, key)) {
-			console.log('User Info before update: ', userInfo);
+			//console.log('User Info before update: ', userInfo);
 			userInfo[key] = value;
 			console.log('User Info after update: ', userInfo);
 			// call saveAuthentication to save the updated user info

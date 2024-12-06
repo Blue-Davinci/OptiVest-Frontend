@@ -49,6 +49,7 @@
 		"imagekit": "^5.2.0",
 		"intl-tel-input": "^24.6.0",
 		"layerchart": "^0.54.0",
-		"lodash": "^4.17.21"
+		"lodash": "^4.17.21",
+		"qrcode": "^1.5.4"
 	}
 }
