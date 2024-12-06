@@ -16,32 +16,31 @@
 	import { Input } from '$lib/components/ui/input';
 	import { Tooltip } from '$lib/components/ui/tooltip';
 
-	let codes = $state(Array(5).fill(''));
-	let { data } = $props();
-	let activeCodeIndex = $state(0);
-	let progressLevel = $state(1);
+    let codes = $state(Array(5).fill(''));
+    let { data } = $props();
+    let activeCodeIndex = $state(0);
+    let progressLevel = $state(1);
+    
+    // Create refs for input elements
+    let codeInputs = Array(5).fill(null);
 
 	// Function to check if all codes are filled
-	function checkCodesCompletion() {
-		const allCodesFilled = codes.every(code => code.length>0);
-		if (allCodesFilled) {
-			progressLevel = 2;
-		} else {
-			progressLevel = 1;
-		}
-		return allCodesFilled;
-	}
+    function checkCodesCompletion() {
+        const allCodesFilled = codes.every(code => code.length > 0);
+        progressLevel = allCodesFilled ? 2 : 1;
+        return allCodesFilled;
+    }
 
     function handleKeyPress(event, index) {
-		if (event.key === 'Backspace' && !codes[index] && index > 0) {
-			document.getElementById(`code-${index - 1}`).focus();
-			activeCodeIndex = index - 1;
-		} else if (codes[index]?.length === 4 && index < 5) {
-			document.getElementById(`code-${index + 1}`).focus();
-			activeCodeIndex = index + 1;
-		}
-		checkCodesCompletion();
-	}
+        if (event.key === 'Backspace' && !codes[index] && index > 0) {
+            codeInputs[index - 1]?.focus();
+            activeCodeIndex = index - 1;
+        } else if (codes[index]?.length === 4 && index < 5) {
+            codeInputs[index + 1]?.focus();
+            activeCodeIndex = index + 1;
+        }
+        checkCodesCompletion();
+    }
 
     function handlePaste(event) {
     event.preventDefault();
@@ -160,11 +159,10 @@
 						<div class="relative">
 							<Input
 								type="text"
-								id="code-{i}"
-                                name="code-{i}"
+								bind:this={codeInputs[i]}
 								bind:value={codes[i]}
 								on:keyup={(e) => handleKeyPress(e, i)}
-                                on:paste={handlePaste}
+								on:paste={handlePaste}
 								class="block w-full rounded-lg border border-gray-300 px-4 py-3 font-mono uppercase transition-all
 									dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400
 									{activeCodeIndex === i ? 'border-primary ring-2 ring-primary/20 dark:ring-primary/40' : ''}
