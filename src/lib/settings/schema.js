@@ -265,3 +265,33 @@ export const avatarUrlSchema = z.object({
   .string()
   .min(1,{message:"image link must be provided"})
 })
+
+const investmentTimeLine = [
+  {"label": "Short Term", "value": "short"},
+  {"label": "Medium Term", "value": "medium"},
+  {"label": "Long Term", "value": "long"}
+]
+const investmentRisk = [
+  {"label": "Low risk", "value": "low"},
+  {"label": "Moderate", "value": "medium"},
+  {"label": "Agveressie", "value": "high"}
+]
+
+export const investmentRiskandTimelineSchema = z.object({
+  timeline: z.enum(
+    investmentTimeLine.map((f) => f.value) // Extract values ['short', 'medium', 'long']
+  ).refine((val) => !!val, { message: "Please select a valid timeline." }),
+
+  risk: z.enum(investmentRisk.map((f) => f.value), {
+    errorMap: () => ({ message: "Please select a valid risk level." })
+  })
+});
+
+export const profileSchema = z.object({
+  first_name: z.string().min(1, { message: 'First name is required' }).max(64, { message: 'First name must be less than 64 characters' }),
+  last_name: z.string().min(1, { message: 'Last name is required' }).max(64, { message: 'Last name must be less than 64 characters' }),
+  phone_number: z.string().min(5, 'Phone number must be provided and valid').max(50, 'Phone number must not exceed 50 characters'),
+  address: z.string().min(5, 'Address must be provided and valid').max(50, 'Address must not exceed 50 characters'),
+  country_code: z.string().min(1, { message: 'Country code is required' }).max(3, { message: 'Country code must be valid' }),
+  currency_code: z.string().min(1, { message: 'Currency code is required' }).max(3, { message: 'Currency code must be valid' }),
+})

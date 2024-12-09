@@ -77,8 +77,60 @@ function generateRobohashUrls(userName,bgSetIndex,bgSets)   {
   });
 }
 
+ async function fetchCountries() {
+  // Check if we're running in a browser environment
+  if (typeof window === 'undefined') {
+    console.warn('Not in a browser environment. Skipping localStorage and using direct fetch.');
+    return await fetchFromAPI();
+  }
+
+  // Check if country data exists in localStorage
+  const cachedCountries = localStorage.getItem('countries');
+  if (cachedCountries) {
+    try {
+      console.log('Loaded countries from localStorage cache');
+      return JSON.parse(cachedCountries);
+    } catch{
+      console.warn('Failed to parse cached countries, clearing cache.');
+      localStorage.removeItem('countries'); // Clear bad cache if parsing fails
+    }
+  }
+
+  // Fetch fresh data if not found in localStorage
+  const countries = await fetchFromAPI();
+
+  try {
+    localStorage.setItem('countries', JSON.stringify(countries));
+    console.log('Countries fetched from API and cached in localStorage');
+  } catch (error) {
+    console.warn('Failed to cache countries in localStorage:', error);
+  }
+
+  return countries;
+}
+
+// Helper function to fetch countries from the API
+async function fetchFromAPI() {
+  try {
+    const response = await fetch('https://restcountries.com/v3.1/all?fields=name,cca2');
+    const data = await response.json();
+    const countries = data
+      .map(country => ({
+        name: country.name.common,
+        code: country.cca2
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
+    return countries;
+  } catch (error) {
+    console.error('Failed to fetch country data from API:', error);
+    return [];
+  }
+}
+
+
 export { 
   toastManager, 
   buildFeedFollowUrl ,
-  generateRobohashUrls
+  generateRobohashUrls,
+  fetchCountries
 };

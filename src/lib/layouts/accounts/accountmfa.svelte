@@ -6,22 +6,23 @@
         AlertCircle,
         Loader2
     } from 'lucide-svelte';
+    import Alertconfirmationdialog from '../common/alertconfirmationdialog.svelte';
     import { fade } from 'svelte/transition';
     import Recoverycodes from './recoverycodes.svelte';
     import { onMount } from 'svelte';
     import QRCode from 'qrcode';
     import { optinToMFA } from '$lib/dataservice/users/usersDataService.js';
     import { TOAST_TYPE_ERROR, TOAST_TYPE_SUCCESS } from '$lib/settings/constants.js';
-	import { toastManager } from '$lib/helpers/utilities.js';
+    import { toastManager } from '$lib/helpers/utilities.js';
     import * as Form from '$lib/components/ui/form';
     import { totpSchema } from '$lib/settings/schema.js';
     import { superForm } from 'sveltekit-superforms';
-	import { zodClient } from 'sveltekit-superforms/adapters';
+    import { zodClient } from 'sveltekit-superforms/adapters';
 
-    let {data} = $props();
+    let {data, user} = $props();
     
     // MFA related state
-    let mfaEnabled = $state(false);
+    let mfaEnabled = $state(user.mfa_enabled);
     let showQRCode = $state(false);
     let verificationCode = $state('');
     let isLoading = $state(false);
@@ -29,9 +30,11 @@
     let isGeneratingQR = $state(false);
     let recovery_details = $state({});
     let isDrawerOpen = $state(false);
+    let lastLoginDate = $state(user.last_login);
+    let lastMfaDate = $state(user.mfa_last_checked);
     
     // QR code canvas reference
-    let qrCanvas = $state();;
+    let qrCanvas = $state();
     
     onMount(() => {
         if (qrCanvas && qrCodeUrl) {
@@ -59,18 +62,16 @@
         if (!mfaEnabled) {
             isLoading = true;
             try {
-                // perform the MFA optin request
                 const response = await optinToMFA();
                 if (response.success && response.data.qr_code) {
                     isGeneratingQR = true;
                     qrCodeUrl = response.data.qr_code;
                     showQRCode = true;
-                    // Small delay to ensure canvas is mounted
                     await new Promise(resolve => setTimeout(resolve, 100));
                     if (qrCanvas) {
                         await generateQRCode(qrCodeUrl);
                     }
-                }else{
+                } else {
                     toastManager(TOAST_TYPE_ERROR, response.error);
                 }
             } catch (error) {
@@ -80,7 +81,6 @@
                 isGeneratingQR = false;
             }
         } else {
-            // Handle MFA disable logic
             mfaEnabled = false;
             showQRCode = false;
             qrCodeUrl = '';
@@ -89,25 +89,24 @@
 
     const form = superForm(data.totpForm, {
         validators: zodClient(totpSchema),
-		dataType: 'json',
+        dataType: 'json',
         invalidateAll: true,
-		onUpdated({ form }) {
+        onUpdated({ form }) {
             console.log("Totp confirmation:", form);
-			if (form.message && form.message.success) {
-				toastManager(TOAST_TYPE_SUCCESS, form.message.message);
-				console.log('Form Data created:', form.message.data);
+            if (form.message && form.message.success) {
+                toastManager(TOAST_TYPE_SUCCESS, form.message.message);
+                console.log('Form Data created:', form.message.data);
                 mfaEnabled = true;
                 showQRCode = false;
                 verificationCode = '';
                 recovery_details = form.message.data.recovery_details;
                 isDrawerOpen = true;
-			} else if (form.message && !form.message.success) {
+            } else if (form.message && !form.message.success) {
                 toastManager(TOAST_TYPE_ERROR, form.message.message);
-			}
-		}
+            }
+        }
     });
     const{form:totpForm, enhance:totpEnhance, message:totpMessage, delayed:totpDeleyed} = form;
-
 </script>
 
 {#if isLoading}
@@ -147,25 +146,25 @@
                     </div>
                 </div>
                 <button
-                onclick={toggleMFA}
-                disabled={isLoading || showQRCode}
-                class={`rounded-lg px-4 py-2 font-medium inline-flex items-center gap-2 transition-all
-                    ${mfaEnabled
-                        ? 'bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/50 dark:text-red-400'
-                        : 'bg-purple-100 text-purple-600 hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-400'
-                    } 
-                    ${(isLoading || showQRCode) ? 
-                        'opacity-50 cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500' 
-                        : ''
-                    }`}
-            >
-                {#if isLoading}
-                    <Loader2 class="animate-spin" size={16} />
-                    <span>Processing...</span>
-                {:else}
-                    {mfaEnabled ? 'Disable' : 'Enable'}
-                {/if}
-            </button>
+                    onclick={toggleMFA}
+                    disabled={isLoading || showQRCode}
+                    class={`rounded-lg px-4 py-2 font-medium inline-flex items-center gap-2 transition-all
+                        ${mfaEnabled
+                            ? 'bg-red-100 text-red-600 hover:bg-red-200 dark:bg-red-900/50 dark:text-red-400'
+                            : 'bg-purple-100 text-purple-600 hover:bg-purple-200 dark:bg-purple-900/50 dark:text-purple-400'
+                        } 
+                        ${(isLoading || showQRCode) ? 
+                            'opacity-50 cursor-not-allowed hover:bg-gray-100 dark:hover:bg-gray-700 bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500' 
+                            : ''
+                        }`}
+                >
+                    {#if isLoading}
+                        <Loader2 class="animate-spin" size={16} />
+                        <span>Processing...</span>
+                    {:else}
+                        {mfaEnabled ? 'Disable' : 'Enable'}
+                    {/if}
+                </button>
             </div>
 
             {#if showQRCode}
@@ -196,7 +195,7 @@
                                     bind:value={$totpForm.totp_code}
                                     type="text"
                                     inputmode="numeric"
-									pattern="[0-9]*"
+                                    pattern="[0-9]*"
                                     maxlength="6"
                                     class="w-full rounded-lg border border-gray-200 bg-white p-3 text-gray-900 outline-none transition-all focus:border-purple-500 focus:ring-2 focus:ring-purple-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white dark:focus:ring-purple-800"
                                     placeholder="• • • • • •"
@@ -206,127 +205,97 @@
                         </Form.Field>
                         <Form.Button type="submit" disabled={$totpDeleyed} class="mt-2 w-full rounded-lg bg-purple-600 px-4 py-2 font-medium text-white transition-all hover:bg-purple-700 focus:ring-4 focus:ring-purple-200 dark:focus:ring-purple-800">
                             {#if $totpDeleyed}
-							<svg
-								width="20"
-								height="20"
-								fill="currentColor"
-								class="mr-2 animate-spin"
-								viewBox="0 0 1792 1792"
-								xmlns="http://www.w3.org/2000/svg"
-							>
-								<path
-									d="M526 1394q0 53-37.5 90.5t-90.5 37.5q-52 0-90-38t-38-90q0-53 37.5-90.5t90.5-37.5 90.5 37.5 37.5 90.5zm498 206q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-704-704q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm1202 498q0 52-38 90t-90 38q-53 0-90.5-37.5t-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-964-996q0 66-47 113t-113 47-113-47-47-113 47-113 113-47 113 47 47 113zm1170 498q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-640-704q0 80-56 136t-136 56-136-56-56-136 56-136 136-56 136 56 56 136zm530 206q0 93-66 158.5t-158 65.5q-93 0-158.5-65.5t-65.5-158.5q0-92 65.5-158t158.5-66q92 0 158 66t66 158z"
-								>
-								</path>
-							</svg>
-							Verifying...
-							{toastManager(TOAST_TYPE_LOADING, 'Please wait...')}
-						{:else}
-                        Verify and Enable
-						{/if}
+                            <svg
+                                width="20"
+                                height="20"
+                                fill="currentColor"
+                                class="mr-2 animate-spin"
+                                viewBox="0 0 1792 1792"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <path d="M526 1394q0 53-37.5 90.5t-90.5 37.5q-52 0-90-38t-38-90q0-53 37.5-90.5t90.5-37.5 90.5 37.5 37.5 90.5zm498 206q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-704-704q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm1202 498q0 52-38 90t-90 38q-53 0-90.5-37.5t-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-964-996q0 66-47 113t-113 47-113-47-47-113 47-113 113-47 113 47 47 113zm1170 498q0 53-37.5 90.5t-90.5 37.5-90.5-37.5-37.5-90.5 37.5-90.5 90.5-37.5 90.5 37.5 37.5 90.5zm-640-704q0 80-56 136t-136 56-136-56-56-136 56-136 136-56 136 56 56 136zm530 206q0 93-66 158.5t-158 65.5q-93 0-158.5-65.5t-65.5-158.5q0-92 65.5-158t158.5-66q92 0 158 66t66 158z"></path>
+                            </svg>
+                            Verifying...
+                            {toastManager(TOAST_TYPE_LOADING, 'Please wait...')}
+                            {:else}
+                            Verify and Enable
+                            {/if}
                         </Form.Button>
                     </form>
                 </div>
             </div>
             {/if}
 
-            {#if !showQRCode}
-                <div class="space-y-6">
-                    <div
-                        class="rounded-lg border border-gray-200 bg-gray-50 p-8 dark:border-gray-600 dark:bg-gray-700/50"
-                    >
-                        <div class="flex flex-col items-center justify-center text-center">
-                            <div
-                                class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/50"
-                            >
-                                <Shield class="h-8 w-8 text-purple-600 dark:text-purple-400" />
-                            </div>
+            {#if !showQRCode && !mfaEnabled}
+            <div class="space-y-6">
+                <div class="rounded-lg border border-gray-200 bg-gray-50 p-8 dark:border-gray-600 dark:bg-gray-700/50">
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <div class="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-purple-100 dark:bg-purple-900/50">
+                            <Shield class="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                        </div>
 
-                            <!-- Process Flow Visualization -->
-                            <div class="mx-auto w-full max-w-2xl">
-                                <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-                                    <!-- Step 1: Enable -->
-                                    <div class="relative">
-                                        <div
-                                            class="h-full rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
-                                        >
-                                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
-                                                <span
-                                                    class="rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-purple-600 dark:bg-purple-900/50 dark:text-purple-400"
-                                                >
-                                                    Step 1
-                                                </span>
-                                            </div>
-                                            <div class="mt-4 flex flex-col items-center space-y-3">
-                                                <button
-                                                    class="rounded-lg bg-purple-100 px-4 py-2 font-medium text-purple-600"
-                                                >
-                                                    Enable MFA
-                                                </button>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">
-                                                    Click enable to start setup
-                                                </p>
-                                            </div>
+                        <!-- Process Flow Visualization -->
+                        <div class="mx-auto w-full max-w-2xl">
+                            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+                                <!-- Step 1: Enable -->
+                                <div class="relative">
+                                    <div class="h-full rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
+                                            <span class="rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-purple-600 dark:bg-purple-900/50 dark:text-purple-400">
+                                                Step 1
+                                            </span>
                                         </div>
-                                        <div
-                                            class="absolute -right-4 top-1/2 hidden -translate-y-1/2 transform md:block"
-                                        >
-                                            <ChevronRight class="h-6 w-6 text-gray-400" />
+                                        <div class="mt-4 flex flex-col items-center space-y-3">
+                                            <button class="rounded-lg bg-purple-100 px-4 py-2 font-medium text-purple-600">
+                                                Enable MFA
+                                            </button>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                Click enable to start setup
+                                            </p>
                                         </div>
                                     </div>
+                                    <div class="absolute -right-4 top-1/2 hidden -translate-y-1/2 transform md:block">
+                                        <ChevronRight class="h-6 w-6 text-gray-400" />
+                                    </div>
+                                </div>
 
-                                    <!-- Step 2: Scan  -->
-                                    <div class="relative">
-                                        <div
-                                            class="h-full rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
-                                        >
-                                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
-                                                <span
-                                                    class="rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-purple-600 dark:bg-purple-900/50 dark:text-purple-400"
-                                                >
-                                                    Step 2
-                                                </span>
-                                            </div>
-                                            <div class="mt-4 flex flex-col items-center space-y-3">
-                                                <div
-                                                    class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700"
-                                                >
-                                                    <QrCode class="h-6 w-6 text-gray-400" />
-                                                </div>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">
-                                                    Scan QR with authenticator
-                                                </p>
-                                            </div>
+                                <!-- Step 2: Scan  -->
+                                <div class="relative">
+                                    <div class="h-full rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
+                                            <span class="rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-purple-600 dark:bg-purple-900/50 dark:text-purple-400">
+                                                Step 2
+                                            </span>
                                         </div>
-                                        <div
-                                            class="absolute -right-4 top-1/2 hidden -translate-y-1/2 transform md:block"
-                                        >
-                                            <ChevronRight class="h-6 w-6 text-gray-400" />
+                                        <div class="mt-4 flex flex-col items-center space-y-3">
+                                            <div class="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
+                                                <QrCode class="h-6 w-6 text-gray-400" />
+                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                Scan QR with authenticator
+                                            </p>
                                         </div>
                                     </div>
+                                    <div class="absolute -right-4 top-1/2 hidden -translate-y-1/2 transform md:block">
+                                        <ChevronRight class="h-6 w-6 text-gray-400" />
+                                    </div>
+                                </div>
 
-                                    <!-- Step 3: Verify -->
-                                    <div class="relative">
-                                        <div
-                                            class="h-full rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800"
-                                        >
-                                            <div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
-                                                <span
-                                                    class="rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-purple-600 dark:bg-purple-900/50 dark:text-purple-400"
-                                                >
-                                                    Step 3
-                                                </span>
+                                <!-- Step 3: Verify -->
+                                <div class="relative">
+                                    <div class="h-full rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-800">
+                                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 transform">
+                                            <span class="rounded-full bg-purple-100 px-3 py-1 text-xs font-bold text-purple-600 dark:bg-purple-900/50 dark:text-purple-400">
+                                                Step 3
+                                            </span>
+                                        </div>
+                                        <div class="mt-4 flex flex-col items-center space-y-3">
+                                            <div class="flex h-8 w-24 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700">
+                                                <span class="font-mono text-gray-400">• • • • • •</span>
                                             </div>
-                                            <div class="mt-4 flex flex-col items-center space-y-3">
-                                                <div
-                                                    class="flex h-8 w-24 items-center justify-center rounded-lg bg-gray-100 dark:bg-gray-700"
-                                                >
-                                                    <span class="font-mono text-gray-400">• • • • • •</span>
-                                                </div>
-                                                <p class="text-sm text-gray-500 dark:text-gray-400">
-                                                    Enter verification code
-                                                </p>
-                                            </div>
+                                            <p class="text-sm text-gray-500 dark:text-gray-400">
+                                                Enter verification code
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -334,10 +303,30 @@
                         </div>
                     </div>
                 </div>
+            </div>
+            {/if}
+
+            {#if mfaEnabled}
+            <div class="space-y-4" transition:fade={{ duration: 200 }}>
+                <div class="rounded-lg border border-green-200 bg-green-50 p-6 dark:border-green-800 dark:bg-green-900/20">
+                    <h3 class="mb-3 font-semibold text-green-900 dark:text-green-100">MFA Status Overview</h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-700 dark:text-green-300">Last Login</span>
+                            <span class="text-green-900 dark:text-green-100">{new Date(lastLoginDate).toLocaleString()}</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-green-700 dark:text-green-300">Security Level</span>
+                            <span class="rounded-full bg-green-200 px-3 py-1 text-sm font-medium text-green-800 dark:bg-green-800 dark:text-green-200">High</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
             {/if}
         </div>
 
-        <!-- MFA Tips and Information -->
+        {#if !mfaEnabled}
+        <!-- MFA Tips and Information - Only shown when MFA is not enabled -->
         <div class="rounded-xl bg-purple-50 p-6 dark:bg-purple-900/20">
             <div class="mb-4 flex items-center gap-3">
                 <AlertCircle class="text-purple-600 dark:text-purple-400" size={24} />
@@ -378,9 +367,61 @@
                 </ol>
             </div>
         </div>
+        {/if}
+
+        {#if mfaEnabled}
+        <!-- Security Activity Section - Only shown when MFA is enabled -->
+        <div class="rounded-xl bg-white p-6 shadow-sm dark:bg-gray-800">
+            <h3 class="mb-4 font-semibold text-gray-900 dark:text-white">Security Activity</h3>
+            <div class="space-y-4">
+                <div class="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-white">MFA Authentication</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Last successful verification</p>
+                        </div>
+                        <span class="text-sm text-gray-500 dark:text-gray-400">{lastMfaDate}</span>
+                    </div>
+                </div>
+                <div class="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="font-medium text-gray-900 dark:text-white">Recovery Codes</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Backup codes not available</p>
+                        </div>
+                        <Alertconfirmationdialog
+                        isPositive={true}
+                        positiveLabel={'view info'}
+                        dlgTitle={'Recovery Codes'}
+                        dlgMessage={
+                        `<div class="dlg-message space-y-4">
+                          <p>
+                            Recovery codes are used to access your account when you lose access to your authenticator app. 
+                            <strong>Keep them safe and secure.</strong>
+                          </p                       >
+
+                          <p>
+                            We do not store recovery codes on our servers, 
+                            <strong>so they cannot be retrieved once lost</strong> unless you saved them during the initial setup.
+                          </p                       >
+
+                          <p>
+                            If you need to generate new recovery codes, you will need to 
+                            <strong>recover your password</strong> and complete the process.
+                          </p>
+                        </div>
+`
+                        }
+                        />
+                    </div>
+                </div>
+            </div>
+        </div>
+        {/if}
     </div>
 </section>
 
 {#if isDrawerOpen}
-<Recoverycodes {recovery_details} {isDrawerOpen}  />    
+    <Recoverycodes {recovery_details} {isDrawerOpen} />    
 {/if}
+  

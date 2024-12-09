@@ -2,12 +2,13 @@ import {VITE_API_BASE_URL_ACCOUNT, VITE_API_BASE_URL_MFA_VERIFY} from '$env/stat
 import {updateUserInformation} from '$lib/dataservice/users/usersDataService.js'
 import { IMAGEKIT_PUBLIC_KEY, IMAGEKIT_PRIVATE_KEY, IMAGEKIT_URL_ENDPOINT } from '$env/static/private';
 import ImageKit from "imagekit";
-import { avatarSchema, avatarUrlSchema, totpSchema } from '$lib/settings/schema.js';
+import {getCurrencies} from '$lib/dataservice/searchoptions/searchoptions';
+import { avatarSchema, avatarUrlSchema, totpSchema, investmentRiskandTimelineSchema, profileSchema } from '$lib/settings/schema.js';
 import { zod } from 'sveltekit-superforms/adapters';
 import { superValidate, fail,message } from 'sveltekit-superforms';
 import { checkAuthentication, updateAuthentication } from '$lib/helpers/auths';
 import { redirect } from '@sveltejs/kit';
-
+// 
 const imageKit = new ImageKit({
     publicKey : IMAGEKIT_PUBLIC_KEY,
     privateKey: IMAGEKIT_PRIVATE_KEY,
@@ -40,13 +41,19 @@ export const load = async ({fetch, cookies}) => {
         let avatarForm = await superValidate(zod(avatarSchema));
         let avatarUrlForm = await superValidate(zod(avatarUrlSchema));
         let totpForm = await superValidate(zod(totpSchema));
-        console.log('GBLEIP Server: API Response:', responseData);
+        let investmentRiskAndTimeLineForm = await superValidate(zod(investmentRiskandTimelineSchema));
+        let profileForm = await superValidate(zod(profileSchema));
+        let currencies = await getCurrencies({fetch});
+        //console.log('GBLEIP Server: API Response:', responseData);
         return {
             success: true,
             data: responseData,
+            currencies,
             avatarForm,
             avatarUrlForm,
-            totpForm
+            totpForm,
+            profileForm,
+            investmentRiskAndTimeLineForm,
         };
     }catch(err){
         console.log("GAIP-SE error: ", err);
@@ -186,6 +193,75 @@ export const actions = {
                 error: "An error occured while submitting data"
             };
         }
+    },
+    investmentpreferences: async({request,fetch, cookies})=>{
+        let auth = checkAuthentication(cookies).user;
+        if (!auth){
+            console.log('UPIV Server: User is not authenticated, REDIRECTING..');
+            return redirect(303, `/login?redirectTo=/dashboard/account`);
+        }
+        const formData = await request.formData();
+        const investmentRiskAndTimeLineForm = await superValidate(formData,zod(investmentRiskandTimelineSchema))
+        if (!investmentRiskAndTimeLineForm.valid) {
+            return fail(400,{investmentRiskAndTimeLineForm});
+        }
+        // if there are no changes, return a message
+        if (!hasChanges(formData, investmentRiskAndTimeLineForm)) {
+            return message(investmentRiskAndTimeLineForm, {
+                message: 'No changes detected.',
+                success: true
+            });
+        }
+        console.log("Investment Risk and Timeline: ", investmentRiskAndTimeLineForm, "\nForm Data: ", formData);
+        // proceed to update the user's investment preferences
+        try{
+            const response = await fetch(VITE_API_BASE_URL_ACCOUNT, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${auth}`
+                },
+                body: JSON.stringify({
+                    time_horizon: investmentRiskAndTimeLineForm.data.timeline,
+                    risk_tolerance: investmentRiskAndTimeLineForm.data.risk
+                })
+            });
+            if (!response.ok){
+                let errorData = await response.json();
+                console.log('UPIV Server: API Response:', errorData);
+                return message(investmentRiskAndTimeLineForm, {
+                    message: errorData.errors,
+                    error: errorData.error
+                });
+            }
+            let responseData = await response.json();
+            console.log('UPIV Server: API Response:', responseData);
+            return message(investmentRiskAndTimeLineForm,{
+                success: true,
+                data: responseData,
+                message: 'Investment Preferences successfully updated!'
+            });
+        }catch(err){
+            console.log('UPIV-SE error: ', err);
+            return {
+                status: 500,
+                error: "An error occured while submitting data"
+            };
+        }
+    },
+    updateProfile: async({request, cookies})=>{
+        let auth = checkAuthentication(cookies).user;
+        if (!auth){
+            console.log('UPIV Server: User is not authenticated, REDIRECTING..');
+            return redirect(303, `/login?redirectTo=/dashboard/account`);
+        }
+        const formData = await request.formData();
+        const profileForm = await superValidate(formData,zod(profileSchema))
+        console.log("Form Data: ", formData, "\n Profile Form: ", profileForm);
+        return message(profileForm, {
+            message: 'Profile successfully updated!',
+            success: true
+        });
     }
 }
 
@@ -209,4 +285,12 @@ async function imageWorker(fetch, payload, cookies){
         };
     }
     return {success:true}
+}
+
+function hasChanges(formData, superformData) {
+    const originalTimeline = formData.get('originaltimeline');
+    const originalRisk = formData.get('originalrisk');
+    const { timeline, risk } = superformData.data;
+
+    return originalTimeline !== timeline || originalRisk !== risk;
 }
